@@ -1,0 +1,25 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+    .home-container{
+        display: grid;
+        grid-template-columns: 1fr 3fr 1fr;
+    }
+</style>
+<div class="home-container">
+    <div>
+        <h1>Ingredients</h1>
+    </div>
+    <div>
+        <h1> Recipe</h1>
+        <h2>{{recipe.name}}</h2>
+        {% for ingredient in recipe.ingredients_list.all %}
+            <h3>{{ingredient.name}}</h3>
+        {% endfor %}
+    </div>
+    <div>
+        <h1>Commnity Discussion</h1>
+    </div>
+</div>
+{% endblock content %}

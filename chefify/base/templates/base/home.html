@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+    .home-container{
+        display:grid;
+        grid-template-columns: 1fr 3fr 3fr;
+    }
+</style>
+
+<div class="home-container">
+    <div>
+        <h1>Cuisine</h1>
+        <hr>
+    </div>
+    <div>
+        <h1>Community Recipes</h1>
+        <hr>
+        {% for recipe in c_recipe %}
+            <h2><a href="{% url 'community-recipe-room' recipe.id %}">{{recipe.name}}</a></h2>
+        {% endfor %}
+    </div>
+    <div>
+        <h1>Your Recipes </h1>
+        <hr>
+    </div>
+</div>
+
+{% endblock content %}
