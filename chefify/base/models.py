@@ -1,15 +1,16 @@
 from django.db import models
+from django import forms
 
 # Create your models here.
 
 class Categories(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
 
     def __str__(self):
         return self.name
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     # category =
     # calories = 
     def __str__(self):
@@ -18,7 +19,7 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     name = models.CharField(max_length=50)
     
-    cuisine = models.ForeignKey(Categories, on_delete=models.SET_NULL, null= True, blank=True)
+    categories = models.ForeignKey(Categories, on_delete=models.SET_NULL, null= True, blank=True)
 
     calories = models.IntegerField(null=True, blank=True)
 

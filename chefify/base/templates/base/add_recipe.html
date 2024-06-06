@@ -1,0 +1,25 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+    <style>
+        .home-container{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+    </style>
+
+    <h1>Add {{model_name}}</h1>
+
+    <div class="home-container">
+        <div>
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <a href="{% url 'add-ingredient' %}?source=recipe">Add Ingredient</a>
+    </div>
+
+{% endblock%}

@@ -10,8 +10,16 @@
 
 <div class="home-container">
     <div>
-        <h1>Cuisine</h1>
+        <h1>Categories</h1>
         <hr>
+        <div>
+            <a href="{% url 'home' %}">All</a>
+        </div>
+        {% for category in categories %}
+            <div>
+                <a href="{% url 'home' %}?q={{category.name}}">{{category.name}}</a>
+            </div>
+        {% endfor %}
     </div>
     <div>
         <h1>Community Recipes</h1>
@@ -23,6 +31,8 @@
     <div>
         <h1>Your Recipes </h1>
         <hr>
+        <a href="{% url 'add-recipe' %}">Add Recipe</a>
+        <a href="{% url 'add-ingredient' %}">Add Ingredient</a>
     </div>
 </div>
 
