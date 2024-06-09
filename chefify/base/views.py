@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
 
 # Create your views here.
 
@@ -59,6 +60,7 @@ def add_ingredient_user(request, pk):
     
     if request.method == "POST":
         form = ProfileIngredientsListForm(request.POST, instance=profile)
+        
         if form.is_valid():
             for ingredient in form.cleaned_data['user_ingredients_list']:
                 if not ingredient in profile.user_ingredients_list.all():
@@ -78,14 +80,14 @@ def add_recipe_user(request, pk):
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) | Q(private=False))
-    print(c_recipes)
+    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) & Q(private=False))
     user_profile_ingredient_list = None
     user_profile_recipe_list = None
 
     if request.user.is_authenticated:
         user_profile_ingredient_list = Profile.objects.get(user=request.user.id).user_ingredients_list.all()
         user_profile_recipe_list = Profile.objects.get(user=request.user.id).user_recipe_list.all()
+        user_profile_recipe_list = user_profile_recipe_list.filter(Q(categories__name__icontains=q))
 
     context = {'c_recipe': c_recipes, 'categories': Categories.objects.all(), 'user_profile_ingredient_list': user_profile_ingredient_list, "user_profile_recipe_list": user_profile_recipe_list}
     return render(request, 'base/home.html', context)
@@ -106,6 +108,7 @@ def add_recipe(request, pk):
             recipe_form = form.save(commit=False)
             recipe_form.culinarian = request.user
             recipe_form.save()
+            form.save_m2m()
             user_profile.user_recipe_list.add(recipe_form)
             return redirect('home')
     context = {'form': form}
@@ -118,10 +121,11 @@ def add_ingredient(request):
 
     if request.method == 'POST':
         form = IngredientForm(request.POST)
+        print(form)
         if form.is_valid():
             form.save()
             if request.GET.get('source') == 'recipe':
-                return redirect('add-recipe')
+                return redirect(reverse('add-recipe', args=[request.user.id]))
             return redirect('home')
 
     context = {'form': form}
