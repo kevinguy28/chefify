@@ -78,13 +78,16 @@ def add_recipe_user(request, pk):
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q))
+    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) | Q(private=False))
+    print(c_recipes)
     user_profile_ingredient_list = None
+    user_profile_recipe_list = None
 
     if request.user.is_authenticated:
         user_profile_ingredient_list = Profile.objects.get(user=request.user.id).user_ingredients_list.all()
+        user_profile_recipe_list = Profile.objects.get(user=request.user.id).user_recipe_list.all()
 
-    context = {'c_recipe': c_recipes, 'categories': Categories.objects.all(), 'user_profile_ingredient_list': user_profile_ingredient_list}
+    context = {'c_recipe': c_recipes, 'categories': Categories.objects.all(), 'user_profile_ingredient_list': user_profile_ingredient_list, "user_profile_recipe_list": user_profile_recipe_list}
     return render(request, 'base/home.html', context)
 
 @login_required(login_url="/login")
@@ -94,15 +97,17 @@ def community_recipe(request, pk):
     return render(request, 'base/community_recipe_room.html', context)
 
 @login_required(login_url="/login")
-def add_recipe(request):
+def add_recipe(request, pk):
     form = RecipeForm()
-
+    user_profile = Profile.objects.get(user=pk)
     if request.method == 'POST':
         form = RecipeForm(request.POST)
         if form.is_valid():
-            form.save()
+            recipe_form = form.save(commit=False)
+            recipe_form.culinarian = request.user
+            recipe_form.save()
+            user_profile.user_recipe_list.add(recipe_form)
             return redirect('home')
-
     context = {'form': form}
     return render(request, 'base/add_recipe.html', context)
 

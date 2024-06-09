@@ -10,7 +10,7 @@
 <div><a href="{% url 'login-page' %}">Login</a></div>
 {% endif %}
 
-<a href="{% url 'add-recipe' %}">Add Recipe</a>
+<a href="{% url 'add-recipe' user.id %}">Add Recipe</a>
 <a href="{% url 'add-ingredient' %}">Add Ingredient</a>
 
 <hr>

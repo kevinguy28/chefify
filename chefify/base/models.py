@@ -19,14 +19,12 @@ class Ingredient(models.Model):
     
 class Recipe(models.Model):
     name = models.CharField(max_length=50)
-    
     categories = models.ForeignKey(Categories, on_delete=models.SET_NULL, null= True, blank=True)
-    cook_name = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    culinarian = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     calories = models.IntegerField(null=True, blank=True)
-
     ingredients_list = models.ManyToManyField(Ingredient)
-
     review = models.IntegerField(null=True, blank=True)
+    private = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

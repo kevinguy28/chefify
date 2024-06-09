@@ -6,6 +6,7 @@ class RecipeForm(ModelForm):
     class Meta:
         model = Recipe 
         fields = '__all__'
+        exclude = ['culinarian']
 
 class IngredientForm(ModelForm):
     class Meta:
