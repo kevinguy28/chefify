@@ -4,7 +4,7 @@
 <style>
     .home-container{
         display:grid;
-        grid-template-columns: 1fr 3fr 3fr;
+        grid-template-columns: 1fr 3fr 3fr 3fr;
     }
 </style>
 
@@ -31,8 +31,13 @@
     <div>
         <h1>Your Recipes </h1>
         <hr>
-        <a href="{% url 'add-recipe' %}">Add Recipe</a>
-        <a href="{% url 'add-ingredient' %}">Add Ingredient</a>
+    </div>
+
+    <div>
+        <h1>Your Ingredients</h1> <hr>
+        {% if user.is_authenticated %}
+            <a href="{% url 'add-ingredient-user' user.id %}">Add Ingredient</a>
+        {% endif %}
     </div>
 </div>
 

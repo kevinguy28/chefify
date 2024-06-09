@@ -1,5 +1,6 @@
 from django.db import models
 from django import forms
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -20,7 +21,7 @@ class Recipe(models.Model):
     name = models.CharField(max_length=50)
     
     categories = models.ForeignKey(Categories, on_delete=models.SET_NULL, null= True, blank=True)
-
+    cook_name = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     calories = models.IntegerField(null=True, blank=True)
 
     ingredients_list = models.ManyToManyField(Ingredient)
@@ -31,4 +32,15 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Profile(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_recipe_list = models.ForeignKey(Recipe, on_delete=models.SET_NULL, null= True, blank = True)
+    user_ingredients_list = models.ManyToManyField(Ingredient, blank=True)
+    
+    def __str__(self):
+        return self.user.username
+
+
     
