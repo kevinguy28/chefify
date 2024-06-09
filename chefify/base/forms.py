@@ -29,3 +29,7 @@ class ProfileIngredientsListForm(ModelForm):
         model = Profile
         fields = ['user_ingredients_list']
 
+class ProfileRecipeListForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['user_recipe_list']

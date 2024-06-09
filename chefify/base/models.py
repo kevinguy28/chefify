@@ -36,7 +36,7 @@ class Recipe(models.Model):
 class Profile(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    user_recipe_list = models.ForeignKey(Recipe, on_delete=models.SET_NULL, null= True, blank = True)
+    user_recipe_list = models.ManyToManyField(Recipe, blank=True)
     user_ingredients_list = models.ManyToManyField(Ingredient, blank=True)
     
     def __str__(self):

@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect
 from .models import Recipe, Categories, Profile
-from .forms import RecipeForm, IngredientForm, ProfileIngredientsListForm
+from .forms import RecipeForm, IngredientForm, ProfileIngredientsListForm, ProfileRecipeListForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+
 # Create your views here.
 
 def login_page(request):
-
+    page = "login"
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -25,12 +27,29 @@ def login_page(request):
             return redirect('home')
         else:
             messages.error(request, "Username OR Password does not exist")
-    context ={}
+    context = {'page': page}
     return render(request, 'base/login_register.html', context)
 
 def logout_user(request):
     logout(request)
     return redirect('home')
+
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            login(request, user)
+            Profile.objects.create(user=user).save()
+            return redirect('home')
+        else:
+            messages.error(request, 'An error occured during registration')
+    context = {'form': form}
+    return render(request, 'base/login_register.html', context)
 
 @login_required(login_url='/login')
 def add_ingredient_user(request, pk):
@@ -49,11 +68,23 @@ def add_ingredient_user(request, pk):
     context = {'form': form}
     return render(request, "base/add_ingredient.html", context)
 
+@login_required(login_url='/login')
+def add_recipe_user(request, pk):
+    profile = Profile.objects.get(user=pk)
+    form = ProfileRecipeListForm()
+
+    context = {'form': form}
+    return render(request, context)
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q))
-    context = {'c_recipe': c_recipes, 'categories': Categories.objects.all()}
+    user_profile_ingredient_list = None
+
+    if request.user.is_authenticated:
+        user_profile_ingredient_list = Profile.objects.get(user=request.user.id).user_ingredients_list.all()
+
+    context = {'c_recipe': c_recipes, 'categories': Categories.objects.all(), 'user_profile_ingredient_list': user_profile_ingredient_list}
     return render(request, 'base/home.html', context)
 
 @login_required(login_url="/login")

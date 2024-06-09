@@ -31,12 +31,27 @@
     <div>
         <h1>Your Recipes </h1>
         <hr>
+
+        {% if user.is_authenticated %}
+
+        {% else %}
+        <p>Login to view your recipes!</p>
+        {% endif%}
     </div>
 
     <div>
         <h1>Your Ingredients</h1> <hr>
         {% if user.is_authenticated %}
             <a href="{% url 'add-ingredient-user' user.id %}">Add Ingredient</a>
+            {% if user_profile_ingredient_list %}
+                {% for ingredient in user_profile_ingredient_list %}
+                    <p>{{ingredient}}</p>
+                {% endfor %}
+            {% else %}
+                <p>You have no ingredients! Add some!</p>
+            {% endif %}
+        {% else %}
+            <p>Login to view your ingredients!</p>
         {% endif %}
     </div>
 </div>
