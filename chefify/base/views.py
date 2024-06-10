@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Recipe, Categories, Profile
-from .forms import RecipeForm, IngredientForm, ProfileIngredientsListForm, ProfileRecipeListForm
+from .models import Recipe, Categories, Profile, Steps
+from .forms import RecipeForm, IngredientForm, ProfileIngredientsListForm, ProfileRecipeListForm, StepsForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
 
@@ -93,12 +94,6 @@ def home(request):
     return render(request, 'base/home.html', context)
 
 @login_required(login_url="/login")
-def community_recipe(request, pk):
-    recipe = Recipe.objects.get(id=pk)
-    context = {'recipe': recipe}
-    return render(request, 'base/community_recipe_room.html', context)
-
-@login_required(login_url="/login")
 def add_recipe(request, pk):
     form = RecipeForm()
     user_profile = Profile.objects.get(user=pk)
@@ -131,3 +126,57 @@ def add_ingredient(request):
     context = {'form': form}
     return render(request, 'base/add_ingredient.html', context)
 
+@login_required(login_url="/login")
+def community_recipe(request, pk):
+    recipe = Recipe.objects.get(id=pk)
+    steps = Steps.objects.filter(recipe=pk)
+    context = {'recipe': recipe, 'steps':steps}
+    return render(request, 'base/community_recipe_room.html', context)
+
+@login_required(login_url="/login")
+def add_steps(request, pk):
+    form = StepsForm()
+
+    if request.method == "POST":
+        form = StepsForm(request.POST)
+        if form.is_valid():
+            step_form = form.save(commit=False)
+            step_form.author = request.user
+            step_form.recipe = Recipe.objects.get(id=pk)
+            last_step = Steps.objects.filter(recipe=step_form.recipe).order_by('-order').first()
+            if last_step:
+                step_form.order = last_step.order + 1
+            else:
+                step_form.order = 1
+            step_form.save()
+        return redirect(reverse('community-recipe-room', args=[pk]))
+
+    context = {'form':form}
+    return render(request, 'base/add_steps.html', context)
+
+@login_required(login_url="/login")
+def update_steps(request, pk):
+    if request.user != Steps.objects.get(id=pk).author:
+        return HttpResponse('You are not allowed here!')
+    
+    form = StepsForm(instance=Steps.objects.get(id=pk))
+    
+    if request.method == "POST":
+        form = StepsForm(request.POST, instance=Steps.objects.get(id=pk))
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('community-recipe-room', args=[Steps.objects.get(id=pk).recipe.id]))
+        
+    context = {'form': form}
+    return render(request, 'base/add_steps.html', context)
+
+@login_required(login_url="/login")
+def delete_steps(request,pk):
+    if request.user != Steps.objects.get(id=pk).author:
+        return HttpResponse('You are not allowed here!')
+    print(request.method)
+    if request.method == "POST": #THIS NEEDS TO BE RESOLVED, PROLLY ADD A CONFIRMATION DELETE SCREEN
+        print(Steps.objects.get(id=pk))
+        Steps.objects.get(id=pk).delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    

@@ -25,12 +25,30 @@ class Recipe(models.Model):
     ingredients_list = models.ManyToManyField(Ingredient)
     review = models.IntegerField(null=True, blank=True)
     private = models.BooleanField(default=True)
+    # guide = models.TextField(blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    #guide = models.ForeignKey(Guide, on delete=models.SET_NULL, null = True)
 
     def __str__(self):
         return self.name
     
+class Steps(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    description = models.TextField()
+    order = models.PositiveIntegerField()
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return("Step-"+ str(self.order))
+
+    #last_step = Step.objects.filter(recipe=self.recipe).order_by('-order').first()
+
+
 class Profile(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

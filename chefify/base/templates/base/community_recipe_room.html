@@ -16,6 +16,17 @@
     </div>
     <div>
         <h1> Recipe | {{recipe.categories}}: {{recipe.name}} </h1>
+        {% if user.is_authenticated and recipe.culinarian == user %} 
+            <a href="{% url 'add-steps' recipe.id %}">Add Steps</a> 
+        {% endif %}
+        {% for step in steps %}
+            <p>{{step.description}}
+                {% if user.is_authenticated and recipe.culinarian == user %}
+                    <a href="{% url 'update-steps' step.id %}">Edit</a>
+                    <a href="{% url 'delete-steps' step.id %}">Delete</a>
+                {% endif %}
+            </p>
+        {% endfor %}
     </div>
     <div>
         <h1>Commnity Discussion</h1>
