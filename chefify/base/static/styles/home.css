@@ -1,0 +1,54 @@
+.home-container{
+    display:grid;
+    grid-template-columns: 1fr 2fr 2fr 2fr 2fr;
+}
+
+.home_header{
+    margin: 1rem auto
+}
+
+.typewriter_wrapper{
+    display: inline-block;
+    padding: 10px;
+}
+
+.text{
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    border-right:5px solid;
+    width:100%;
+    white-space: nowrap;
+    overflow:hidden;
+    animation:
+        typing 2s steps(20),
+        cursor .4s step-end infinite alternate;
+}
+
+@keyframes cursor{
+    50% {border-color:transparent}
+}
+
+@keyframes typing{
+    from {width:0}
+}
+
+@media(max-width: 1200px) {
+    .home-container{
+        grid-template-columns: 2fr 2fr;
+    }
+
+    #col_categories, #col_uingredients, #col_shoppinglist{
+        display:none;
+    }
+
+    .show-set-2 #col_crecipe, .show-set-2 #col_urecipes {
+        display: none; /* Hide the first set of columns */
+    }
+    
+    .show-set-2 #col_uingredients, .show-set-2 #col_shoppinglist {
+        display: block; /* Show the second set of columns */
+    }
+
+}

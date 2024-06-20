@@ -1,0 +1,38 @@
+
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/your_ingredients.css'%}">
+{% endblock extra_css %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    <form method="POST" action="" class="ingredient-input">
+        {% csrf_token %}
+        <input type="hidden" name="ingredient-input" value="ingredient-to-add">
+
+        <input type="text" name="ingredient-to-add" placeholder="Add Ingredient...">
+    </form>
+
+    <form method="POST" action="" class="ingredient-input">
+        {% csrf_token %}
+        <input type="hidden" name="ingredient-input"  value="ingredient-to-remove">
+
+        <input type="text" name="ingredient-to-remove" placeholder="Remove Ingredient...">
+    </form>
+
+    <div id="in_item_wrapper">
+        {% if user_profile_ingredient_list %}
+            {% for ingredient in user_profile_ingredient_list %}
+                <p class="in_item style_text">{{ingredient}}</p>
+            {% endfor %}
+        {% else %}
+            <p>You have no ingredients! Add some!</p>
+        {% endif %}
+    </div> 
+{% else %}
+    <p><a href="{% url 'login-page' %}">Login </a>to view your ingredients!</p>
+{% endif %}
+
+{% endblock content %}

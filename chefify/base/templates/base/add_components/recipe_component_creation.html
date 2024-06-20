@@ -1,0 +1,70 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/recipe_component_creation.css'%}">
+
+<div class="recipe_component_wrapper">
+    <div>
+        <div>
+            <form method="POST" action="" class="component-input" >
+                {% csrf_token %} 
+                <input type="hidden" name="form-type" value="form-add-component">
+                <input class="input_style" type="text" name="recipe-component" placeholder="Add a new recipe component ... ">
+            </form>
+        </div>
+        <div class="crud-wrapper">
+            {% for component in recipe.recipe_components_list.all %}
+            {% if user == recipe.culinarian %}
+                <h2 class="component-name">Component: {{component}} </h2>
+                <div>
+                    <form method="POST" action="" class="component-add">
+                        {% csrf_token %} 
+                        <input type="hidden" name="form-type" value="form-add-ingredient">
+                        <input type="hidden" name="component-id" value="{{component.id}}">
+                        
+                        <input class="input_style" type="number" min="0" step="any"  name="quantity" placeholder="Quantity">
+                        <select class="input_style" name="unit">
+                            <option value="tbsp">Tablespoon</option>
+                            <option value="tsp">Teaspoon</option>
+                            <option value="cup">Cup</option>
+                            <option value="oz">Ounce</option>
+                            <option value="g">Gram</option>
+                            <option value="kg">Kilogram</option>
+                            <option value="ml">Milliliter</option>
+                            <option value="L">Liter</option>
+                            <option value="pinch">Pinch</option>
+                            <option value="dash">Dash</option>
+                        </select>
+                        <input class="input_style" type="text" name="add-ingredient" placeholder="Add Ingredient" pattern="[A-Za-z]+" >
+                        <input class="input_style" type="submit" value="Submit">
+                    </form>
+                </div>
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        {% for component in recipe.recipe_components_list.all %}
+            <div class="component-list">
+                <h2 class="component-name"><u>{{component.name}}</u> | 
+                    <a class="delete-button" href="{% url 'delete-component' component.id %}"> Delete</a>
+                </h2>
+                <div class="list-wrapper">
+                    {% for ingredient in component.ingredients_list.all %}
+                        <p class="ingredient-unit">{{ingredient}} |
+                            {% if user == recipe.culinarian %}
+                                <a class="delete-button" href="{% url 'delete-component-ingredient' ingredient.id %}"> Del.</a>
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock content %}

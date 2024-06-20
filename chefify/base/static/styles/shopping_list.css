@@ -1,0 +1,59 @@
+#sl_add{
+    font-size: 1.25rem;
+    text-align: center;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 600px;
+    font-style: normal;
+    margin:1rem auto;
+}
+
+
+.sl_wrapper{
+    background-color: #b7b5b3;
+    color: black;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+    max-width: 90%;
+}
+
+.sl_header{
+    color: black;
+    font-size: 1.25rem;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    text-align: center;
+}
+
+.sl_crud{
+    color:black;
+}
+
+.sl_crud:visited{
+    color:black;
+}
+
+.sl_crud:hover{
+    color: #36454F;
+}
+
+ul{
+    padding: 0;
+    display:grid;
+    place-items: center;
+    grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.sl_item{
+    font-size: 1.25rem;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    text-align: center;
+    margin: 1rem;
+    list-style-type: none;
+}

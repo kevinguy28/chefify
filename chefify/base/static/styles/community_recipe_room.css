@@ -1,0 +1,107 @@
+.home-container{
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+.style_text{
+    font-style: normal;
+    font-weight: 600px;
+    font-optical-sizing: auto;
+    font-family: "Roboto Mono", monospace;
+    font-size: 1.25rem;
+}
+
+/* Ingredients Section */
+
+#ingredient-list-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.ingredient-list-item{
+    margin: 0.3rem auto;
+}
+
+#crud-components{
+    margin: 1rem auto;
+    text-align: center;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    margin:2rem;
+    font-size: 1.2rem;
+}
+
+.component-name{
+    font-size: 1.25rem;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    margin: 1rem auto;
+}
+
+.component-list{
+    margin:1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.list-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;;
+}
+
+.ingredient-unit{
+    text-align: center;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 600px;
+    font-style: normal;
+    margin:0.5rem;
+    font-size: 1.2rem;
+}
+
+/* Recipes Section */
+
+#steps-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1rem;
+}
+
+.steps{
+    color: black;
+    margin: 1rem 0;
+    padding: 1rem 1rem;
+    background-color: #b7b5b3;
+    border-radius: 10px;
+}
+
+/* Discussion Section */
+
+#discussion-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1rem;
+}
+
+.message{
+    margin: 0.5rem 0;
+    font-size: 1rem;
+}
+
+@media(max-width: 1200px) {
+    .home-container{
+        grid-template-columns: 1fr;
+    }
+}

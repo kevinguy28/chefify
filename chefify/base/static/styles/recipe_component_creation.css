@@ -1,0 +1,77 @@
+/* Wrappers */
+
+.recipe_component_wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.crud-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 1rem;
+}
+
+/* Component Section */
+
+.component-name{
+    font-size: 1.25rem;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    margin: 1rem auto;
+}
+
+.component-add{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.input_style{
+    width: 75%; 
+    padding: 8px;
+    margin: auto; 
+    border-radius: 20px;
+    box-sizing: border-box; 
+    outline: none;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    text-align: center;
+}
+
+.component-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin:1rem auto;
+}
+
+.component-input input::placeholder{
+    text-align: center;
+}
+
+/* List Section */
+
+.component-list{
+    margin:1rem
+}
+
+.list-wrapper{
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 
+        repeat(auto-fit, minmax(200px,1fr))
+}
+
+.ingredient-unit{
+    text-align: center;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 600px;
+    font-style: normal;
+}

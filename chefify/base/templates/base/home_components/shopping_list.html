@@ -1,0 +1,42 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/shopping_list.css'%}">
+{% endblock extra_css %}
+
+{% if user.is_authenticated %}
+    <div id="sl_add"><a href="{% url 'add-shopping-list' user.id %}"> Add Shopping List </a></div>
+{% else %}
+    <p><a href="{% url 'login-page' %}">Login </a>to view your shopping lists!</p>
+{% endif %}
+
+<div>
+    {% if user_shopping_list %}
+        {% for shopping_list in shopping_lists %}
+            <div class="sl_wrapper">
+                
+                <div class="sl_header">
+                    <div><u>List {{ forloop.counter }}: {{ shopping_list.list_name }}</u></div>
+                    <div>
+                        <a class="sl_crud" href="{% url 'add-shopping-list' user.id %}?shopping_list={{shopping_list.id}}">Add to list</a> | 
+                        <a class="sl_crud" href="{% url 'delete-shopping-list' shopping_list.id %}"> Delete </a>
+                    </div>
+                </div>
+                
+                
+                <ul>
+                    {% for ingredient in shopping_list.ingredients.all %}
+                        {% for ingredient_shopping_list in ingredient.ingredientshoppinglist_set.all %}
+                            {% if ingredient_shopping_list.shopping_list == shopping_list %}
+                                <li class="sl_item">{{ ingredient.name }} - Quantity: {{ ingredient_shopping_list.get_quantity }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% if user.is_authenticated %}
+            <h4>You don't have any list yet! Try adding one!</h4>
+        {% endif %}
+    {% endif %}
+</div>

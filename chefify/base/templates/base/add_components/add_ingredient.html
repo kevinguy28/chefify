@@ -1,13 +1,12 @@
 {% extends 'main.html' %}
 
+{% load static %}
+
 {% block content %}
 
-    <style>
-        .home-container{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-        }
-    </style>
+    {% block extra_css %}
+        <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/add_ingredient.css'%}">
+    {% endblock extra_css %}
 
     <h1>Add Ingredient</h1>
     <div class="home-container">

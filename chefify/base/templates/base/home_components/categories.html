@@ -1,0 +1,14 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/categories.css'%}">
+{% endblock extra_css %}
+
+<div class="categories">
+    <a href="{% url 'home' %}">All</a>
+</div>
+
+{% for category in categories %}
+    <div class="categories">
+        <a href="{% url 'home' %}?q={{category.name}}">{{category.name}}</a>
+    </div>
+{% endfor %}

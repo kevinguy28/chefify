@@ -1,16 +1,47 @@
-<h1><a href="/">LOGO</a></h1>
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/navbar.css'%}">
+{% endblock extra_css %}
 
+<nav>
+    <ul class="sidebar">
+        <li class="nav_item" onclick="hideSideBar()"><a><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a></li>
+        {% if request.path == '/' %}
+            <li><a class="nav_item" style="color:black;" onclick="toggleColumns()">Toggle Columns</a></li>
+        {% endif %}
+        <li><a class="nav_item"  href="{% url 'add-recipe' user.id %}">Add Recipe</a></li>
+        <li><a class="nav_item" href="{% url 'add-ingredient' %}">Add Ingredient</a></li>
+        {% if request.user.is_authenticated %}
+            <li><a class="nav_item" href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+            <li><a class="nav_item" href="{% url 'login-page' %}">Login</a></li>
+        {% endif %}
+    </ul>
+    <ul>
+        <li><a  id="logo" class="nav_item" href="/">CHEFIFY</a></li>
+        <form class="searchbar" method="GET" action="{% url 'home' %}">
+            <input type="text" name="q" placeholder="Search Recipe..."/>
+        </form>
 
-<form method="GET" action="{% url 'home' %}">
-    <input type="text" name="q" placeholder="Search Recipe..."/>
-</form>
-{% if request.user.is_authenticated %}
-<div><p>Hello {{request.user.username}}!</p><a href="{% url 'logout' %}">Logout</a></div>
-{% else %}
-<div><a href="{% url 'login-page' %}">Login</a></div>
-{% endif %}
-
-<a href="{% url 'add-recipe' user.id %}">Add Recipe</a>
-<a href="{% url 'add-ingredient' %}">Add Ingredient</a>
-
+        <li class="hideOnMobile"><a class="nav_item"  href="{% url 'add-recipe' user.id %}">Add Recipe</a></li>
+        <li class="hideOnMobile"><a class="nav_item" href="{% url 'add-ingredient' %}">Add Ingredient</a></li>
+        {% if request.user.is_authenticated %}
+            <li class="hideOnMobile"><a class="nav_item" href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+            <li class="hideOnMobile"><a class="nav_item" href="{% url 'login-page' %}">Login</a></li>
+        {% endif %}
+        <li class="menu" onclick="showSidebar()"><a><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+    </ul>
+</nav>
 <hr>
+
+<script>
+    function showSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'flex'
+    }
+    function hideSideBar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'none'
+    }
+</script>

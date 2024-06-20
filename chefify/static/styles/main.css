@@ -1,0 +1,47 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #141301;
+    color: white;
+    min-height: 100vh;
+    margin:0;
+    padding:0;
+}
+
+h1{
+    text-align: center;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+}
+
+.delete-button{
+    color: #B80C09;
+}
+
+.delete-button:visited{
+    color:#B80C09;
+}
+
+.delete-button:hover{
+    color: #b7b5b3;
+}
+
+a{
+    text-decoration: none;
+    color: #e5e7e6;
+}
+
+a:visited{
+    color:#e5e7e6;
+}
+
+a:hover{
+    color: #b7b5b3;
+}
+    

@@ -1,0 +1,13 @@
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/your_recipes.css'%}">
+{% endblock extra_css %}
+
+{% if user.is_authenticated %}
+    <div id="rc_add"> <a href="{% url 'add-recipe' user.id %}">Add Recipe</a> </div>
+    {% for recipe in user_profile_recipe_list %}
+        <a href="{% url 'community-recipe-room' recipe.id %}"><div class="u_recipes">{{recipe.name}}</div></a>
+    {% endfor %}
+{% else %}
+    <p><a href="{% url 'login-page' %}">Login </a> to view your recipes!</p>
+{% endif%}

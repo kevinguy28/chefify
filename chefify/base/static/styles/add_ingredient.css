@@ -1,0 +1,31 @@
+.home-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+#id_user_ingredients_list{
+    width: 100%;
+}
+
+/* Custom styles for Select2 elements */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: black; /* Change selected item text color */
+}
+
+.select2-container--default .select2-results__option {
+    color: black; /* Change dropdown items text color */
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    color: black; /* Change text color of selected items in multi-select */
+}
+
+/* Optional: Change background color for better visibility */
+.select2-container--default .select2-selection--single {
+    background-color: white; /* Change background color of selected item */
+}
+
+.select2-container--default .select2-results__option--highlighted {
+    background-color: #d0d0d0; /* Change highlighted item background color */
+    color: black; /* Change highlighted item text color */
+}

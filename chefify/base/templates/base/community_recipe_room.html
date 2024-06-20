@@ -1,35 +1,63 @@
 {% extends 'main.html' %}
+{% load static %}
 
 {% block content %}
-<style>
-    .home-container{
-        display: grid;
-        grid-template-columns: 1fr 3fr 1fr;
-    }
-</style>
+
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static '/styles/community_recipe_room.css' %}">
+{% endblock extra_css %}
+
 <div class="home-container">
-    <div>
+    <div id="ingredient-list-wrapper">
         <h1>Ingredients</h1>
-        {% for ingredient in recipe.ingredients_list.all %}
-            <h3>{{ingredient.name}}</h3>
+
+        {% if user.is_authenticated and recipe.culinarian == user %} 
+            <a id="crud-components" href="{% url 'recipe-component-creation' recipe.id %}"><u>Edit Recipe Components</u></a>
+        {% endif %}
+
+        {% for component in recipe.recipe_components_list.all %}
+        <div class="component-list">
+            <h2 class="component-name"><u>{{component.name}}</u></h2>
+            <div class="list-wrapper">
+                {% for ingredient in component.ingredients_list.all %}
+                    <p class="ingredient-unit">{{ingredient}}</p>
+                {% endfor %}
+            </div>
+        </div>
         {% endfor %}
+
     </div>
-    <div>
+
+    <div id="steps-wrapper">
         <h1> Recipe | {{recipe.categories}}: {{recipe.name}} </h1>
         {% if user.is_authenticated and recipe.culinarian == user %} 
             <a href="{% url 'add-steps' recipe.id %}">Add Steps</a> 
         {% endif %}
-        {% for step in steps %}
-            <p>{{step.description}}
-                {% if user.is_authenticated and recipe.culinarian == user %}
-                    <a href="{% url 'update-steps' step.id %}">Edit</a>
-                    <a href="{% url 'delete-steps' step.id %}">Delete</a>
+        <div>
+            {% for step in steps %}
+                <h3>Step {{forloop.counter}}: </h3>
+                <p class="steps style_text">{{step.description}}
+                    {% if user.is_authenticated and recipe.culinarian == user %}
+                        <a href="{% url 'update-steps' step.id %}">Edit</a>
+                        <a href="{% url 'delete-steps' step.id %}">Delete</a>
+                    {% endif %}
+                </p>
+            {% endfor %}    
+        </div>
+    </div>
+
+    <div id="discussion-wrapper">
+        <h1> Discussion</h1>
+        <a href="{% url 'add-message' recipe.id %}">Add Message</a>
+        {% for user_message in user_messages %}
+            <p class="message style_text">{{user_message.body}} - <span style="color:#B7B5B3">{{user_message.user}}</span> @{{user_message.created}}
+                {% if user.is_authenticated and user_message.user == user %}
+                    <a class="delete-button" href="{% url 'delete-message' user_message.id %}">Delete</a>
                 {% endif %}
             </p>
+
         {% endfor %}
     </div>
-    <div>
-        <h1>Commnity Discussion</h1>
-    </div>
+
 </div>
 {% endblock content %}
