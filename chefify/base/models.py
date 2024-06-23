@@ -52,7 +52,10 @@ class Recipe(models.Model):
     # ingredients_list = models.ManyToManyField(Ingredient)
     recipe_components_list = models.ManyToManyField(RecipeComponents, blank= True, null=True)
     review = models.IntegerField(null=True, blank=True)
+
+    publish = models.BooleanField(default=False)
     private = models.BooleanField(default=True)
+
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

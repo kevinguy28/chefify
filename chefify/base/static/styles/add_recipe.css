@@ -1,25 +1,6 @@
-#rc_add{
-    font-size: 1.25rem;
-    text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
-    margin:1rem auto;
-}
-
-.u_recipes{
-    max-width: 75%;
-    background-color: #434234;
-    margin: 1rem auto;
-    text-align: center;
-    border-radius: .5rem;
-    font-size: 1.25rem;
-    text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
+.home-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
 .component-input {
@@ -28,38 +9,12 @@
     align-items: center;
     justify-content: center;
     margin:1rem auto;
-}
-
-.category-submit-wrapper{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin:1rem auto;
-}
-
-.input_style{
-    width: 75%; 
-    padding: 8px;
-    border-radius: 20px;
-    box-sizing: border-box; 
-    outline: none;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
-    text-align: center;
-}
-
-#searchable-dropdown{
-    width: 50%;
+    background-color: cadetblue;
 }
 
 /* Custom styles for Select2 elements */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: black; /* Change selected item text color */
-    text-align: center;
 }
 
 .select2-container--default .select2-results__option {
@@ -80,3 +35,30 @@
     color: black; /* Change highlighted item text color */
 }
 
+.input_style{
+    width: 75%; 
+    padding: 8px;
+    margin: auto; 
+    border-radius: 20px;
+    box-sizing: border-box; 
+    outline: none;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    text-align: center;
+}
+
+.ingredient-input{
+    width: 75%; 
+    padding: 8px;
+    margin: auto; 
+    border-radius: 20px;
+    box-sizing: border-box; 
+    outline: none;
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    text-align: center;
+} 

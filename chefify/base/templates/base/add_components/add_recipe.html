@@ -1,25 +1,53 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <style>
-        .home-container{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-        }
-    </style>
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    <h1>Add {{model_name}}</h1>
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/add_recipe.css'%}">
 
     <div class="home-container">
-        <div>
+        <!-- <div>
             <form method="POST" action="">
                 {% csrf_token %}
                 {{form.as_p}}
                 <input type="submit" value="Submit">
             </form>
         </div>
-        <a href="{% url 'add-ingredient'%}?source=recipe">Add Ingredient</a>
-    </div>
+        <a href="{% url 'add-ingredient'%}?source=recipe">Add Ingredient</a> -->
+        <div>
+            <form method="POST" action="">
+                {% csrf_token %} 
+                <input type="hidden" name="form-type" value="form-add-component">
+                <input class="input_style" type="text" name="recipe-component" placeholder="Name of recipe ... ">
+                
 
+                <select id="searchable-dropdown" style="width: 200px;">
+                    {% for category in categories %}
+                        <option value="{{category.name}}">{{category.name}}</option>
+                    {% endfor %}
+                </select>
+                <input class="input_style" type="submit" value="Submit">
+                
+
+            </form>
+        </div>
+        <div class="recipe-display">
+            <div style="background-color: white;">
+
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $('#searchable-dropdown').select2();
+        });
+    </script>
+    
 {% endblock%}

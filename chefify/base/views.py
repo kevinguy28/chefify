@@ -137,7 +137,7 @@ def add_recipe_user(request, pk):
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) & Q(private=False))
+    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) & Q(private=False) & Q(publish=True) )
     form = ProfileIngredientsListForm()
     user_profile_ingredient_list = None
     user_profile_recipe_list = None
@@ -174,11 +174,23 @@ def home(request):
         user_profile_recipe_list = Profile.objects.get(user=request.user.id).user_recipe_list.all()
         user_profile_recipe_list = user_profile_recipe_list.filter(Q(categories__name__icontains=q))
 
+    # Add Recipes
+
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST.get("form-type") == "form-add-recipe":
+                recipe_name = request.POST.get("form-recipe").capitalize()
+                category = request.POST.get("category-select").capitalize()
+                if Categories.objects.get(name=category):
+                    recipe = Recipe.objects.create(name=recipe_name, categories=Categories.objects.get(name=category), culinarian=request.user)
+                    user_profile = Profile.objects.get(user=request.user)
+                    user_profile.user_recipe_list.add(recipe)
+                    return redirect(reverse('community-recipe-room', args=[recipe.id]))
+
     # Add/Remove Ingredients to User Profile & Creates Ingredients if it does not exist
 
     if request.user.is_authenticated:
         if request.method == "POST":
-            print(request.POST.get("ingredient-input"))
             if request.POST.get("ingredient-input") == "ingredient-to-add":
                 searched_ingredient = request.POST.get("ingredient-to-add").capitalize()
                 try:
@@ -202,6 +214,7 @@ def home(request):
 @login_required(login_url="/login")
 def add_recipe(request, pk):
     form = RecipeForm()
+    categories = Categories.objects.all().order_by('name')
     user_profile = Profile.objects.get(user=pk)
     if request.method == 'POST':
         form = RecipeForm(request.POST)
@@ -211,8 +224,9 @@ def add_recipe(request, pk):
             recipe_form.save()
             form.save_m2m()
             user_profile.user_recipe_list.add(recipe_form)
+
             return redirect('home')
-    context = {'form': form}
+    context = {'form': form, 'categories': categories}
     return render(request, 'base/add_components/add_recipe.html', context)
 
 @login_required(login_url="/login")
@@ -243,6 +257,21 @@ def community_recipe(request, pk):
     steps = Steps.objects.filter(recipe=pk)
     user_messages = Message.objects.filter(recipe=pk)
 
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST.get("publish") == "publish-true":
+                recipe.publish = True
+            elif request.POST.get("publish") == "publish-false":
+                recipe.publish = False
+
+            if request.POST.get("private") == "private-true":
+                recipe.private = False
+            elif request.POST.get("private") == "private-false":
+                recipe.private = True
+
+            recipe.save()
+            return redirect(request.get_full_path())
+            
     context = {'recipe': recipe, 'steps':steps, 'user_messages': user_messages}
     return render(request, 'base/community_recipe_room.html', context)
 

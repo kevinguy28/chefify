@@ -12,7 +12,7 @@
         <h1>Ingredients</h1>
 
         {% if user.is_authenticated and recipe.culinarian == user %} 
-            <a id="crud-components" href="{% url 'recipe-component-creation' recipe.id %}"><u>Edit Recipe Components</u></a>
+            <a class="crud-components" href="{% url 'recipe-component-creation' recipe.id %}"><u>Edit Recipe Components</u></a>
         {% endif %}
 
         {% for component in recipe.recipe_components_list.all %}
@@ -31,7 +31,7 @@
     <div id="steps-wrapper">
         <h1> Recipe | {{recipe.categories}}: {{recipe.name}} </h1>
         {% if user.is_authenticated and recipe.culinarian == user %} 
-            <a href="{% url 'add-steps' recipe.id %}">Add Steps</a> 
+            <a class="crud-components" href="{% url 'add-steps' recipe.id %}"><u>Add Steps</u></a> 
         {% endif %}
         <div>
             {% for step in steps %}
@@ -48,7 +48,7 @@
 
     <div id="discussion-wrapper">
         <h1> Discussion</h1>
-        <a href="{% url 'add-message' recipe.id %}">Add Message</a>
+        <a class="crud-components" href="{% url 'add-message' recipe.id %}"><u>Add Message</u></a>
         {% for user_message in user_messages %}
             <p class="message style_text">{{user_message.body}} - <span style="color:#B7B5B3">{{user_message.user}}</span> @{{user_message.created}}
                 {% if user.is_authenticated and user_message.user == user %}
@@ -58,6 +58,44 @@
 
         {% endfor %}
     </div>
-
 </div>
+
+{% if user.is_authenticated and recipe.culinarian == user %} 
+    {% if recipe.publish == False %}
+        <div class="button-wrapper">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="publish" value="publish-true">
+                <button type="submit">Publish Page</button>
+            </form>
+        </div>
+    {% elif recipe.publish == True %}
+        <div class="button-wrapper">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="publish" value="publish-false">
+                <button type="submit">Unpublish Page</button>
+            </form>
+        </div>
+    {% endif %}
+    
+    {% if recipe.private == False %}
+        <div class="button-wrapper">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="private" value="private-false">
+                <button type="submit">Turn page private</button>
+            </form>
+        </div>
+    {% elif recipe.private == True %}
+        <div class="button-wrapper">
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="private" value="private-true">
+                <button type="submit">Turn page public</button>
+            </form>
+        </div>
+    {% endif %}
+{% endif %}
+
 {% endblock content %}

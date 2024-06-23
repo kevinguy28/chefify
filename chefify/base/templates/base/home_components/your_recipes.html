@@ -1,13 +1,49 @@
 {% load static %}
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/your_recipes.css'%}">
-{% endblock extra_css %}
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/your_recipes.css'%}">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Include Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 {% if user.is_authenticated %}
-    <div id="rc_add"> <a href="{% url 'add-recipe' user.id %}">Add Recipe</a> </div>
+    <!-- <div id="rc_add"> <a href="{% url 'add-recipe' user.id %}">Add Recipe</a> </div> -->
+
+    <div>
+        <form method="POST" action="" class="component-input" >
+            {% csrf_token %} 
+            <input type="hidden" name="form-type" value="form-add-recipe">
+            <input class="input_style" type="text" name="form-recipe" placeholder="Name of recipe ... ">
+        
+            <div class="category-submit-wrapper">
+                <select id="searchable-dropdown" name="category-select">
+                    <option value="---"> --- </option>
+                    {% for category in categories %}
+                        <option value="{{category.name}}">{{category.name}}</option>
+                    {% endfor %}
+                </select>
+                <input class="input_style" type="submit" value="Submit" style="width: 25%;">
+            </div>
+
+        </form>
+    </div>
+    <div class="recipe-display">
+        <div style="background-color: white;">
+
+        </div>
+    </div>
+
     {% for recipe in user_profile_recipe_list %}
         <a href="{% url 'community-recipe-room' recipe.id %}"><div class="u_recipes">{{recipe.name}}</div></a>
     {% endfor %}
+    <script>
+        $(document).ready(function() {
+            $('#searchable-dropdown').select2();
+        });
+    </script>
 {% else %}
     <p><a href="{% url 'login-page' %}">Login </a> to view your recipes!</p>
 {% endif%}

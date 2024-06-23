@@ -24,7 +24,7 @@
     margin: 0.3rem auto;
 }
 
-#crud-components{
+.crud-components{
     margin: 1rem auto;
     text-align: center;
     font-family: "Roboto Mono", monospace;
@@ -104,4 +104,10 @@
     .home-container{
         grid-template-columns: 1fr;
     }
+}
+
+/* Buttons */
+
+.button-wrapper{
+    background-color: blue;
 }
