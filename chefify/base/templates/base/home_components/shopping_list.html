@@ -4,12 +4,21 @@
 {% endblock extra_css %}
 
 {% if user.is_authenticated %}
-    <div id="sl_add"><a href="{% url 'add-shopping-list' user.id %}"> Add Shopping List </a></div>
+    <form method="POST" action="" class="ingredient-input">
+        {% csrf_token %}
+        <input type="hidden" name="shopping-list-input" value="form-name-shopping-list">
+        <input type="text" name="name-shopping-list" placeholder="New shopping list ... ">
+    </form>
 {% else %}
     <p><a href="{% url 'login-page' %}">Login </a>to view your shopping lists!</p>
 {% endif %}
 
-<div>
+{% for list in shopping_lists %}
+    <p>{{list}}</p>
+{% endfor %}
+
+
+<!-- <div>
     {% if user_shopping_list %}
         {% for shopping_list in shopping_lists %}
             <div class="sl_wrapper">
@@ -39,4 +48,4 @@
             <h4>You don't have any list yet! Try adding one!</h4>
         {% endif %}
     {% endif %}
-</div>
+</div> -->

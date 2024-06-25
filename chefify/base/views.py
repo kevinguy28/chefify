@@ -158,16 +158,7 @@ def home(request):
         if request.POST.get("form-type"):
             if(request.POST.get("form-type") == "form-name-shopping-list"):
                 ShoppingList.objects.create(user=request.user, list_name=request.POST.get("name-shopping-list"))
-            elif(request.POST.get("form-type") ==  "add-shopping-list"):
-                ingredient = str(request.POST.get("ingredient").capitalize())
-                quantity = request.POST.get("quantity")
-                shopping_list = request.POST.get("list-id")
-                try:
-                    Ingredient.objects.get(name=ingredient)
-                except Ingredient.DoesNotExist:
-                    Ingredient.objects.create(name=ingredient)
-                shopping_list = IngredientShoppingList.objects.create(ingredient=Ingredient.objects.get(name=ingredient),shopping_list=ShoppingList.objects.get(id=shopping_list),quantity=quantity)
-                shopping_list.save()
+
 
     if request.user.is_authenticated:
         user_profile_ingredient_list = Profile.objects.get(user=request.user.id).user_ingredients_list.all()
@@ -206,6 +197,15 @@ def home(request):
                 if Ingredient.objects.filter(name=searched_ingredient).exists():
                     the_ingredient = Ingredient.objects.get(name = searched_ingredient)
                     Profile.objects.get(user=request.user).user_ingredients_list.remove(the_ingredient)
+
+    # Add Shopping List
+
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST.get("shopping-list-input"):
+                if(request.POST.get("shopping-list-input") == "form-name-shopping-list"):
+                    ShoppingList.objects.create(user=request.user, list_name=request.POST.get("name-shopping-list"))
+
 
     context = {'c_recipe': c_recipes, 'categories': Categories.objects.all(), 'user_profile_ingredient_list': user_profile_ingredient_list, "user_profile_recipe_list": user_profile_recipe_list, 
                'user_shopping_list': user_shopping_list, 'shopping_lists': shopping_lists, 'form':form}
