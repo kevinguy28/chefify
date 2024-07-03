@@ -4,10 +4,6 @@
 }
 
 .style_text{
-    font-style: normal;
-    font-weight: 600px;
-    font-optical-sizing: auto;
-    font-family: "Roboto Mono", monospace;
     font-size: 1.25rem;
 }
 
@@ -27,20 +23,12 @@
 .crud-components{
     margin: 1rem auto;
     text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
     margin:2rem;
     font-size: 1.2rem;
 }
 
 .component-name{
     font-size: 1.25rem;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-style: normal;
     margin: 1rem auto;
 }
 
@@ -61,10 +49,6 @@
 
 .ingredient-unit{
     text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
     margin:0.5rem;
     font-size: 1.2rem;
 }
@@ -83,7 +67,7 @@
     margin: 1rem 0;
     padding: 1rem 1rem;
     background-color: #b7b5b3;
-    border-radius: 10px;
+    /* border-radius: 10px; */
 }
 
 /* Discussion Section */
@@ -106,8 +90,35 @@
     }
 }
 
-/* Buttons */
+.edit-section{
+    display: none;
+    grid-template-columns: 
+        repeat(auto-fit, minmax(300px,1fr));
+    place-items: center
+}
 
 .button-wrapper{
-    background-color: blue;
+    padding: 0.5rem 0;
+    color: white;
+}
+
+.discussion-wrapper{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.discussion-box{
+    width: 100%;
+    min-height: 5rem;
+    resize: none;
+    margin: 1rem 0 ;
+    padding:0.5rem;
+}
+
+#discussion-submit{
+    margin-left: auto;
+    padding: 0.5rem;
 }

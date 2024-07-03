@@ -1,5 +1,6 @@
 {% load static %}
 <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/your_recipes.css'%}">
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/input.css'%}">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -10,13 +11,12 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 {% if user.is_authenticated %}
-    <!-- <div id="rc_add"> <a href="{% url 'add-recipe' user.id %}">Add Recipe</a> </div> -->
 
     <div>
         <form method="POST" action="" class="component-input" >
             {% csrf_token %} 
             <input type="hidden" name="form-type" value="form-add-recipe">
-            <input class="input_style" type="text" name="form-recipe" placeholder="Name of recipe ... ">
+            <input class="input" type="text" name="form-recipe" placeholder="Name of recipe ... ">
         
             <div class="category-submit-wrapper">
                 <select id="searchable-dropdown" name="category-select">
@@ -25,7 +25,7 @@
                         <option value="{{category.name}}">{{category.name}}</option>
                     {% endfor %}
                 </select>
-                <input class="input_style" type="submit" value="Submit" style="width: 25%;">
+                <input id="your-recipe-submit" type="submit" value="Submit">
             </div>
 
         </form>

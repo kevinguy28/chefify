@@ -1,15 +1,15 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/delete.css'%}">
+<a href="{{request.META.HTTP_REFERER}}">Go back</a>
 
-<form method="POST">
+<form method="POST" class="delete-wrapper">
     {% csrf_token %}
     <!-- Your form fields here -->
     <p> Are you sure you want to delete "{{obj}}"?</p>
-
-    <a href="{{request.META.HTTP_REFERER}}">Go back</a>
-    <input type="hidden" name="next" value="{{ request.META.HTTP_REFERER|default:'/' }}">
-    <button type="submit">Submit</button>
+    <input type="hidden" name="next" value="{{ '/' }}">
+    <button type="submit" class="del-btn">Submit</button>
 </form>
 
 {% endblock content %}

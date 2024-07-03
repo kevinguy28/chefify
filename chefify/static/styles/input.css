@@ -1,0 +1,15 @@
+.item-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin:1rem auto;
+}
+
+.input{
+    width: 75%; 
+    padding: 8px;
+    margin: auto; 
+    box-sizing: border-box; 
+    outline: none;
+    text-align: center;
+} 

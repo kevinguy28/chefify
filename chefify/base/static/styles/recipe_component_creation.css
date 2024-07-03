@@ -16,10 +16,7 @@
 
 .component-name{
     font-size: 1.25rem;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600;
-    font-style: normal;
+
     margin: 1rem auto;
 }
 
@@ -34,13 +31,8 @@
     width: 75%; 
     padding: 8px;
     margin: auto; 
-    border-radius: 20px;
     box-sizing: border-box; 
     outline: none;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
     text-align: center;
 }
 
@@ -58,7 +50,7 @@
 /* List Section */
 
 .component-list{
-    margin:1rem
+    margin:1rem;
 }
 
 .list-wrapper{
@@ -70,8 +62,4 @@
 
 .ingredient-unit{
     text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
 }

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -45,6 +46,11 @@ class RecipeComponents(models.Model):
         return self.name
 
 class Recipe(models.Model):
+    STATUS_CHOICES = {
+        'private': 'Private',
+        'public': 'Public',
+        'friends-only': 'Friends Only',
+    }
     name = models.CharField(max_length=50)
     categories = models.ForeignKey(Categories, on_delete=models.SET_NULL, null= True, blank=True)
     culinarian = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
@@ -53,8 +59,7 @@ class Recipe(models.Model):
     recipe_components_list = models.ManyToManyField(RecipeComponents, blank= True, null=True)
     review = models.IntegerField(null=True, blank=True)
 
-    publish = models.BooleanField(default=False)
-    private = models.BooleanField(default=True)
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='private')
 
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -73,6 +78,12 @@ class Steps(models.Model):
 
     def __str__(self):
         return("Step-"+ str(self.order))
+    
+    def delete(self, *args, **kwargs):
+        # Update the order of instances with a larger order value
+        Steps.objects.filter(order__gt=self.order).update(order=F('order') - 1)
+        # Call the superclass delete method to delete the instance
+        super(Steps, self).delete(*args, **kwargs)
 
 class Profile(models.Model):
 
@@ -105,7 +116,7 @@ class ShoppingList(models.Model):
     created = models.DateTimeField(auto_now_add= True)
     
     def __str__(self) -> str:
-        return f"{self.list_name}' of {self.user}"
+        return self.list_name
     
 class IngredientShoppingList(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
@@ -117,3 +128,4 @@ class IngredientShoppingList(models.Model):
     
     def get_quantity(self):
         return self.quantity
+    

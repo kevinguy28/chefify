@@ -7,6 +7,94 @@
     <link rel="stylesheet" type="text/css" media="screen" href="{% static '/styles/community_recipe_room.css' %}">
 {% endblock extra_css %}
 
+<div class="typewriter_wrapper">
+    <p  class="text">Hello {{request.user.first_name}}!
+        {% if user.is_authenticated and recipe.culinarian == user %} 
+            This page is currently set to: {{recipe.status}}!
+        {% endif %}
+    </p>
+</div>
+
+<div class="edit-section" >
+    <h1>
+        Page Status:
+        {% if user.is_authenticated and recipe.culinarian == user %} 
+            {% if recipe.status == 'private' %}
+                Private
+            {% elif recipe.status == 'public' %}
+                Public
+            {% elif recipe.status == 'friends-only'  %}
+                Friends Only
+            {% endif %}
+        {% endif %}
+    </h1>
+
+
+    {% if request.path|slice:"0:23" == '/community_recipe_room/' %}
+        {% if user.is_authenticated and recipe.culinarian == user %} 
+            {% if recipe.status ==  'private' %}
+                <div class="button-wrapper">
+                    <form method="POST" class="form1"  actions="{% url 'community-recipe-room' recipe.id}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form-type" value="edit-page"> 
+                        <input type="hidden" name="status" value="status-public">
+                        <a onclick="submitForm1(); return false;">Turn Page "Public"</a>
+                    </form>
+                </div>
+                <div class="button-wrapper">
+                    <form method="POST" class="form2" actions="{% url 'community-recipe-room' recipe.id}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form-type" value="edit-page"> 
+                        <input type="hidden" name="status" value="status-friends-only">
+                        <a  onclick="submitForm2(); return false;">Turn Page "Friends Only" </a>
+                    </form>
+                </div>
+            {% elif recipe.status ==  'public' %}
+                <div class="button-wrapper">
+                    <form method="POST" class="form1" actions="{% url 'community-recipe-room' recipe.id}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form-type" value="edit-page"> 
+                        <input type="hidden" name="status" value="status-private">
+                        <a  onclick="submitForm1(); return false;">Turn Page "Private"</a>
+                    </form>
+                </div>
+                <div class="button-wrapper">
+                    <form method="POST" class="form2" actions="{% url 'community-recipe-room' recipe.id}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form-type" value="edit-page"> 
+                        <input type="hidden" name="status" value="status-friends-only">
+                        <a  onclick="submitForm2(); return false;">Turn Page "Friends Only"</a>
+                    </form>
+                </div>
+            {% elif recipe.status == 'friends-only' %}
+                <div class="button-wrapper">
+                    <form method="POST" class="form1" actions="{% url 'community-recipe-room' recipe.id}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form-type" value="edit-page"> 
+                        <input type="hidden" name="status" value="status-public">
+                        <a  onclick="submitForm1(); return false;">Turn Page "Public"</a>
+                    </form>
+                </div>
+                <div class="button-wrapper">
+                    <form method="POST" class="form2" actions="{% url 'community-recipe-room' recipe.id}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form-type" value="edit-page"> 
+                        <input type="hidden" name="status" value="status-private">
+                        <a  onclick="submitForm2(); return false;">Turn Page "Private"</a>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+    <a href="{% url 'delete-recipe' recipe.id %}">
+        Delete Page
+    </a>
+
+</div>
+
+<hr>
+
 <div class="home-container">
     <div id="ingredient-list-wrapper">
         <h1>Ingredients</h1>
@@ -48,54 +136,43 @@
 
     <div id="discussion-wrapper">
         <h1> Discussion</h1>
-        <a class="crud-components" href="{% url 'add-message' recipe.id %}"><u>Add Message</u></a>
+        <a class="crud-components" href="#discussion-submit"><u>Add Message</u></a>
         {% for user_message in user_messages %}
             <p class="message style_text">{{user_message.body}} - <span style="color:#B7B5B3">{{user_message.user}}</span> @{{user_message.created}}
                 {% if user.is_authenticated and user_message.user == user %}
-                    <a class="delete-button" href="{% url 'delete-message' user_message.id %}">Delete</a>
+                    <a class="delete-button delete-button--alt" href="{% url 'community-recipe-room' recipe.id %}?del_id={{user_message.id}}"> Del. </a>
                 {% endif %}
             </p>
-
         {% endfor %}
+        <form class="discussion-wrapper" method="POST">
+            {% csrf_token %}
+            <textarea name="discussion-box" class="discussion-box"></textarea>
+            <input type="hidden" name="form-type" value="comment"> 
+            <button id="discussion-submit" type="submit">Post</button>
+        </form>
     </div>
 </div>
 
-{% if user.is_authenticated and recipe.culinarian == user %} 
-    {% if recipe.publish == False %}
-        <div class="button-wrapper">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="publish" value="publish-true">
-                <button type="submit">Publish Page</button>
-            </form>
-        </div>
-    {% elif recipe.publish == True %}
-        <div class="button-wrapper">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="publish" value="publish-false">
-                <button type="submit">Unpublish Page</button>
-            </form>
-        </div>
-    {% endif %}
-    
-    {% if recipe.private == False %}
-        <div class="button-wrapper">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="private" value="private-false">
-                <button type="submit">Turn page private</button>
-            </form>
-        </div>
-    {% elif recipe.private == True %}
-        <div class="button-wrapper">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="private" value="private-true">
-                <button type="submit">Turn page public</button>
-            </form>
-        </div>
-    {% endif %}
-{% endif %}
-
+<script>
+    function submitForm1() {
+        var forms = document.getElementsByClassName("form1");
+        console.log("gaty")
+        for (var i = 0; i < forms.length; i++) {
+                if (forms[i].style.display !== 'none') {
+                    forms[i].submit();
+                    return;
+                }
+        }
+    }
+    function submitForm2() {
+        var forms = document.getElementsByClassName("form2");
+        console.log("gatsssy")
+        for (var i = 0; i < forms.length; i++) {
+                if (forms[i].style.display !== 'none') {
+                    forms[i].submit();
+                    return;
+                }
+        }
+    }
+</script>
 {% endblock content %}

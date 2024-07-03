@@ -1,30 +1,28 @@
 #sl_add{
     font-size: 1.25rem;
     text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
     margin:1rem auto;
 }
 
 
 .sl_wrapper{
     background-color: #b7b5b3;
+    padding: 0.5rem;
+    border-radius: 10px;
     color: black;
+    max-width: 80%;
     margin: 1rem auto;
-    border-radius: 0.5rem;
-    max-width: 90%;
 }
 
 .sl_header{
     color: black;
     font-size: 1.25rem;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
     text-align: center;
+}
+
+.sl_name{
+    font-weight: 700;
+    margin:0.5rem auto;
 }
 
 .sl_crud{
@@ -48,12 +46,10 @@ ul{
 }
 
 .sl_item{
-    font-size: 1.25rem;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
     text-align: center;
-    margin: 1rem;
+    margin: 0.5rem;
     list-style-type: none;
+
+    font-size: 1.25rem;
+    font-weight: 500;
 }

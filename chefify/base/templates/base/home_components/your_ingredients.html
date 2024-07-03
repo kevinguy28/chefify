@@ -8,24 +8,24 @@
 
 {% if user.is_authenticated %}
 
-    <form method="POST" action="" class="ingredient-input">
+    <form method="POST" action="" class="item-input">
         {% csrf_token %}
         <input type="hidden" name="ingredient-input" value="ingredient-to-add">
 
-        <input type="text" name="ingredient-to-add" placeholder="Add Ingredient...">
+        <input class="input" type="text" name="ingredient-to-add" placeholder="Add Ingredient...">
     </form>
 
-    <form method="POST" action="" class="ingredient-input">
+    <form method="POST" action="" class="item-input">
         {% csrf_token %}
         <input type="hidden" name="ingredient-input"  value="ingredient-to-remove">
 
-        <input type="text" name="ingredient-to-remove" placeholder="Remove Ingredient...">
+        <input class="input" type="text" name="ingredient-to-remove" placeholder="Remove Ingredient...">
     </form>
 
     <div id="in_item_wrapper">
         {% if user_profile_ingredient_list %}
             {% for ingredient in user_profile_ingredient_list %}
-                <p class="in_item style_text">{{ingredient}}</p>
+                <p class="in_item style_text">{{ingredient}} | <a  href="{% url 'home' %}?del_id={{ingredient.id}}" class="delete-button delete-button--alt"> Del.</a></p>
             {% endfor %}
         {% else %}
             <p>You have no ingredients! Add some!</p>

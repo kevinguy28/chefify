@@ -1,26 +1,4 @@
-#rc_add{
-    font-size: 1.25rem;
-    text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
-    margin:1rem auto;
-}
-
-.u_recipes{
-    max-width: 75%;
-    background-color: #434234;
-    margin: 1rem auto;
-    text-align: center;
-    border-radius: .5rem;
-    font-size: 1.25rem;
-    text-align: center;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 600px;
-    font-style: normal;
-}
+/* Form Input Section */
 
 .component-input {
     display: flex;
@@ -28,6 +6,14 @@
     align-items: center;
     justify-content: center;
     margin:1rem auto;
+}
+
+.component-input input {
+    width: 75%; 
+    padding: 8px;
+    box-sizing: border-box; 
+    outline: none;
+    text-align: center;
 }
 
 .category-submit-wrapper{
@@ -39,22 +25,15 @@
     margin:1rem auto;
 }
 
-.input_style{
-    width: 75%; 
-    padding: 8px;
-    border-radius: 20px;
-    box-sizing: border-box; 
-    outline: none;
-    font-family: "Roboto Mono", monospace;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
-    text-align: center;
+#your-recipe-submit{
+    width: 25%;
 }
 
 #searchable-dropdown{
     width: 50%;
 }
+
+/* Select2 */
 
 /* Custom styles for Select2 elements */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -80,3 +59,16 @@
     color: black; /* Change highlighted item text color */
 }
 
+/* Recipe Display */
+
+.u_recipes{
+    max-width: 80%;
+    background-color: #434234;
+    margin: 1rem auto;
+    padding:0.5rem;
+    text-align: center;
+    border-radius: .5rem;
+
+    font-size: 1.25rem;
+    font-weight: 500;
+}

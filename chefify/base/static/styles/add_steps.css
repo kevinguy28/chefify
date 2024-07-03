@@ -1,0 +1,25 @@
+.textarea-section-wrapper{
+    display: flex;
+    flex-direction: column; 
+    margin: auto;
+    align-items: center;
+}
+
+.submit-btn{
+    width: 50%;
+    margin: 1rem 0 ;
+}
+
+textarea{
+    margin-top:1rem;
+    padding: 1rem;
+    resize: none;
+    width: 100%;
+    min-height: 200px;
+}
+
+textarea:focus{
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none; /* Remove default outline */
+}

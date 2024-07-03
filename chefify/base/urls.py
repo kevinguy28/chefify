@@ -21,4 +21,5 @@ urlpatterns = [
     path('delete_message/<str:pk>', views.delete_message, name="delete-message"),
     path('delete_component_ingredient/<str:pk>', views.delete_component_ingredient, name="delete-component-ingredient"),
     path('delete_component/<str:pk>',views.delete_component, name="delete-component"),
+    path('delete_recipe/<str:pk>', views.delete_recipe, name="delete-recipe"),
 ]

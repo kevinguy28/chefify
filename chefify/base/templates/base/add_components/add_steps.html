@@ -1,11 +1,14 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content%}
-<div>
-    <form method="POST" action="">
+
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/add_steps.css'%}">
+<a href="{{request.META.HTTP_REFERER}}">Go back</a>
+<div style="display: flex;">
+    <form method="POST" action="" class="textarea-section-wrapper">
         {% csrf_token %}
-        {{form.as_p}}
-        <input type="submit" value="Submit">
+        <textarea name="textarea" rows="20" cols="60"></textarea>
+        <input type="submit" value="Submit" class="submit-btn">
     </form>
 </div>
 {% endblock content%}

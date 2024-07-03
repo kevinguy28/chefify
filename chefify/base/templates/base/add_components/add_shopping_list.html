@@ -1,47 +1,40 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
-{% if mode == "default" %}
-    <div>
-        <form method="POST" action="">
-            {% csrf_token %} 
-            <input type="hidden" name="form-type" value="form-name-shopping-list">
-            <input type="text" name="name-shopping-list" placeholder="Name of new Shopping List...">
-            <input type="submit" value="Submit">
-        </form>
-    </div>
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/add_shopping_list.css'%}">
 
-    <div>
-        {% if user_shopping_list %}
-            <h1>Shopping Lists</h1>
-            {% for shopping_list in shopping_lists %}
-                <h2>{{ shopping_list.list_name }} of {{ shopping_list.user.username }} | <a href="{% url 'add-shopping-list' user.id %}?shopping_list={{shopping_list.id}}">Add to list | <a href="{% url 'delete-shopping-list' shopping_list.id %}"> Delete </a></h2> 
-                <ul>
-                    {% for ingredient in shopping_list.ingredients.all %}
-                        {% for ingredient_shopping_list in ingredient.ingredientshoppinglist_set.all %}
-                            {% if ingredient_shopping_list.shopping_list == shopping_list %}
-                                <li>{{ ingredient.name }} - Quantity: {{ ingredient_shopping_list.get_quantity }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            {% endfor %}
-        {% else %}
-            <h4>no shopping list. try to start one!</h4>
-        {% endif %}
+<a href="/">Go back</a>
+
+<div class="page-wrapper">
+    <form method="POST" action="" class="form-wrapper">
+        {% csrf_token %} 
+        <input type="hidden" name="form-type" value="add-shopping-list">
+        <input type="hidden" name="list-id" value="{{list_id}}">
+        <input class="form-wrapper-child" type="text" name="ingredient" placeholder="Add an ingredient...">
+        <input class="form-wrapper-child" type="number" name="quantity" placeholder="Quantity..." min="1" max="99">
+        <input class="form-wrapper-child" type="submit" value="Submit">
+    </form>
+
+    <div class="list-ingredient-wrapper">
+            {% if shopping_lists %}
+                {% for shopping_list in shopping_lists %}
+                    {% if shopping_list.id == list_id %}
+                        {% if shopping_list.ingredients.exists %}
+                            <div class="list-container">
+                                {% for ingredient_shopping_list in shopping_list.ingredientshoppinglist_set.all %}
+                                    {% if ingredient_shopping_list.shopping_list == shopping_list %}
+                                        <ul class="sl_item">{{ ingredient_shopping_list.ingredient.name}} - Qty: {{ ingredient_shopping_list.get_quantity }}
+                                            <a class="delete-button delete-button--alt" href="{% url 'add-shopping-list' shopping_list.id %}?del_id={{ingredient_shopping_list.id}}"> Del. </a>
+                                        </ul>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    <a class="delete-list-btn" href="{% url 'delete-shopping-list' shopping_list.id %}"> Delete list</a>
+                {% endfor %}
+            {% endif %}
     </div>
-{% elif mode == "add-to-list" %}
-    <a href="{{request.META.HTTP_REFERER}}">Go back</a>
-    <div>
-        <form method="POST" action="">
-            {% csrf_token %} 
-            <input type="hidden" name="form-type" value="add-shopping-list">
-            <input type="hidden" name="list-id" value="{{list_id}}">
-            <input type="text" name="ingredient" placeholder="Add an ingredient...">
-            <input type="number" name="quantity" placeholder="Quantity..." min="1" max="99">
-            <input type="submit" value="Submit">
-        </form>
-    </div>
-{% endif %}
+</div>
 
 {% endblock content %}

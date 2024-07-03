@@ -3,7 +3,7 @@
 {% block content %}
 
 <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/recipe_component_creation.css'%}">
-
+<a href="{{request.META.HTTP_REFERER}}">Go back</a>
 <div class="recipe_component_wrapper">
     <div>
         <div>
@@ -55,7 +55,7 @@
                     {% for ingredient in component.ingredients_list.all %}
                         <p class="ingredient-unit">{{ingredient}} |
                             {% if user == recipe.culinarian %}
-                                <a class="delete-button" href="{% url 'delete-component-ingredient' ingredient.id %}"> Del.</a>
+                                <a class="delete-button" href="{% url 'delete-component-ingredient' ingredient.id %}?"> Del.</a>
                             {% endif %}
                         </p>
                     {% endfor %}

@@ -1,0 +1,65 @@
+.page-wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Form Input Section */
+
+.form-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:1rem;
+}
+
+.form-wrapper input{
+    width: 75%; 
+    padding: 8px;
+    margin: auto; 
+    box-sizing: border-box; 
+    outline: none;
+    text-align: center;
+} 
+    
+/* List Item Section */
+
+.list-container{
+    padding: 0;
+    display:grid;
+    place-items: center;
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.list-container{
+    background-color: #b7b5b3;
+    padding: 0.5rem;
+    color: black;
+    max-width: 90%;
+    margin:auto;
+}
+
+.sl_item{
+    text-align: center;
+    margin: 0.5rem;
+    list-style-type: none;
+}
+
+.delete-list-btn{
+    display: block;
+    background-color: #b7b5b3;
+    text-align: center;
+    margin:2rem auto;
+    padding: 0.5rem;
+    width: 30%;
+    color:black;
+}
+
+.delete-list-btn:hover{
+    color:initial;
+}
+
+.delete-list-btn:visited{
+    color:initial;
+}

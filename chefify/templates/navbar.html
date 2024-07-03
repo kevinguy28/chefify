@@ -9,22 +9,32 @@
         {% if request.path == '/' %}
             <li><a class="nav_item" style="color:black;" onclick="toggleColumns()">Toggle Columns</a></li>
         {% endif %}
-        <li><a class="nav_item"  href="{% url 'add-recipe' user.id %}">Add Recipe</a></li>
-        <li><a class="nav_item" href="{% url 'add-ingredient' %}">Add Ingredient</a></li>
+    
+        {% if request.path|slice:"0:23" == '/community_recipe_room/' %}
+            {% if user.is_authenticated and recipe.culinarian == user %} 
+                <li onclick="showEdits()"><a class="nav_item">Edit Page</a></li>
+            {% endif %}
+        {% endif %}
+
         {% if request.user.is_authenticated %}
             <li><a class="nav_item" href="{% url 'logout' %}">Logout</a></li>
         {% else %}
             <li><a class="nav_item" href="{% url 'login-page' %}">Login</a></li>
         {% endif %}
     </ul>
+
     <ul>
         <li><a  id="logo" class="nav_item" href="/">CHEFIFY</a></li>
         <form class="searchbar" method="GET" action="{% url 'home' %}">
             <input type="text" name="q" placeholder="Search Recipe..."/>
         </form>
 
-        <li class="hideOnMobile"><a class="nav_item"  href="{% url 'add-recipe' user.id %}">Add Recipe</a></li>
-        <li class="hideOnMobile"><a class="nav_item" href="{% url 'add-ingredient' %}">Add Ingredient</a></li>
+        {% if request.path|slice:"0:23" == '/community_recipe_room/' %}
+            {% if user.is_authenticated and recipe.culinarian == user %} 
+                <li class="hideOnMobile edit-btn" onclick="showEdits()" class="nav_item">Edit Page</li>
+            {% endif %}
+        {% endif %}
+
         {% if request.user.is_authenticated %}
             <li class="hideOnMobile"><a class="nav_item" href="{% url 'logout' %}">Logout</a></li>
         {% else %}
@@ -43,5 +53,13 @@
     function hideSideBar(){
         const sidebar = document.querySelector('.sidebar')
         sidebar.style.display = 'none'
+    }
+    function showEdits(){
+        const edit = document.querySelector('.edit-section')
+        if(edit.style.display == 'grid'){
+            edit.style.display = 'none'
+        }else{
+            edit.style.display = 'grid'
+        }
     }
 </script>

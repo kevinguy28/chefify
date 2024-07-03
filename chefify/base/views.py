@@ -78,33 +78,29 @@ def add_ingredient_user(request, pk):
 
 @login_required(login_url='/login')
 def add_shopping_list(request, pk):
-    user_shopping_list = ShoppingList.objects.filter(user=User.objects.get(id=pk))
-    mode = "default"
-
+    user_shopping_list = ShoppingList.objects.get(id=pk)
     shopping_lists = ShoppingList.objects.filter(user=request.user)
 
     if request.method == "GET":
-        if request.GET.get("shopping_list"):
-            mode = "add-to-list"
-            context = {'mode':mode, 'shopping_list': ShoppingList.objects.get(id=request.GET.get("shopping_list")), 'list_id': request.GET.get("shopping_list")}
-            return render(request, 'base/add_components/add_shopping_list.html', context)
-    
+        if request.GET.get("del_id"):
+            item_id = request.GET.get("del_id")
+            IngredientShoppingList.objects.get(id=item_id).delete()
+            return redirect(reverse('add-shopping-list',  kwargs={'pk': pk}))
+            
     if request.method == "POST":
-        if request.POST.get("form-type"):
-            if(request.POST.get("form-type") == "form-name-shopping-list"):
-                ShoppingList.objects.create(user=request.user, list_name=request.POST.get("name-shopping-list"))
-            elif(request.POST.get("form-type") ==  "add-shopping-list"):
-                ingredient = str(request.POST.get("ingredient").capitalize())
-                quantity = request.POST.get("quantity")
-                shopping_list = request.POST.get("list-id")
-                try:
-                    Ingredient.objects.get(name=ingredient)
-                except Ingredient.DoesNotExist:
-                    Ingredient.objects.create(name=ingredient)
-                shopping_list = IngredientShoppingList.objects.create(ingredient=Ingredient.objects.get(name=ingredient),shopping_list=ShoppingList.objects.get(id=shopping_list),quantity=quantity)
-                shopping_list.save()
+        ingredient = str(request.POST.get("ingredient")).capitalize()
+        quantity = request.POST.get("quantity")
+        sl = ShoppingList.objects.get(id=request.POST.get("list-id"))
 
-    context = {'mode': mode, 'user_shopping_list': user_shopping_list, 'shopping_lists': shopping_lists}
+        try:
+            Ingredient.objects.get(name=ingredient)
+        except Ingredient.DoesNotExist:
+            Ingredient.objects.create(name=ingredient)
+            
+        shopping_list = IngredientShoppingList.objects.create(ingredient=Ingredient.objects.get(name=ingredient),shopping_list=sl,quantity=quantity)
+        shopping_list.save()
+
+    context = {'user_shopping_list': user_shopping_list, 'shopping_lists': shopping_lists, 'list_id': int(pk)}
     return render(request, 'base/add_components/add_shopping_list.html', context)
 
 @login_required(login_url='/login')
@@ -137,7 +133,7 @@ def add_recipe_user(request, pk):
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) & Q(private=False) & Q(publish=True) )
+    c_recipes = Recipe.objects.filter(Q(categories__name__icontains= q) & (Q(status='public')))
     form = ProfileIngredientsListForm()
     user_profile_ingredient_list = None
     user_profile_recipe_list = None
@@ -146,19 +142,13 @@ def home(request):
 
     if request.user.is_authenticated:
         user_shopping_list = ShoppingList.objects.filter(user=User.objects.get(id=request.user.id))
-        shopping_lists = ShoppingList.objects.filter(user=request.user)
+        shopping_lists = ShoppingList.objects.filter(user=request.user)      
 
-    if request.method == "GET":
-        if request.GET.get("shopping_list"):
-            mode = "add-to-list"
-            context = {'mode':mode, 'shopping_list': ShoppingList.objects.get(id=request.GET.get("shopping_list")), 'list_id': request.GET.get("shopping_list")}
-            return render(request, 'base/add_components/add_shopping_list.html', context)
-    
-    if request.method == "POST":
-        if request.POST.get("form-type"):
-            if(request.POST.get("form-type") == "form-name-shopping-list"):
-                ShoppingList.objects.create(user=request.user, list_name=request.POST.get("name-shopping-list"))
-
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST.get("form-type"):
+                if(request.POST.get("form-type") == "form-name-shopping-list"):
+                    ShoppingList.objects.create(user=request.user, list_name=request.POST.get("name-shopping-list"))
 
     if request.user.is_authenticated:
         user_profile_ingredient_list = Profile.objects.get(user=request.user.id).user_ingredients_list.all()
@@ -181,6 +171,13 @@ def home(request):
     # Add/Remove Ingredients to User Profile & Creates Ingredients if it does not exist
 
     if request.user.is_authenticated:
+        
+        if request.GET.get("del_id"):
+            del_id = request.GET.get("del_id")
+            the_ingredient = Ingredient.objects.get(id=del_id)
+            Profile.objects.get(user=request.user).user_ingredients_list.remove(the_ingredient)
+            return redirect(reverse('home'))
+
         if request.method == "POST":
             if request.POST.get("ingredient-input") == "ingredient-to-add":
                 searched_ingredient = request.POST.get("ingredient-to-add").capitalize()
@@ -205,7 +202,16 @@ def home(request):
             if request.POST.get("shopping-list-input"):
                 if(request.POST.get("shopping-list-input") == "form-name-shopping-list"):
                     ShoppingList.objects.create(user=request.user, list_name=request.POST.get("name-shopping-list"))
-
+                elif(request.POST.get("add-to-list")) == "ingredient-to-add":
+                    ingredient = str(request.POST.get("ingredient-to-add").capitalize())
+                    quantity = request.POST.get("quantity")
+                    shopping_list = request.POST.get("list-id")
+                    try:
+                        Ingredient.objects.get(name=ingredient)
+                    except Ingredient.DoesNotExist:
+                        Ingredient.objects.create(name=ingredient)
+                    shopping_list = IngredientShoppingList.objects.create(ingredient=Ingredient.objects.get(name=ingredient),shopping_list=ShoppingList.objects.get(id=shopping_list),quantity=quantity)
+                    shopping_list.save()
 
     context = {'c_recipe': c_recipes, 'categories': Categories.objects.all(), 'user_profile_ingredient_list': user_profile_ingredient_list, "user_profile_recipe_list": user_profile_recipe_list, 
                'user_shopping_list': user_shopping_list, 'shopping_lists': shopping_lists, 'form':form}
@@ -256,22 +262,34 @@ def community_recipe(request, pk):
     recipe = Recipe.objects.get(id=pk)
     steps = Steps.objects.filter(recipe=pk)
     user_messages = Message.objects.filter(recipe=pk)
-
+    
     if request.user.is_authenticated:
+
+        if request.method == "GET":
+            if request.GET.get("del_id"):
+                item_id = request.GET.get("del_id")
+                Message.objects.get(id=item_id).delete()
+                return redirect(reverse('community-recipe-room', args=[pk]))
+                
+
         if request.method == "POST":
-            if request.POST.get("publish") == "publish-true":
-                recipe.publish = True
-            elif request.POST.get("publish") == "publish-false":
-                recipe.publish = False
-
-            if request.POST.get("private") == "private-true":
-                recipe.private = False
-            elif request.POST.get("private") == "private-false":
-                recipe.private = True
-
-            recipe.save()
-            return redirect(request.get_full_path())
-            
+            if request.POST.get("form-type") == "edit-page":
+                if request.POST.get("status") == "status-public":
+                    value = "public"
+                elif request.POST.get("status") == "status-private":
+                    value = "private"
+                elif request.POST.get("status") == "status-friends-only" :
+                    value = "friends-only"
+                recipe.status = value
+                recipe.save()
+                return redirect(request.get_full_path())
+            elif request.POST.get("form-type") == "comment":
+                message_user = request.user
+                message_recipe = Recipe.objects.get(id=pk)
+                if(request.POST.get("discussion-box") and request.POST.get("discussion-box").strip()):
+                    body = request.POST.get("discussion-box")
+                    Message.objects.create(user=message_user, recipe=message_recipe, body=body).save()
+  
     context = {'recipe': recipe, 'steps':steps, 'user_messages': user_messages}
     return render(request, 'base/community_recipe_room.html', context)
 
@@ -308,23 +326,20 @@ def recipe_component_creation(request, pk):
 
 @login_required(login_url="/login")
 def add_steps(request, pk):
-    form = StepsForm()
-
+    
     if request.method == "POST":
-        form = StepsForm(request.POST)
-        if form.is_valid():
-            step_form = form.save(commit=False)
-            step_form.user = request.user
-            step_form.recipe = Recipe.objects.get(id=pk)
-            last_step = Steps.objects.filter(recipe=step_form.recipe).order_by('-order').first()
+            step_user = request.user
+            step_recipe = Recipe.objects.get(id=pk)
+            last_step = Steps.objects.filter(recipe=step_recipe).order_by('-order').first()
             if last_step:
-                step_form.order = last_step.order + 1
+                last_step = last_step.order + 1
             else:
-                step_form.order = 1
-            step_form.save()
-        return redirect(reverse('community-recipe-room', args=[pk]))
+                last_step= 1
+            description = request.POST.get("textarea")
+            Steps.objects.create(recipe=step_recipe, user=step_user, order=last_step, description=description).save()
+            return redirect(reverse('community-recipe-room', args=[pk]))
 
-    context = {'form':form}
+    context = {}
     return render(request, 'base/add_components/add_steps.html', context)
 
 @login_required(login_url="/login")
@@ -436,3 +451,21 @@ def delete_component(request, pk):
         return redirect(next_url)
 
     return render(request, 'base/delete.html', context={'obj': obj})
+
+@login_required(login_url="/login")
+def delete_recipe(request, pk):
+    obj = Recipe.objects.get(id=pk)
+
+    if request.method == "POST":
+        obj.delete()
+        name = request.POST.get("value")
+        next_url = request.POST.get('next', '/')
+
+        # Debug log to check the value (you can remove this in production)
+        print(f"Name: {name}")
+        
+        # Redirect to the previous page
+        return redirect(next_url)
+    
+    return render(request, 'base/delete.html', context={'obj': obj})
+

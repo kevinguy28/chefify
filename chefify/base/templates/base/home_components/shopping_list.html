@@ -4,39 +4,33 @@
 {% endblock extra_css %}
 
 {% if user.is_authenticated %}
-    <form method="POST" action="" class="ingredient-input">
+    <form method="POST" action="" class="item-input">
         {% csrf_token %}
         <input type="hidden" name="shopping-list-input" value="form-name-shopping-list">
-        <input type="text" name="name-shopping-list" placeholder="New shopping list ... ">
+        <input class="input" type="text" name="name-shopping-list" placeholder="New shopping list ... ">
     </form>
 {% else %}
     <p><a href="{% url 'login-page' %}">Login </a>to view your shopping lists!</p>
 {% endif %}
 
-{% for list in shopping_lists %}
-    <p>{{list}}</p>
-{% endfor %}
-
-
-<!-- <div>
+<div>
     {% if user_shopping_list %}
         {% for shopping_list in shopping_lists %}
             <div class="sl_wrapper">
                 
                 <div class="sl_header">
-                    <div><u>List {{ forloop.counter }}: {{ shopping_list.list_name }}</u></div>
-                    <div>
-                        <a class="sl_crud" href="{% url 'add-shopping-list' user.id %}?shopping_list={{shopping_list.id}}">Add to list</a> | 
-                        <a class="sl_crud" href="{% url 'delete-shopping-list' shopping_list.id %}"> Delete </a>
+                    <div class="sl_name">List {{ forloop.counter }}: {{ shopping_list.list_name }}</div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <a class="sl_crud" href="{% url 'add-shopping-list' shopping_list.id %}">Edit List</a> 
                     </div>
+                    <hr style="border-color: black;">
                 </div>
-                
                 
                 <ul>
                     {% for ingredient in shopping_list.ingredients.all %}
                         {% for ingredient_shopping_list in ingredient.ingredientshoppinglist_set.all %}
                             {% if ingredient_shopping_list.shopping_list == shopping_list %}
-                                <li class="sl_item">{{ ingredient.name }} - Quantity: {{ ingredient_shopping_list.get_quantity }}</li>
+                                <li class="sl_item">{{ ingredient.name }} - Qty: {{ ingredient_shopping_list.get_quantity }}</li>
                             {% endif %}
                         {% endfor %}
                     {% endfor %}
@@ -48,4 +42,4 @@
             <h4>You don't have any list yet! Try adding one!</h4>
         {% endif %}
     {% endif %}
-</div> -->
+</div>
