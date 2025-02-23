@@ -3,6 +3,7 @@ import Banner from "../components/Banner";
 import { get_recipes, logout } from "../endpoints/api";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
+import RecipeForm from "@/components/RecipeForm";
 
 const Home = () => {
     const [recipeCard, setRecipeCard] = useState<Array<any>>([]);
@@ -34,10 +35,23 @@ const Home = () => {
                 <div>
                     g
                     {recipeCard.map((recipe) => (
-                        <p key={recipe.id}>{recipe.name}</p>
+                        <div
+                            key={recipe.id}
+                            className="rounded-xl bg-white p-4"
+                        >
+                            <img
+                                src={recipe.image.url}
+                                className="rounded-xl"
+                                alt={recipe.name}
+                            />
+                            <h1>{recipe.name}</h1>
+                            <p>{recipe.description}</p>
+                        </div>
                     ))}
                 </div>
-                <div>g</div>
+                <div>
+                    <RecipeForm />
+                </div>
             </div>
             <h1 className="text-3xl font-bold underline">Hello world!</h1>
             <div onClick={handleLogout} className="bg-red-300">

@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Recipe
+from .models import Recipe, Cuisine
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -22,6 +22,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class CuisineSerializer(ModelSerializer):
+   class Meta:
+       model = Cuisine
+       fields = '__all__' 
 
 class RecipeSerializer(ModelSerializer):
     user = UserSerializer()

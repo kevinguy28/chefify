@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from .models import Recipe
-from .serializer import RecipeSerializer, UserRegistrationSerializer
+from .serializer import CuisineSerializer, RecipeSerializer, UserRegistrationSerializer
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -10,6 +10,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+
+from .models import Recipe, Cuisine
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -94,6 +96,13 @@ def is_authenticated(request):
     return Response({'authenticated': True})
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_cuisines(request):
+    cuisines = Cuisine.objects.all().order_by('name')
+    serializer = CuisineSerializer(cuisines, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 @permission_classes ([IsAuthenticated])
 def get_recipes(request):
     user = request.user
@@ -101,4 +110,12 @@ def get_recipes(request):
     serializer = RecipeSerializer(recipes, many=True)
     return Response(serializer.data)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_recipes(request):
+    print('hello')
+
+
+
 # Create your views here.
+

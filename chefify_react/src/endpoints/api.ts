@@ -1,12 +1,14 @@
 import axios, { AxiosResponse } from "axios";
-
 const BASE_URL = "http://127.0.0.1:8000/api/";
+const CREATE_URL = "create/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
 const RECIPE_URL = `${BASE_URL}recipes/`;
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
 const REGISTER_URL = `${BASE_URL}register/`;
+const CUISINE_URL = `${BASE_URL}cuisine/`;
+const CREATE_CUISINE_URL = `${CUISINE_URL}${CREATE_URL}`;
 
 export const login = async (username: string, password: string) => {
     try {
@@ -70,12 +72,27 @@ export const refresh_token = async () => {
 
 export const get_recipes = async () => {
     try {
-        console.log("HERE");
         const response = await axios.get(RECIPE_URL, { withCredentials: true });
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
             axios.get(RECIPE_URL, { withCredentials: true })
+        );
+    }
+};
+
+export const get_cuisines = async () => {
+    try {
+        console.log(CUISINE_URL);
+        console.log("ss");
+        const response = await axios.get(CUISINE_URL, {
+            withCredentials: true,
+        });
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(CUISINE_URL, { withCredentials: true })
         );
     }
 };
