@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { get_cuisines } from "@/endpoints/api";
+import { get_cuisines, create_recipe } from "@/endpoints/api";
 
 const RecipeForm = () => {
     const [recipeName, setRecipeName] = useState("");
@@ -9,14 +9,13 @@ const RecipeForm = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        create_recipe();
+        create_recipe(recipeName, cuisine, privacy);
     };
 
     useEffect(() => {
         const fetchCuisines = async () => {
             const cuisines = await get_cuisines();
             if (Array.isArray(cuisines)) {
-                console.log(cuisines);
                 setRecipeCuisine(cuisines);
             }
         };
@@ -32,7 +31,7 @@ const RecipeForm = () => {
                 value={recipeName}
                 name="selectRecipeName"
                 type="text"
-                onChange={(e) => setPrivacy(e.target.value)}
+                onChange={(e) => setRecipeName(e.target.value)}
             />
             <br />
             <select

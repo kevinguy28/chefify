@@ -3,7 +3,10 @@ const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
+
+// Recipes
 const RECIPE_URL = `${BASE_URL}recipes/`;
+const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}/`;
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
 const REGISTER_URL = `${BASE_URL}register/`;
@@ -77,6 +80,29 @@ export const get_recipes = async () => {
     } catch (error) {
         return await call_refresh(error, () =>
             axios.get(RECIPE_URL, { withCredentials: true })
+        );
+    }
+};
+
+export const create_cuisine = async (
+    recipeName: string,
+    cuisine: string,
+    privacy: string
+) => {
+    try {
+        const reponse = await axios.post(
+            RECIPE_CREATE_URL,
+            {
+                recipeName,
+                cuisine,
+                privacy,
+            },
+            { withCredentials: true }
+        );
+        return reponse.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(RECIPE_CREATE_URL, { withCredentials: true })
         );
     }
 };
