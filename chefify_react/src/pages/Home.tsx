@@ -32,7 +32,7 @@ const Home = () => {
     return (
         <div>
             <Banner />
-            <div className="grid grid-cols-[2fr_5fr_2fr] gap-4 mt-8">
+            <div className="grid grid-cols-[2fr_5fr_2fr] mt-8 ">
                 <div></div>
                 <div className="flex flex-wrap gap-4 justify-evenly items-center bg-red-400">
                     {recipeCard.map((recipe) => (

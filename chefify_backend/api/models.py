@@ -16,6 +16,7 @@ class Recipe(models.Model):
     }
     RATING_CHOICES = [(i/2, str(i/2)) for i in range(0, 11)]
     name = models.CharField(max_length=50)
+    cuisine = models.ForeignKey(Cuisine, on_delete=models.SET_NULL, null=True, blank=True)
     privacy = models.CharField(max_length=15, choices=STATUS_CHOICES, default='private')
     description = models.TextField(max_length=200, blank=True)
     image = models.ImageField(upload_to='images/recipes/', blank=True, null=True)

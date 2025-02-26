@@ -4,12 +4,11 @@ import { get_cuisines, create_recipe } from "@/endpoints/api";
 const RecipeForm = () => {
     const [recipeName, setRecipeName] = useState("");
     const [cuisine, setCuisine] = useState("");
-    const [privacy, setPrivacy] = useState("private");
     const [recipeCuisine, setRecipeCuisine] = useState<Array<any>>([]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        create_recipe(recipeName, cuisine, privacy);
+        create_recipe(recipeName, cuisine);
     };
 
     useEffect(() => {
@@ -23,10 +22,11 @@ const RecipeForm = () => {
     }, []);
 
     return (
-        <form>
-            <label>Recipe Name</label>
+        <form className="flex flex-col justify-center items-center bg-amber-600 p-4">
+            <h1 className="font-bold text-2xl text-center">Create a Recipe!</h1>
             <br />
             <input
+                className="w-70 p-4 bg-duck-yellow rounded-xl"
                 placeholder="Name of Recipe"
                 value={recipeName}
                 name="selectRecipeName"
@@ -35,6 +35,7 @@ const RecipeForm = () => {
             />
             <br />
             <select
+                className="w-70  p-4 bg-duck-yellow rounded-xl"
                 name="selectCuisine"
                 onChange={(e) => setCuisine(e.target.value)}
                 value={cuisine}
@@ -47,17 +48,12 @@ const RecipeForm = () => {
                 ))}
             </select>
             <br />
-            <select
-                name="selectPrivacy"
-                onChange={(e) => setPrivacy(e.target.value)}
-                value={privacy}
-            >
-                <option key={"private"}>Private</option>
-                <option key={"public"}>Public</option>
-                <option key={"friends"}>Friends</option>
-            </select>
-            <br />
-            <div onClick={handleSubmit}>Create Recipe</div>
+            <input
+                className="w-70 py-4  bg-duck-pale-yellow rounded-lg hover:bg-duck-yellow font-bol"
+                type="submit"
+                value="Create Recipe"
+                onClick={handleSubmit}
+            />
         </form>
     );
 };

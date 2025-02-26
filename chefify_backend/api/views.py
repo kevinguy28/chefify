@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from .models import Recipe
 from .serializer import CuisineSerializer, RecipeSerializer, UserRegistrationSerializer
+from rest_framework import status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -112,10 +113,24 @@ def get_recipes(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create_recipes(request):
-    print('hello')
-
-
-
-# Create your views here.
-
+def create_recipe(request):
+    try:
+        recipeName = request.data.get('recipeName')
+        cuisine = request.data.get('cuisine')
+        print(f"Received: {recipeName}, {cuisine}")
+        if not cuisine or cuisine == "N/A":
+            recipe = Recipe.objects.create(
+                name=recipeName,
+                user = request.user
+            )
+        else:
+            recipe = Recipe.objects.create(
+                name=recipeName,
+                cuisine = cuisine,
+                user = request.user
+            )
+        serializer = RecipeSerializer(recipe)
+        return Response(serializer.data, status=201)
+    except:
+        print("error")
+        return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)

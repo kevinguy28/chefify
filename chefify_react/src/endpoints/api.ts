@@ -6,7 +6,8 @@ const REFRESH_URL = `${BASE_URL}token/refresh/`;
 
 // Recipes
 const RECIPE_URL = `${BASE_URL}recipes/`;
-const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}/`;
+const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}`;
+
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
 const REGISTER_URL = `${BASE_URL}register/`;
@@ -84,21 +85,18 @@ export const get_recipes = async () => {
     }
 };
 
-export const create_cuisine = async (
-    recipeName: string,
-    cuisine: string,
-    privacy: string
-) => {
+export const create_recipe = async (recipeName: string, cuisine: string) => {
     try {
+        console.log("made it");
         const reponse = await axios.post(
             RECIPE_CREATE_URL,
             {
                 recipeName,
                 cuisine,
-                privacy,
             },
             { withCredentials: true }
         );
+        console.log("made it here");
         return reponse.data;
     } catch (error) {
         return await call_refresh(error, () =>
