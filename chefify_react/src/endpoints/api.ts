@@ -4,15 +4,20 @@ const CREATE_URL = "create/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
 
+// Cuisine
+
+const CUISINE_URL = `${BASE_URL}cuisine/`;
+
 // Recipes
-const RECIPE_URL = `${BASE_URL}recipes/`;
+const RECIPES_URL = `${BASE_URL}recipes/`;
+
+// Recipe
+const RECIPE_URL = `${BASE_URL}recipe/`;
 const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}`;
 
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
 const REGISTER_URL = `${BASE_URL}register/`;
-const CUISINE_URL = `${BASE_URL}cuisine/`;
-const CREATE_CUISINE_URL = `${CUISINE_URL}${CREATE_URL}`;
 
 export const login = async (username: string, password: string) => {
     try {
@@ -74,20 +79,37 @@ export const refresh_token = async () => {
     }
 };
 
-export const get_recipes = async () => {
+// Recipes
+
+export const getRecipes = async () => {
     try {
-        const response = await axios.get(RECIPE_URL, { withCredentials: true });
+        const response = await axios.get(RECIPES_URL, {
+            withCredentials: true,
+        });
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(RECIPE_URL, { withCredentials: true })
+            axios.get(RECIPES_URL, { withCredentials: true })
         );
     }
 };
 
-export const create_recipe = async (recipeName: string, cuisine: string) => {
+// Recipe
+
+export const getRecipe = async (recipeId: string) => {
+    const url = `${RECIPE_URL}${recipeId}/`;
     try {
-        console.log("made it");
+        const response = await axios.get(url, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(url, { withCredentials: true })
+        );
+    }
+};
+
+export const createRecipe = async (recipeName: string, cuisine: string) => {
+    try {
         const reponse = await axios.post(
             RECIPE_CREATE_URL,
             {
@@ -96,14 +118,22 @@ export const create_recipe = async (recipeName: string, cuisine: string) => {
             },
             { withCredentials: true }
         );
-        console.log("made it here");
         return reponse.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(RECIPE_CREATE_URL, { withCredentials: true })
+            axios.post(
+                RECIPE_CREATE_URL,
+                {
+                    recipeName,
+                    cuisine,
+                },
+                { withCredentials: true }
+            )
         );
     }
 };
+
+// Cuisine
 
 export const get_cuisines = async () => {
     try {

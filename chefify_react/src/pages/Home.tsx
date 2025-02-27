@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Banner from "../components/Banner";
-import { get_recipes, logout } from "../endpoints/api";
+import { getRecipes, logout } from "../endpoints/api";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
 import RecipeForm from "@/components/RecipeForm";
@@ -11,7 +11,6 @@ const Home = () => {
     const nav = useNavigate();
 
     const handleLogout = async () => {
-        console.log("hello");
         const success = await logout();
 
         if (success) {
@@ -21,7 +20,7 @@ const Home = () => {
 
     useEffect(() => {
         const fetchRecipes = async () => {
-            const recipeCards = await get_recipes();
+            const recipeCards = await getRecipes();
             if (Array.isArray(recipeCards)) {
                 setRecipeCard(recipeCards);
             }

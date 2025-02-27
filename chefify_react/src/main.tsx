@@ -8,6 +8,8 @@ import PrivateRoutes from "./components/PrivateRoutes.tsx";
 import Home from "./pages/Home.tsx";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
+import RecipeEdit from "./pages/RecipeEdit.tsx";
+import Banner from "./components/Banner.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -21,6 +23,14 @@ createRoot(document.getElementById("root")!).render(
                         element={
                             <PrivateRoutes>
                                 <Home />
+                            </PrivateRoutes>
+                        }
+                    />
+                    <Route
+                        path="/recipe/:recipeId"
+                        element={
+                            <PrivateRoutes>
+                                <RecipeEdit />
                             </PrivateRoutes>
                         }
                     />

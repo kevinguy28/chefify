@@ -103,34 +103,49 @@ def get_cuisines(request):
     serializer = CuisineSerializer(cuisines, many=True)
     return Response(serializer.data)
 
+# ----- Recipes -----
+
 @api_view(['GET'])
 @permission_classes ([IsAuthenticated])
-def get_recipes(request):
+def getRecipes(request):
     user = request.user
     recipes = Recipe.objects.filter(user=user)
     serializer = RecipeSerializer(recipes, many=True)
     return Response(serializer.data)
 
+
+# ----- Recipe -----
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getRecipe(request, recipeId):
+    try:
+        recipe = Recipe.objects.get(id=recipeId)
+        serializer = RecipeSerializer(recipe)
+        return Response(serializer.data)
+    except Recipe.DoesNotExist:
+        return Response({"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create_recipe(request):
+def createRecipe(request):
     try:
         recipeName = request.data.get('recipeName')
-        cuisine = request.data.get('cuisine')
-        print(f"Received: {recipeName}, {cuisine}")
-        if not cuisine or cuisine == "N/A":
+        print("ass2")
+        try:
+            cuisine = Cuisine.objects.get(name=request.data.get('cuisine'))
             recipe = Recipe.objects.create(
-                name=recipeName,
-                user = request.user
-            )
-        else:
-            recipe = Recipe.objects.create(
-                name=recipeName,
+                name= recipeName,
                 cuisine = cuisine,
                 user = request.user
             )
+        except:
+            recipe = Recipe.objects.create(
+                name = recipeName,
+                user = request.user
+            )
+
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data, status=201)
     except:
-        print("error")
         return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)

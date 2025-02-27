@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { get_cuisines, create_recipe } from "@/endpoints/api";
+import { get_cuisines, createRecipe } from "@/endpoints/api";
+import { useNavigate } from "react-router-dom";
 
 const RecipeForm = () => {
     const [recipeName, setRecipeName] = useState("");
     const [cuisine, setCuisine] = useState("");
     const [recipeCuisine, setRecipeCuisine] = useState<Array<any>>([]);
+    const nav = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        create_recipe(recipeName, cuisine);
+        if (recipeName.trim()) {
+            const createdRecipe = await createRecipe(recipeName, cuisine);
+            if (createdRecipe && createdRecipe?.id) {
+                console.log("Navigating to:", `/recipe/${createdRecipe.id}/`);
+                nav(`/recipe/${createdRecipe.id}`);
+            }
+        } else {
+            alert("Name of the recipe cannot be empty!");
+        }
     };
 
     useEffect(() => {
