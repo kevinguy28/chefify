@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
+const EDIT_URL = "edit/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
 
@@ -14,6 +15,7 @@ const RECIPES_URL = `${BASE_URL}recipes/`;
 // Recipe
 const RECIPE_URL = `${BASE_URL}recipe/`;
 const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}`;
+const RECIPE_EDIT_URL = `${RECIPE_URL}${EDIT_URL}`;
 
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
@@ -133,16 +135,58 @@ export const createRecipe = async (recipeName: string, cuisine: string) => {
     }
 };
 
-// Cuisine
-
-export const get_cuisines = async () => {
+export const editRecipe = async (
+    recipeId: number,
+    recipeName: string,
+    recipeCuisine: string,
+    recipePrivacy: string,
+    recipeDescription: string,
+    recipeImageUrl: string,
+    recipeImage: File
+) => {
+    const url = `${RECIPE_EDIT_URL}${recipeId}/`;
     try {
-        console.log(CUISINE_URL);
-        console.log("ss");
+        const response = await axios.put(
+            url,
+            {
+                recipeName,
+                recipeCuisine,
+                recipePrivacy,
+                recipeDescription,
+                recipeImageUrl,
+                recipeImage,
+            },
+            {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.put(
+                url,
+                {
+                    recipeName,
+                    recipeCuisine,
+                    recipePrivacy,
+                    recipeDescription,
+                    recipeImageUrl,
+                    recipeImage,
+                },
+                {
+                    withCredentials: true,
+                }
+            )
+        );
+    }
+};
+// Cuisines
+
+export const getCuisines = async () => {
+    try {
         const response = await axios.get(CUISINE_URL, {
             withCredentials: true,
         });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { get_cuisines, createRecipe } from "@/endpoints/api";
+import { getCuisines, createRecipe } from "@/endpoints/api";
 import { useNavigate } from "react-router-dom";
 
 const RecipeForm = () => {
@@ -23,7 +23,7 @@ const RecipeForm = () => {
 
     useEffect(() => {
         const fetchCuisines = async () => {
-            const cuisines = await get_cuisines();
+            const cuisines = await getCuisines();
             if (Array.isArray(cuisines)) {
                 setRecipeCuisine(cuisines);
             }
@@ -52,9 +52,7 @@ const RecipeForm = () => {
             >
                 <option key="N/A">N/A</option>
                 {recipeCuisine.map((cuisine) => (
-                    <option key={cuisine.id}>
-                        {cuisine.name} <br />
-                    </option>
+                    <option key={cuisine.id}>{cuisine.name}</option>
                 ))}
             </select>
             <br />

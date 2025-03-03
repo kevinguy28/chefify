@@ -96,9 +96,11 @@ def register(request):
 def is_authenticated(request):
     return Response({'authenticated': True})
 
+# ----- Cuisines -----
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_cuisines(request):
+def getCuisines(request):
     cuisines = Cuisine.objects.all().order_by('name')
     serializer = CuisineSerializer(cuisines, many=True)
     return Response(serializer.data)
@@ -149,3 +151,11 @@ def createRecipe(request):
         return Response(serializer.data, status=201)
     except:
         return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([is_authenticated])
+def editRecipe(request, recipeId):
+    try:
+        recipe = Recipe.objects.get(id=recipeId)
+    except:
+        print("Failed attempt")

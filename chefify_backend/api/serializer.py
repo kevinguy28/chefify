@@ -6,7 +6,7 @@ from .models import Recipe, Cuisine
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'username', 'email']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -30,7 +30,7 @@ class CuisineSerializer(ModelSerializer):
 
 class RecipeSerializer(ModelSerializer):
     user = UserSerializer()
-
+    cuisine = CuisineSerializer()
     class Meta:
         model = Recipe
         fields = '__all__'
