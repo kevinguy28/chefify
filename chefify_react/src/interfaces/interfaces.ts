@@ -14,7 +14,13 @@ export interface Recipe {
     user: User;
     name: string;
     cuisine: Cuisine;
-    description?: string;
+    description: string;
     privacy: string;
-    imageUrl?: string; // Optional field
+    image?: string; // Optional field
+}
+
+export interface RecipeEditFormProps {
+    recipe: Recipe;
+    loaded: boolean;
+    onRecipeUpdate: (updatedRecipe: Recipe) => void;
 }

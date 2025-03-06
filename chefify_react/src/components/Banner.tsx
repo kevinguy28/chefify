@@ -8,7 +8,6 @@ const Banner = () => {
     const nav = useNavigate();
 
     const handleLogout = async () => {
-        console.log("hello");
         const success = await logout();
 
         if (success) {

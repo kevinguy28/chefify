@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Recipe, Cuisine
+from .models import Recipe, Cuisine, RecipeSteps
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -33,4 +33,10 @@ class RecipeSerializer(ModelSerializer):
     cuisine = CuisineSerializer()
     class Meta:
         model = Recipe
+        fields = '__all__'
+
+class RecipeStepsSerializer(ModelSerializer):
+    recipe = RecipeSerializer()
+    class Meta:
+        model = RecipeSteps
         fields = '__all__'

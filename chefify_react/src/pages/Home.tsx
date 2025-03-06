@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import Banner from "../components/Banner";
-import { getRecipes, logout } from "../endpoints/api";
+import { readRecipes, logout } from "../endpoints/api";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
-import RecipeForm from "@/components/RecipeForm";
+import RecipeForm from "@/forms/recipe/RecipeForm";
 
 const Home = () => {
     const [recipeCard, setRecipeCard] = useState<Array<any>>([]);
@@ -20,7 +20,7 @@ const Home = () => {
 
     useEffect(() => {
         const fetchRecipes = async () => {
-            const recipeCards = await getRecipes();
+            const recipeCards = await readRecipes();
             if (Array.isArray(recipeCards)) {
                 setRecipeCard(recipeCards);
             }

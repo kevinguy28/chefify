@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getCuisines, createRecipe } from "@/endpoints/api";
+import { readCuisines, createRecipe } from "@/endpoints/api";
 import { useNavigate } from "react-router-dom";
 
 const RecipeForm = () => {
@@ -13,7 +13,6 @@ const RecipeForm = () => {
         if (recipeName.trim()) {
             const createdRecipe = await createRecipe(recipeName, cuisine);
             if (createdRecipe && createdRecipe?.id) {
-                console.log("Navigating to:", `/recipe/${createdRecipe.id}/`);
                 nav(`/recipe/${createdRecipe.id}`);
             }
         } else {
@@ -23,7 +22,7 @@ const RecipeForm = () => {
 
     useEffect(() => {
         const fetchCuisines = async () => {
-            const cuisines = await getCuisines();
+            const cuisines = await readCuisines();
             if (Array.isArray(cuisines)) {
                 setRecipeCuisine(cuisines);
             }

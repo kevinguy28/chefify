@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const get_authenticated = async () => {
         setLoading(true);
         try {
-            console.log("here");
             const success = await is_authenticated();
             setIsAuthenticated(success);
         } catch {

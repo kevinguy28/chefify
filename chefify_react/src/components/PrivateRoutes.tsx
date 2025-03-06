@@ -10,9 +10,6 @@ const PrivateRoutes = ({ children }: PrivateRouteProps) => {
     const { isAuthenticated, loading } = useAuth();
     const nav = useNavigate();
 
-    console.log(loading);
-    console.log(isAuthenticated);
-
     if (loading) {
         return <h1> Loading ...</h1>;
     }

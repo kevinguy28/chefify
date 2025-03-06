@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -25,3 +26,29 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+    
+class RecipeSteps(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="steps")
+    title = models.CharField(max_length=50, default="")
+    description = models.TextField()
+    order = models.PositiveIntegerField(blank=True)
+    
+    class Meta:
+        ordering = ["order"]
+        verbose_name = "Recipe Step"
+        verbose_name_plural = "Recipe Steps"
+
+    def __str__(self):
+        return("Step-"+ str(self.order) + ": " + self.title[0:30])
+    
+    def save(self, *args, **kwargs):
+        if not self.order:
+            last_order = RecipeSteps.objects.filter(recipe=self.recipe).aggregate(models.Max("order"))["order__max"]
+            self.order = (last_order + 1) if last_order else 1
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        # Update the order of instances with a larger order value
+        RecipeSteps.objects.filter(order__gt=self.order).update(order=F('order') - 1)
+        # Call the superclass delete method to delete the instance
+        super(RecipeSteps, self).delete(*args, **kwargs)
