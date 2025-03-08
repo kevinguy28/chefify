@@ -20,7 +20,10 @@ export interface Recipe {
 }
 
 export interface RecipeEditFormProps {
-    recipe: Recipe;
-    loaded: boolean;
-    onRecipeUpdate: (updatedRecipe: Recipe) => void;
+    recipe: Recipe | null;
+    setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface RecipeCardProp {
+    recipe: Recipe | null;
 }

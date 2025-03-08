@@ -127,7 +127,6 @@ export const readRecipe = async (recipeId: string) => {
     const url = `${RECIPE_READ_URL}${recipeId}/`;
     try {
         const response = await axios.get(url, { withCredentials: true });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>

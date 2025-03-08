@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { readCuisines, readRecipe } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
-import { Cuisine, Recipe } from "@/interfaces/interfaces";
+import { Cuisine, Recipe, RecipeEditFormProps } from "@/interfaces/interfaces";
 import { updateRecipe } from "@/endpoints/api";
 
-const RecipeEditForm = () => {
+const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
+    recipe,
+    setLoaded,
+}) => {
     const { recipeId } = useParams();
-    const [recipe, setRecipe] = useState<Recipe | undefined>();
     const [allCuisines, setAllCuisines] = useState<Array<Cuisine>>([]);
-    const [loaded, setLoad] = useState<boolean>(false);
+    const [receivedRecipe, setReceivedRecipe] = useState<Boolean>(false);
 
     const [recipeName, setRecipeName] = useState<string>("");
     const [recipeCuisine, setRecipeCuisine] = useState<string>("");
@@ -17,23 +19,6 @@ const RecipeEditForm = () => {
     const [originalImageUrl, setOriginalImageUrl] = useState<string>("");
     const [recipeImageUrl, setRecipeImageUrl] = useState<string>("");
     const [recipeImage, setRecipeImage] = useState<File | null>(null);
-
-    const fetchRecipe = async () => {
-        const retrievedRecipe = await readRecipe(String(recipeId));
-
-        if (retrievedRecipe) {
-            const { name } = retrievedRecipe.cuisine;
-            setRecipe(retrievedRecipe);
-            setRecipeName(retrievedRecipe.name);
-            setRecipeCuisine(name);
-            setRecipePrivacy(retrievedRecipe.privacy);
-            setRecipeDescription(retrievedRecipe.description);
-            setOriginalImageUrl(retrievedRecipe.image);
-            setLoad(true);
-        } else {
-            console.error("No valid recipe found!");
-        }
-    };
 
     const fetchCuisines = async () => {
         const retrievedCuisines = await readCuisines();
@@ -61,18 +46,30 @@ const RecipeEditForm = () => {
             recipeDescription,
             recipeImage
         );
+        if (submitData) {
+            setLoaded(false);
+            setReceivedRecipe(false);
+        }
         return;
     };
 
     useEffect(() => {
-        if (!loaded) {
+        if (recipe) {
             fetchCuisines();
-            fetchRecipe();
+            setRecipeName(recipe.name);
+            setRecipeCuisine(recipe.cuisine.name);
+            setRecipePrivacy(recipe.privacy);
+            setRecipeDescription(recipe.description);
+            if (recipe.image) {
+                setOriginalImageUrl(recipe.image);
+            }
+            setRecipeImageUrl("");
+            setReceivedRecipe(true);
         }
-    }, [loaded]);
+    }, [recipe]);
 
     return (
-        <form className="flex flex-col justify-center p-4 gap-4 bg-red-400">
+        <form className="flex flex-col justify-center p-4 gap-4 bg-duck-dark-orange">
             <h1 className="w-100 mx-auto font-bold text-xl">
                 Editing Recipe:
                 <span className="italic"> {recipe?.name}</span>
@@ -122,10 +119,11 @@ const RecipeEditForm = () => {
                 <label className="font-bold text-xl">Description</label>
                 <textarea
                     className="w-100 p-4 mx-auto bg-duck-yellow rounded-xl resize-none"
-                    rows={15}
+                    rows={5}
                     value={recipeDescription}
-                    placeholder={recipeDescription}
+                    placeholder={recipe?.description}
                     onChange={(e) => setRecipeDescription(e.target.value)}
+                    maxLength={200}
                 ></textarea>
                 <br />
             </div>

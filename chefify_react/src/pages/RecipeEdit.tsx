@@ -15,7 +15,6 @@ const RecipeEdit = () => {
     const fetchRecipe = async () => {
         const response = await readRecipe(String(recipeId));
         if (response) {
-            console.log(response);
             setRecipe(response);
             setLoaded(true);
         }
@@ -28,23 +27,17 @@ const RecipeEdit = () => {
     }, [loaded]);
 
     return (
-        <div className="grid grid-cols-[3fr_3fr_5fr]">
-            <RecipeEditForm />
-            <RecipeStepsForm />
-            <div>
-                {recipe && (
-                    <RecipeCard
-                        user={recipe.user}
-                        id={recipe.id}
-                        name={recipe.name}
-                        cuisine={recipe.cuisine}
-                        privacy={recipe.privacy}
-                        description={recipe.description}
-                        image={recipe.image}
-                    />
-                )}
-                <RecipeStepsDisplay />
-            </div>
+        <div className="grid grid-cols-[3fr_5fr_3fr]">
+            {recipe && (
+                <>
+                    <RecipeEditForm recipe={recipe} setLoaded={setLoaded} />
+                    <div className="p-4">
+                        <RecipeCard recipe={recipe} />
+                        <RecipeStepsDisplay />
+                    </div>
+                    <RecipeStepsForm />
+                </>
+            )}
         </div>
     );
 };

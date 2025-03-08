@@ -1,3 +1,4 @@
+import os
 from django.db.models import F
 from django.db import models
 from django.contrib.auth.models import User
@@ -24,7 +25,18 @@ class Recipe(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if self.id:
+            oldRecipe = Recipe.objects.get(id=self.id)
+            if (oldRecipe.image != self.image) and oldRecipe.image:
+                oldImageUrl = oldRecipe.image.path
+                if os.path.isfile(oldImageUrl):
+                    os.remove(oldImageUrl)
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
+        
         return self.name
     
 class RecipeSteps(models.Model):

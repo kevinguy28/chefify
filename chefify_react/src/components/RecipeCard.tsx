@@ -1,18 +1,21 @@
 import React from "react";
-import { Recipe } from "@/interfaces/interfaces";
+import { RecipeCardProp } from "@/interfaces/interfaces";
 
-const RecipeCard: React.FC<Recipe> = (props) => {
+const RecipeCard: React.FC<RecipeCardProp> = ({ recipe }) => {
     return (
-        <div key={props.id} className="rounded-xl bg-white w-80">
+        <div
+            key={recipe?.id}
+            className="h-120 rounded-xl bg-white w-80 mx-auto"
+        >
             <img
-                className="rounded-t-xl w-full max-h-50"
-                alt={props.name}
-                src={`http://localhost:8000${props.image}`}
+                className="rounded-t-xl w-full h-50"
+                alt={recipe?.name}
+                src={`http://localhost:8000${recipe?.image}`}
             />
             <h1 className="p-2">
-                {props.name} | {props.cuisine.name}
+                {recipe?.name} | {recipe?.cuisine.name}
             </h1>
-            <p className="p-2">{props.description}</p>
+            <p className="p-2">{recipe?.description}</p>
         </div>
     );
 };
