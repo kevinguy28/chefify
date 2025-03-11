@@ -7,10 +7,16 @@ const DELETE_URL = "delete/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
 
+// User
+
+const USER_URL = `${BASE_URL}user/`;
+const USER_READ_URL = `${USER_URL}${READ_URL}`;
+
 // Cuisine
 
 const CUISINE_URL = `${BASE_URL}cuisine/`;
 const CUISINE_READ_URL = `${CUISINE_URL}${READ_URL}`;
+
 // Recipes
 const RECIPES_URL = `${BASE_URL}recipes/`;
 const RECIPES_READ_URL = `${RECIPES_URL}${READ_URL}`;
@@ -25,6 +31,7 @@ const RECIPE_UPDATE_URL = `${RECIPE_URL}${UPDATE_URL}`;
 const RECIPE_STEP_URL = `${BASE_URL}step/recipe/`;
 const RECIPE_STEP_CREATE_URL = `${RECIPE_STEP_URL}${CREATE_URL}`;
 const RECIPE_STEP_DELETE_URL = `${RECIPE_STEP_URL}${DELETE_URL}`;
+const RECIPE_STEPS_UPDATE_ORDER_URL = `${RECIPE_STEP_URL}${UPDATE_URL}order/`;
 
 // Recipe Steps
 
@@ -54,7 +61,7 @@ export const login = async (username: string, password: string) => {
             { withCredentials: true }
         );
 
-        return response.data.success;
+        return response.data;
     } catch (error) {
         console.error("Login error:", error);
         return false; // Handle failure gracefully
@@ -90,9 +97,15 @@ export const register = async (
 
 export const is_authenticated = async () => {
     try {
-        await axios.post(AUTHENTICATED_URL, {}, { withCredentials: true });
-        return true;
-    } catch (erorr) {
+        const response = await axios.post(
+            AUTHENTICATED_URL,
+            {},
+            { withCredentials: true }
+        );
+        if (response) {
+            return response.data;
+        }
+    } catch (error) {
         return false;
     }
 };
@@ -103,6 +116,21 @@ export const refresh_token = async () => {
         return true;
     } catch (error) {
         return false;
+    }
+};
+
+// User
+
+export const readUser = async () => {
+    try {
+        const response = await axios.get(USER_READ_URL, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(USER_READ_URL, { withCredentials: true })
+        );
     }
 };
 
@@ -224,6 +252,22 @@ export const createRecipeStep = async (
                 },
                 { withCredentials: true }
             )
+        );
+    }
+};
+
+export const updateRecipeStepOrder = async (
+    stepId: string,
+    moveDown: boolean
+) => {
+    const url = `${RECIPE_STEPS_UPDATE_ORDER_URL}${stepId}/`;
+    const data = { moveDown };
+    try {
+        const response = await axios.put(url, data, { withCredentials: true });
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.put(url, data, { withCredentials: true })
         );
     }
 };

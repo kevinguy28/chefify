@@ -3,11 +3,13 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import { AuthProvider } from "./contexts/useAuth.tsx";
-import PrivateRoutes from "./components/PrivateRoutes.tsx";
+import PrivateRoutesAuthenticated from "./components/PrivateRoutesAuthenticated.tsx";
+import PrivateRoutesUserRecipe from "./components/PrivateRoutesUserRecipe.tsx";
 
 import Home from "./pages/Home.tsx";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
+import RecipePage from "./pages/RecipePage.tsx";
 import RecipeEdit from "./pages/RecipeEdit.tsx";
 import Banner from "./components/Banner.tsx";
 
@@ -21,25 +23,39 @@ createRoot(document.getElementById("root")!).render(
                     <Route
                         path="/"
                         element={
-                            <PrivateRoutes>
+                            <PrivateRoutesAuthenticated>
+                                <Banner />
                                 <Home />
-                            </PrivateRoutes>
+                            </PrivateRoutesAuthenticated>
                         }
                     />
                     <Route
                         path="/recipe/:recipeId"
                         element={
-                            <PrivateRoutes>
-                                <RecipeEdit />
-                            </PrivateRoutes>
+                            <PrivateRoutesAuthenticated>
+                                <Banner />
+                                <RecipePage />
+                            </PrivateRoutesAuthenticated>
+                        }
+                    />
+                    <Route
+                        path="/recipe/update/:recipeId"
+                        element={
+                            <PrivateRoutesAuthenticated>
+                                <PrivateRoutesUserRecipe>
+                                    <Banner />
+                                    <RecipeEdit />
+                                </PrivateRoutesUserRecipe>
+                            </PrivateRoutesAuthenticated>
                         }
                     />
                     <Route
                         path="*"
                         element={
-                            <PrivateRoutes>
+                            <PrivateRoutesAuthenticated>
+                                <Banner />
                                 <Home />
-                            </PrivateRoutes>
+                            </PrivateRoutesAuthenticated>
                         }
                     />
                 </Routes>

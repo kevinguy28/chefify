@@ -1,6 +1,7 @@
 import React from "react";
 import "../index.css";
 import chefifyDuck from "../assets/chefify-duck.gif";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logout } from "@/endpoints/api";
 
@@ -16,10 +17,10 @@ const Banner = () => {
     };
 
     return (
-        <div className="">
+        <div className="sticky top-0 z-50 text-alt-text">
             <div className="flex items-center gap-4 bg-duck-yellow p-3">
                 <div className="text-duck-dark-orange font-bold">Chefify</div>
-                <div>Home</div>
+                <Link to={`/`}>Home</Link>
                 <div>Recipes</div>{" "}
                 <div onClick={handleLogout} className="ml-auto">
                     Logout

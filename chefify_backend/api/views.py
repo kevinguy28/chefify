@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from .models import Recipe, RecipeSteps
-from .serializer import UserRegistrationSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer
+from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -24,9 +24,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
             access_token = tokens["access"]
             refresh_token = tokens["refresh"]
-
             res = Response()
             res.data = {"success": True}
+            
             res.set_cookie(
                 key="access_token",
                 value=access_token,
@@ -100,8 +100,22 @@ def register(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def is_authenticated(request):
-    return Response({"authenticated": True})
+    user = request.user
+    return Response({
+        "authenticated": True,
+        "user": {
+            "id": user.id,
+            "username": user.username,
+        }
+    })
 
+# ----- User -----
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def readUser(request):
+    user = User.objects.get(user=request.user)
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
 
 # ----- Cuisines -----
 
@@ -120,7 +134,6 @@ def readCuisines(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def readRecipes(request):
-    print('here')
     user = request.user
     recipes = Recipe.objects.filter(user=user)
     serializer = RecipeSerializer(recipes, many=True)
@@ -221,6 +234,42 @@ def createRecipeStep(request, recipeId):
         return Response(
             {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
         )
+    
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def updateRecipeStepOrder(request, stepId):
+    try:
+        moveDown = request.data.get('moveDown')
+        step = RecipeSteps.objects.get(id=stepId)
+        recipeSteps = step.recipe.steps.all()
+        tmp = step.order
+        if(moveDown):
+            higherOrderStep = recipeSteps.filter(order__gt=step.order).first()
+            print(higherOrderStep)
+            if higherOrderStep:
+                # Swap the order of the two steps
+                step.order = higherOrderStep.order
+                higherOrderStep.order = tmp
+                
+                # Save both steps after swapping
+                step.save()
+                higherOrderStep.save()
+        else:
+            lowerOrderStep = recipeSteps.filter(order__lt=step.order).last()
+            if(lowerOrderStep):
+                step.order = lowerOrderStep.order
+                lowerOrderStep.order = tmp
+                
+                # Save both steps after swapping
+                step.save()
+                lowerOrderStep.save()
+        return Response({"success": True})
+    except Exception as e:
+        print("gaggaga")
+        return Response(
+            {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+        )
+        
     
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])

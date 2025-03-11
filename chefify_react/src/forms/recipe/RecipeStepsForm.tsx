@@ -20,37 +20,40 @@ const RecipeStepsForm = () => {
                 stepTitle,
                 stepDescription
             );
+            console.log(addRecipeStep);
         }
     };
 
     return (
         <div>
-            <form className="h-screen sticky top-0 flex flex-col justify-center p-4 gap-4 bg-duck-dark-orange">
-                <h1 className="w-100 mx-auto font-bold text-xl">
-                    Add Steps to your Recipe
-                </h1>
-                <div className="w-100 mx-auto">
-                    <label className="font-bold text-xl">Title</label>
+            <form className="sm:w-4/5 lg:h-[calc(100vh-48px)] mx-auto sticky top-12 flex flex-col justify-center p-4 gap-4">
+                <h1 className="font-bold text-xl">Add Steps to your Recipe</h1>
+                <div>
+                    <label className="text-xl">Title</label>
+                    <hr />
                     <br />
                     <input
-                        className="w-full p-4 mx-auto bg-duck-yellow rounded-xl"
+                        className="w-full p-4 bg-duck-yellow text-alt-text  rounded-xl"
                         placeholder="Name of Step"
                         type="text"
                         onChange={(e) => setStepTitle(e.target.value)}
                     />
                     <br />
                 </div>
-                <div className="w-100 mx-auto flex flex-col flex-grow">
-                    <label className="font-bold text-xl">Description</label>
+                <div className="w-full flex flex-col flex-grow">
+                    <label className="text-xl">Description</label>
+                    <hr />
+                    <br />
                     <textarea
-                        className="w-full p-4 mx-auto bg-duck-yellow rounded-xl resize-none flex-grow"
+                        className="sm:h-100 lg:h-auto p-4 bg-duck-yellow text-alt-text  rounded-xl resize-none flex-grow"
                         name="textarea"
                         onChange={(e) => setStepDescription(e.target.value)}
                     ></textarea>
                     <br />
                 </div>
+                <hr />
                 <input
-                    className="w-100 mx-auto py-4  bg-duck-pale-yellow rounded-lg hover:bg-duck-yellow font-bol"
+                    className="w-full py-4 bg-duck-pale-yellow hover:bg-white text-alt-text  rounded-lg"
                     type="submit"
                     value="Submit Step"
                     onClick={handleSubmit}

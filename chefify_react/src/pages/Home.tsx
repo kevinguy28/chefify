@@ -2,13 +2,24 @@ import { useState, useEffect } from "react";
 import Banner from "../components/Banner";
 import { readRecipes, logout } from "../endpoints/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/useAuth";
 import "../index.css";
 import RecipeForm from "@/forms/recipe/RecipeForm";
+import RecipeCard from "@/components/RecipeCard";
 
 const Home = () => {
-    const [recipeCard, setRecipeCard] = useState<Array<any>>([]);
-
+    const [recipes, setRecipes] = useState<Array<any>>([]);
+    const [loaded, setLoaded] = useState<Boolean>(false);
+    const { user } = useAuth();
     const nav = useNavigate();
+
+    const fetchRecipes = async () => {
+        const response = await readRecipes();
+        if (Array.isArray(response)) {
+            setRecipes(response);
+            setLoaded(true);
+        }
+    };
 
     const handleLogout = async () => {
         const success = await logout();
@@ -19,35 +30,18 @@ const Home = () => {
     };
 
     useEffect(() => {
-        const fetchRecipes = async () => {
-            const recipeCards = await readRecipes();
-            if (Array.isArray(recipeCards)) {
-                setRecipeCard(recipeCards);
-            }
-        };
-        fetchRecipes();
-    }, []);
+        if (!loaded) {
+            fetchRecipes();
+        }
+    }, [loaded]);
 
     return (
         <div>
-            <Banner />
-            <div className="grid grid-cols-[2fr_5fr_2fr] mt-8 ">
-                <div></div>
-                <div className="flex flex-wrap gap-4 justify-evenly items-center bg-red-400">
-                    {recipeCard.map((recipe) => (
-                        <div
-                            key={recipe.id}
-                            className="rounded-xl bg-white w-80"
-                        >
-                            <img
-                                className="rounded-t-xl w-full max-h-50"
-                                alt={recipe.name}
-                                src={`http://localhost:8000${recipe.image}`} // Make sure to add the image source
-                            />
-                            <h1 className="p-2">{recipe.name}</h1>
-                            <p className="p-2">{recipe.description}</p>
-                        </div>
-                    ))}
+            <div className="grid grid-cols-[2fr_5fr_2fr] mt-8 max-w-screen-2xl mx-auto">
+                <div>ss</div>
+                <div className="flex flex-wrap gap-y-4 justify-evenly items-center">
+                    {recipes &&
+                        recipes.map((recipe) => <RecipeCard recipe={recipe} />)}
                 </div>
 
                 <div>

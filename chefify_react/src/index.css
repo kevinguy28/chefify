@@ -1,12 +1,25 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Play:wght@400;700&family=Playfair+Display:ital@0;1&family=Roboto+Slab:wght@888&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 @theme {
     --color-duck-pale-yellow: #fcf0c3;
+    --color-duck-less-pale-yellow: #ebe4d0;
     --color-duck-yellow: #ffd323;
     --color-duck-orange: #f08b5c;
     --color-duck-dark-orange: #d7754d;
     --color-duck-white: #f08b5c;
-    --color-duck-dark-white: #f08b5c;
+    --color-duck-dark-white: #e4d9d9;
+    --color-pepper-green: #bec66d;
+    --color-pepper-dark-green: #b2b764;
+    --color-tmp: #b9a5d3;
+
+    --color-text: white;
+    --color-darker-text: #e9e9e9;
+    --color-alt-text: black;
+
+    --color-bg: #32373b;
+    --color-dark: #4a5859;
+    --color-dark-light: #576566a3;
 }
 
 :root {
@@ -15,11 +28,28 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: black;
-    background-color: var(--color-duck-pale-yellow);
+    color: var(--color-text);
+    background-color: var(--color-bg);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.xxx {
+    &::-webkit-scrollbar {
+        background-color: transparent;
+        width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+    }
+}
+
+.xxx:hover {
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(235, 228, 208, 1);
+        border-radius: 10px;
+    }
 }

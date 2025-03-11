@@ -1,3 +1,9 @@
+import { ReactNode } from "react";
+
+export interface PrivateRouteProps {
+    children: ReactNode;
+}
+
 export interface User {
     id: number;
     username: string;
@@ -16,7 +22,7 @@ export interface Recipe {
     cuisine: Cuisine;
     description: string;
     privacy: string;
-    image?: string; // Optional field
+    image?: string;
 }
 
 export interface RecipeEditFormProps {

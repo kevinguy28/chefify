@@ -19,7 +19,7 @@ const Login = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col justify-center items-center ">
+        <div className="h-screen flex flex-col justify-center items-center text-alt-text">
             <form
                 onSubmit={handleLogin}
                 className="flex flex-col justify-between  gap-4 items-center sm:min-w-100 bg-duck-dark-orange rounded-4xl p-8"
@@ -49,7 +49,7 @@ const Login = () => {
                     type="password"
                 />
                 <input
-                    className="w-70 py-4 m-4 bg-duck-pale-yellow rounded-lg hover:bg-duck-yellow font-bol"
+                    className="w-70 py-4 m-4 bg-duck-pale-yellow hover:bg-white rounded-lg font-bol"
                     type="submit"
                     value="Submit"
                     onClick={handleLogin}

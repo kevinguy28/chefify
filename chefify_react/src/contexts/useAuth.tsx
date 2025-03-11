@@ -8,10 +8,12 @@ import {
 import { is_authenticated, login, register } from "@/endpoints/api";
 import { useLocation } from "react-router-dom"; // If using React Router
 import { useNavigate } from "react-router-dom";
+import { User } from "@/interfaces/interfaces";
 
 // Define the type for the AuthContext
 interface AuthContextType {
     isAuthenticated: boolean;
+    user: number;
     loading: boolean;
     login_user: (username: string, password: string) => Promise<void>; // Add the login_user function type
     register_user: (
@@ -32,6 +34,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState<number>(-1);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
 
@@ -40,8 +43,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const get_authenticated = async () => {
         setLoading(true);
         try {
-            const success = await is_authenticated();
-            setIsAuthenticated(success);
+            const response = await is_authenticated();
+            if (response) {
+                setIsAuthenticated(response.authenticated);
+                console.log(response);
+                setUser(response.user.id);
+            }
         } catch {
             setIsAuthenticated(false);
         } finally {
@@ -50,8 +57,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     const login_user = async (username: string, password: string) => {
-        const success = await login(username, password);
-        if (success) {
+        const response = await login(username, password);
+        console.log(response);
+        if (response.success) {
             setIsAuthenticated(true);
             nav("/");
         }
@@ -81,7 +89,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return (
         <AuthContext.Provider
-            value={{ isAuthenticated, loading, login_user, register_user }}
+            value={{
+                isAuthenticated,
+                user,
+                loading,
+                login_user,
+                register_user,
+            }}
         >
             {children} {/* 'children' is properly used */}
         </AuthContext.Provider>

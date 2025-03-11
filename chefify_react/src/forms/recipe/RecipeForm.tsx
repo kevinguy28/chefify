@@ -31,8 +31,10 @@ const RecipeForm = () => {
     }, []);
 
     return (
-        <form className="flex flex-col justify-center items-center bg-amber-600 p-4">
-            <h1 className="font-bold text-2xl text-center">Create a Recipe!</h1>
+        <form className="flex flex-col justify-center items-center p-4">
+            <h1 className="font-bold text-2xl text-center ">
+                Create a Recipe!
+            </h1>
             <br />
             <input
                 className="w-70 p-4 bg-duck-yellow rounded-xl"
@@ -56,7 +58,7 @@ const RecipeForm = () => {
             </select>
             <br />
             <input
-                className="w-70 py-4  bg-duck-pale-yellow rounded-lg hover:bg-duck-yellow font-bol"
+                className="w-full py-4 bg-pepper-green hover:bg-pepper-dark-green rounded-lg "
                 type="submit"
                 value="Create Recipe"
                 onClick={handleSubmit}
