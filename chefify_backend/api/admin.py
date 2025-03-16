@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Recipe, Cuisine, RecipeSteps
+from .models import Recipe, Cuisine, RecipeSteps, Review
 
 class MyRecipe(admin.ModelAdmin):
     list_display = ('id', 'user', 'name')
@@ -14,3 +14,4 @@ admin.site.register(User, MyUser)
 admin.site.register(Cuisine)
 admin.site.register(Recipe, MyRecipe)
 admin.site.register(RecipeSteps)
+admin.site.register(Review)

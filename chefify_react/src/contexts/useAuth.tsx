@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const response = await is_authenticated();
             if (response) {
                 setIsAuthenticated(response.authenticated);
-                console.log(response);
                 setUser(response.user.id);
             }
         } catch {
@@ -58,7 +57,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const login_user = async (username: string, password: string) => {
         const response = await login(username, password);
-        console.log(response);
         if (response.success) {
             setIsAuthenticated(true);
             nav("/");

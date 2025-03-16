@@ -15,12 +15,11 @@ const RecipeStepsForm = () => {
         } else if (stepDescription.trim() === "") {
             alert("The description of the steps cannot be left");
         } else {
-            const addRecipeStep = await createRecipeStep(
+            await createRecipeStep(
                 String(recipeId),
                 stepTitle,
                 stepDescription
             );
-            console.log(addRecipeStep);
         }
     };
 

@@ -6,13 +6,11 @@ import RecipeCard from "@/components/RecipeCard";
 import { Recipe } from "@/interfaces/interfaces";
 import { readRecipe } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
-import { useAuth } from "@/contexts/useAuth";
 
 const RecipeEdit = () => {
     const { recipeId } = useParams();
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
-    const { user } = useAuth();
 
     const fetchRecipe = async () => {
         const response = await readRecipe(String(recipeId));
@@ -20,7 +18,6 @@ const RecipeEdit = () => {
             setRecipe(response);
             setLoaded(true);
         }
-        console.log(response);
     };
 
     useEffect(() => {
@@ -40,10 +37,10 @@ const RecipeEdit = () => {
                         <RecipeEditForm recipe={recipe} setLoaded={setLoaded} />
                     </div>
                     <div className="xxx p-4 max-h-screen overflow-y-auto scrollbar-custom">
-                        <div className="sm:hidden lg:block">
+                        <div className="sm:hidden lg:block mb-4">
                             <RecipeCard recipe={recipe} />
                         </div>
-                        <RecipeStepsDisplay />
+                        <RecipeStepsDisplay edit={true} />
                     </div>
                     <div>
                         <RecipeStepsForm />

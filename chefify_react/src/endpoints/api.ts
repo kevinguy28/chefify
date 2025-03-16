@@ -28,15 +28,24 @@ const RECIPE_READ_URL = `${RECIPE_URL}${READ_URL}`;
 const RECIPE_UPDATE_URL = `${RECIPE_URL}${UPDATE_URL}`;
 
 // Recipe Step
-const RECIPE_STEP_URL = `${BASE_URL}step/recipe/`;
-const RECIPE_STEP_CREATE_URL = `${RECIPE_STEP_URL}${CREATE_URL}`;
-const RECIPE_STEP_DELETE_URL = `${RECIPE_STEP_URL}${DELETE_URL}`;
-const RECIPE_STEPS_UPDATE_ORDER_URL = `${RECIPE_STEP_URL}${UPDATE_URL}order/`;
+const RECIPE_STEP_URL = `${BASE_URL}recipe/step/`;
+const RECIPE_STEPS_UPDATE_ORDER_URL = (stepId: string) =>
+    `${RECIPE_STEP_URL}order/${stepId}/`;
+const STEP_CREATE_URL = (recipeId: string) =>
+    `${BASE_URL}recipe/${recipeId}/step/`;
+const STEP_URL = (stepId: string) => `${BASE_URL}recipe/step/${stepId}/`;
 
 // Recipe Steps
 
 const RECIPE_STEPS_URL = `${BASE_URL}steps/recipe/`;
 const RECIPE_STEPS_READ_URL = `${RECIPE_STEPS_URL}${READ_URL}`;
+
+// Reviews
+
+const REVIEW_URL = (recipeId: string) =>
+    `${BASE_URL}recipe/${recipeId}/review/`;
+
+//
 
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
@@ -231,10 +240,9 @@ export const createRecipeStep = async (
     stepTitle: string,
     stepDescription: string
 ) => {
-    const url = `${RECIPE_STEP_CREATE_URL}${recipeId}/`;
     try {
         const response = await axios.post(
-            url,
+            STEP_CREATE_URL(recipeId),
             {
                 stepTitle,
                 stepDescription,
@@ -245,7 +253,7 @@ export const createRecipeStep = async (
     } catch (error) {
         return await call_refresh(error, () =>
             axios.post(
-                url,
+                STEP_URL(recipeId),
                 {
                     stepTitle,
                     stepDescription,
@@ -260,28 +268,60 @@ export const updateRecipeStepOrder = async (
     stepId: string,
     moveDown: boolean
 ) => {
-    const url = `${RECIPE_STEPS_UPDATE_ORDER_URL}${stepId}/`;
-    const data = { moveDown };
     try {
-        const response = await axios.put(url, data, { withCredentials: true });
+        const response = await axios.put(
+            RECIPE_STEPS_UPDATE_ORDER_URL(stepId),
+            { moveDown },
+            { withCredentials: true }
+        );
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.put(url, data, { withCredentials: true })
+            axios.put(
+                RECIPE_STEPS_UPDATE_ORDER_URL(stepId),
+                { moveDown },
+                {
+                    withCredentials: true,
+                }
+            )
+        );
+    }
+};
+
+export const updateRecipeStep = async (
+    stepId: string,
+    title: string,
+    description: string
+) => {
+    // const url = `${RECIPE_STEP_URL}${stepId}/`;
+    try {
+        const response = await axios.patch(
+            STEP_URL(stepId),
+            { title, description },
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(
+                STEP_URL(stepId),
+                { title, description },
+                { withCredentials: true }
+            )
         );
     }
 };
 
 export const deleteRecipeStep = async (stepId: string) => {
-    const url = `${RECIPE_STEP_DELETE_URL}${stepId}/`;
+    // const url = `${RECIPE_STEP_DELETE_URL}${stepId}/`;
     try {
-        const response = await axios.delete(url, {
+        const response = await axios.delete(STEP_URL(stepId), {
             withCredentials: true,
         });
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.delete(url, { withCredentials: true })
+            axios.delete(STEP_URL(stepId), { withCredentials: true })
         );
     }
 };
@@ -310,6 +350,73 @@ export const readCuisines = async () => {
     } catch (error) {
         return await call_refresh(error, () =>
             axios.get(CUISINE_READ_URL, { withCredentials: true })
+        );
+    }
+};
+
+// Reviews
+
+export const createReview = async (
+    recipeId: string,
+    rating: number,
+    review_text: string
+) => {
+    try {
+        const response = await axios.post(
+            REVIEW_URL(recipeId),
+            {
+                rating,
+                review_text,
+            },
+            { withCredentials: true }
+        );
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.post(
+                REVIEW_URL(recipeId),
+                {
+                    rating,
+                    review_text,
+                },
+                { withCredentials: true }
+            )
+        );
+    }
+};
+
+export const readReview = async (recipeId: string) => {
+    try {
+        const response = await axios.get(REVIEW_URL(recipeId), {
+            withCredentials: true,
+        });
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(REVIEW_URL(recipeId), { withCredentials: true })
+        );
+    }
+};
+
+export const updateReview = async (
+    recipeId: string,
+    rating: number,
+    review_text: string
+) => {
+    try {
+        const response = await axios.put(
+            REVIEW_URL(recipeId),
+            { rating, review_text },
+            { withCredentials: true }
+        );
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.put(
+                REVIEW_URL(recipeId),
+                { rating, review_text },
+                { withCredentials: true }
+            )
         );
     }
 };

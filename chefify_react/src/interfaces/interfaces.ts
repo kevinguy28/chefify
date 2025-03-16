@@ -33,3 +33,20 @@ export interface RecipeEditFormProps {
 export interface RecipeCardProp {
     recipe: Recipe | null;
 }
+
+export interface Review {
+    review: number;
+    recipe: Recipe;
+    rating: number;
+    review_text: string;
+    user: User;
+}
+
+export interface ReviewCardProps {
+    review: Review | null;
+}
+
+export interface ReviewFormProps {
+    review: Review | null;
+    setReview: React.Dispatch<React.SetStateAction<Review | null>>;
+}

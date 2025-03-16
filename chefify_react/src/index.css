@@ -1,5 +1,6 @@
-@import "tailwindcss";
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
 @import url("https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Play:wght@400;700&family=Playfair+Display:ital@0;1&family=Roboto+Slab:wght@888&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
 
 @theme {
     --color-duck-pale-yellow: #fcf0c3;
@@ -52,4 +53,50 @@
         background-color: rgba(235, 228, 208, 1);
         border-radius: 10px;
     }
+}
+
+/* Ratings widget */
+.rate {
+    display: inline-block;
+    border: 0;
+}
+
+/* Hide radio */
+.rate > input {
+    display: none;
+}
+
+/* Order correctly by floating highest to the right */
+.rate > .label {
+    float: right;
+}
+
+/* The star of the show */
+.rate > .label:before {
+    display: inline-block;
+    font-size: 2rem;
+    padding: 0.3rem 0.2rem;
+    margin: 0;
+    cursor: pointer;
+    font-family: FontAwesome;
+    content: "\f005 "; /* full star */
+}
+
+/* Half star trick */
+.rate .half:before {
+    content: "\f089 "; /* half star no outline */
+    position: absolute;
+    padding-right: 0;
+}
+/* Click + hover color */
+.rate input:checked ~ .label, /* color current and previous stars on checked */
+  .rate .label:hover, .label:hover ~ .label {
+    color: var(--color-duck-yellow);
+} /* color previous stars on hover */
+
+/* Hover highlights */
+.rate input:checked + .label:hover, input:checked ~ .label:hover, /* highlight current and previous stars */
+  .rate input:checked ~ .label:hover ~ .label, /* highlight previous selected stars for new rating */
+  .rate .label:hover ~ input:checked ~ .label /* highlight previous selected stars */ {
+    color: var(--color-duck-pale-yellow);
 }

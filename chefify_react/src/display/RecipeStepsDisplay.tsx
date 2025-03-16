@@ -1,16 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import { deleteRecipeStep, readRecipeSteps } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
-import { updateRecipeStepOrder } from "@/endpoints/api";
+import { updateRecipeStep, updateRecipeStepOrder } from "@/endpoints/api";
 
 import arrowUp from "@/assets/arrow-up.svg";
 import arrowDown from "@/assets/arrow-down.svg";
 
-const RecipeStepsDisplay = () => {
+const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
     const { recipeId } = useParams();
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
     const [recipeSteps, setRecipeSteps] = useState<Array<any>>([]);
+    const [stepTitle, setStepTitle] = useState<string>("");
     const [stepDescription, setStepDescription] = useState<string>("");
     const [editing, setEditing] = useState<boolean>(false);
     const [editStepId, setEditStepId] = useState<number | null>(null);
@@ -32,23 +33,41 @@ const RecipeStepsDisplay = () => {
         }
     };
 
-    const handleEdit = async (description: string, stepId: number) => {
-        console.log("edit");
+    const handleDelete = async (stepId: Number) => {
+        const response = await deleteRecipeStep(String(stepId));
+        if (response) {
+            setLoaded(false);
+        }
+    };
+
+    const handleEdit = async (
+        stepId: number,
+        originalTitle: string,
+        originalDescription: string
+    ) => {
         if (editing) {
+            if (
+                stepDescription !== originalDescription ||
+                stepTitle !== originalTitle
+            ) {
+                const response = await updateRecipeStep(
+                    String(stepId),
+                    stepTitle,
+                    stepDescription
+                );
+                if (response) {
+                    setLoaded(false);
+                }
+            }
+            setStepTitle("");
             setStepDescription("");
             setEditing(false);
             setEditStepId(null);
         } else {
             setEditing(true);
             setEditStepId(stepId);
-            setStepDescription(description);
-        }
-    };
-
-    const handleDelete = async (stepId: Number) => {
-        const response = await deleteRecipeStep(String(stepId));
-        if (response) {
-            setLoaded(false);
+            setStepTitle(originalTitle);
+            setStepDescription(originalDescription);
         }
     };
 
@@ -70,7 +89,7 @@ const RecipeStepsDisplay = () => {
     }, [stepDescription]);
 
     return (
-        <div className="p-4 sm:w-4/5 lg:w-full mx-auto">
+        <div className="px-4 sm:w-4/5 lg:w-full mx-auto ">
             {recipeSteps.length > 0 ? (
                 recipeSteps.map((step, index) => (
                     <>
@@ -79,21 +98,35 @@ const RecipeStepsDisplay = () => {
                             key={step.id}
                         >
                             <h1 className="font-bold text-xl flex gap-4">
-                                <span>
-                                    Step - {step.order}: {step?.title}
-                                </span>
-                                <div className="flex flex-row flex-grow gap-4 justify-end">
-                                    {index !== recipeSteps?.length - 1 && (
-                                        <img
-                                            src={arrowDown}
-                                            alt="Arrow Down"
-                                            className="w-5 h-5 ml-2"
-                                            onClick={() =>
-                                                handleSwap(step.id, true)
+                                {editing && editStepId === step?.id ? (
+                                    <div className="flex flex-col w-full">
+                                        <div>Step - {step.order}:</div>
+                                        <textarea
+                                            className="w-full p-2 border rounded-md resize-none overflow-hidden"
+                                            value={stepTitle}
+                                            onChange={(e) =>
+                                                setStepTitle(e.target.value)
                                             }
-                                        />
-                                    )}
-                                    {index !== 0 && (
+                                        ></textarea>
+                                    </div>
+                                ) : (
+                                    <span>
+                                        Step - {step.order}: {step?.title}
+                                    </span>
+                                )}
+                                <div className="flex flex-row flex-grow gap-4 justify-end">
+                                    {index !== recipeSteps?.length - 1 &&
+                                        edit && (
+                                            <img
+                                                src={arrowDown}
+                                                alt="Arrow Down"
+                                                className="w-5 h-5 ml-2"
+                                                onClick={() =>
+                                                    handleSwap(step.id, true)
+                                                }
+                                            />
+                                        )}
+                                    {index !== 0 && edit && (
                                         <img
                                             src={arrowUp}
                                             alt="Arrow Up"
@@ -116,6 +149,11 @@ const RecipeStepsDisplay = () => {
                                             className="w-full p-2 border rounded-md resize-none overflow-hidden"
                                             value={stepDescription}
                                             rows={1}
+                                            onChange={(e) =>
+                                                setStepDescription(
+                                                    e.target.value
+                                                )
+                                            }
                                         ></textarea>
                                     </form>
                                 ) : (
@@ -124,23 +162,34 @@ const RecipeStepsDisplay = () => {
                             </div>
                             <br />
                             <div className="flex gap-4 justify-end">
-                                <span
-                                    onClick={() =>
-                                        handleEdit(step?.description, step?.id)
-                                    }
-                                >
-                                    {editing
-                                        ? editStepId === step?.id
-                                            ? "Save"
-                                            : ""
-                                        : "Edit"}
-                                </span>
-                                <span
-                                    className="cursor-pointer text-red-500 hover:text-red-300"
-                                    onClick={() => handleDelete(step.id)}
-                                >
-                                    Delete
-                                </span>
+                                {edit && (
+                                    <>
+                                        <span
+                                            className="hover:text-duck-yellow"
+                                            onClick={() =>
+                                                handleEdit(
+                                                    step?.id,
+                                                    step?.title,
+                                                    step?.description
+                                                )
+                                            }
+                                        >
+                                            {editing
+                                                ? editStepId === step?.id
+                                                    ? "Save"
+                                                    : ""
+                                                : "Edit"}
+                                        </span>
+                                        <span
+                                            className="cursor-pointer text-red-500 hover:text-red-300"
+                                            onClick={() =>
+                                                handleDelete(step.id)
+                                            }
+                                        >
+                                            Delete
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <br />

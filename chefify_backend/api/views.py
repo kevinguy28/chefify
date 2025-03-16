@@ -1,12 +1,13 @@
 import json
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from .models import Recipe, RecipeSteps
-from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer
+from .models import Recipe, RecipeSteps, Review
+from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -147,11 +148,8 @@ def readRecipes(request):
 @permission_classes([IsAuthenticated])
 def readRecipe(request, recipeId):
     try:
-        print('hello')
         recipe = Recipe.objects.get(id=recipeId)
-        print(recipe)
         serializer = RecipeSerializer(recipe)
-        print(serializer.data)
         return Response(serializer.data)
     except Recipe.DoesNotExist:
         return Response({"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -208,7 +206,6 @@ def updateRecipe(request, recipeId):
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except:
-        print("Failed attempt")
         return Response(
             {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
         )
@@ -245,7 +242,6 @@ def updateRecipeStepOrder(request, stepId):
         tmp = step.order
         if(moveDown):
             higherOrderStep = recipeSteps.filter(order__gt=step.order).first()
-            print(higherOrderStep)
             if higherOrderStep:
                 # Swap the order of the two steps
                 step.order = higherOrderStep.order
@@ -265,25 +261,43 @@ def updateRecipeStepOrder(request, stepId):
                 lowerOrderStep.save()
         return Response({"success": True})
     except Exception as e:
-        print("gaggaga")
         return Response(
             {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
         )
+    
+class StepView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, stepId):
+        try:
+            try:
+                step = RecipeSteps.objects.get(id=stepId)
+            except Exception as e:
+                return Response(
+                    {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_404_NOT_FOUND
+                )
+            
+            data = request.data
+            if(data['title']):
+                step.title = data['title']
+            if(data['description']):
+                step.description = data['description']
+
+            step.save()
+            return Response({"success": True})
+        except Exception as e:
+            return Response({"error": f"An error occured: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
         
-    
-@api_view(["DELETE"])
-@permission_classes([IsAuthenticated])
-def deleteRecipeStep(request, stepId):
-    try:
-        step = RecipeSteps.objects.get(id=stepId)
-        print(step)
-        step.delete()
-        return Response({"success": "Recipe step deleted successfully"}, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response(
-            {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
-        )
-    
+    def delete(self, request, stepId):
+        try:
+            step = RecipeSteps.objects.get(id=stepId)
+            print(step)
+            step.delete()
+            return Response({"success": "Recipe step deleted successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
 # ----- Recipe Steps -----
 
 @api_view(["GET"])
@@ -298,3 +312,57 @@ def readRecipeSteps(request, recipeId):
         return Response(
             {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
         )
+    
+# ----- Review -----
+
+class ReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, recipeId):
+        try:
+            recipe = Recipe.objects.get(id=recipeId)
+            data = request.data
+            if(data['rating'] and data['rating'] != 0):
+                rating = data['rating']
+                try: 
+                    review_text = data['review_text']
+                    review = Review.objects.create(recipe=recipe, rating=rating, review_text=review_text, user=request.user)
+                except:
+                    review = Review.objects.create(recipe=recipe, rating=rating, review_text=None, user=request.user)
+                serializer = ReviewSerializer(review)
+                return Response(serializer.data, status=201)
+            return Response({"success": True})
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def get(self, request, recipeId):
+        try:
+            recipe = Recipe.objects.get(id=recipeId)
+            try:
+                review = Review.objects.filter(recipe=recipe).get(user=request.user)
+            except Exception as e:
+                return Response(None, status=status.HTTP_200_OK)
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status = 200)
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def put(self, request, recipeId):
+        data = request.data
+        try:
+            review = Review.objects.get(user=request.user, recipe=Recipe.objects.get(id=recipeId))
+            if(data['rating'] != review.rating):
+                review.rating = data['rating']
+            if(data['review_text'] != review.review_text):
+                review.review_text = data['review_text']
+            review.save()
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
