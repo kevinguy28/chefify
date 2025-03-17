@@ -7,11 +7,20 @@ from .models import Recipe, Review
 def update_recipe_rating(sender, instance, **kwargs):
     # Get the recipe associated with the review
     recipe = instance.recipe
-    recipe.update_rating()
+    recipe.reviewers.add(instance.user)
     recipe.save()
+    recipe.update_rating()
+
+@receiver(post_delete, sender=Review)
+def delete_recipe_rating(sender, instance, **kwargs):
+    recipe = instance.recipe
+    recipe.reviewers.remove(instance.user)
+    recipe.save()
+    
 
 @receiver(m2m_changed, sender=Recipe.reviewers.through)
 def reviewers_changed(sender, instance, action, reverse, model, pk_set, using, **kwargs):
     if action in ["post_add", "post_remove"]:
         instance.update_rating()
         instance.save()
+

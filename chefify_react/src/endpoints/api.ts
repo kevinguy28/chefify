@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { WiNightClear } from "react-icons/wi";
 const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
 const READ_URL = "read/";
@@ -27,7 +28,7 @@ const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}`;
 const RECIPE_READ_URL = `${RECIPE_URL}${READ_URL}`;
 const RECIPE_UPDATE_URL = `${RECIPE_URL}${UPDATE_URL}`;
 
-// Recipe Step
+// Step
 const RECIPE_STEP_URL = `${BASE_URL}recipe/step/`;
 const RECIPE_STEPS_UPDATE_ORDER_URL = (stepId: string) =>
     `${RECIPE_STEP_URL}order/${stepId}/`;
@@ -40,7 +41,7 @@ const STEP_URL = (stepId: string) => `${BASE_URL}recipe/step/${stepId}/`;
 const RECIPE_STEPS_URL = `${BASE_URL}steps/recipe/`;
 const RECIPE_STEPS_READ_URL = `${RECIPE_STEPS_URL}${READ_URL}`;
 
-// Reviews
+// Review
 
 const REVIEW_URL = (recipeId: string) =>
     `${BASE_URL}recipe/${recipeId}/review/`;
@@ -417,6 +418,19 @@ export const updateReview = async (
                 { rating, review_text },
                 { withCredentials: true }
             )
+        );
+    }
+};
+
+export const deleteReview = async (recipeId: string) => {
+    try {
+        const response = await axios.delete(REVIEW_URL(recipeId), {
+            withCredentials: true,
+        });
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.delete(REVIEW_URL(recipeId), { withCredentials: true })
         );
     }
 };

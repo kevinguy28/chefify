@@ -1,13 +1,33 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { createReview, updateReview } from "@/endpoints/api";
+import { createReview, deleteReview, updateReview } from "@/endpoints/api";
 
 import { ReviewFormProps } from "@/interfaces/interfaces";
 
-const ReviewForm: React.FC<ReviewFormProps> = ({ review, setReview }) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({
+    review,
+    setReview,
+    setLoaded,
+}) => {
     const { recipeId } = useParams();
     const [userRating, setUserRating] = useState<number>(0);
     const [userReviewText, setUserReviewText] = useState<string>("");
+
+    const handleDelete = async () => {
+        const response = await deleteReview(String(recipeId));
+
+        if (response) {
+            setReview(null);
+            setLoaded(false);
+            const recipeRatings = document.querySelectorAll(
+                "[id^='recipeRating']"
+            );
+            for (const rating of recipeRatings) {
+                const input = rating as HTMLInputElement;
+                input.checked = false;
+            }
+        }
+    };
 
     const handleEdit = async () => {
         const response = await updateReview(
@@ -28,7 +48,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setReview }) => {
         );
         if (response) {
             setReview(response.data);
-            console.log("Updated review:", response.data); // Debugging
         }
     };
 
@@ -41,6 +60,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setReview }) => {
                 `recipeRating${ratingValue}`
             ) as HTMLInputElement;
             recipeRating.checked = true;
+        } else {
+            setUserReviewText("");
         }
     }, [review]);
 
@@ -178,12 +199,24 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setReview }) => {
                     onChange={(e) => setUserReviewText(e.target.value)}
                 ></textarea>
             </div>
-            <input
-                className="sm:w-4/5 lg:w-full py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg mx-auto"
-                type="submit"
-                value={review ? "Submit Edits" : "Submit Changes"}
-                onClick={review ? handleEdit : handleSubmit}
-            />
+            <div className={`flex ${review && "justify-around"}`}>
+                <input
+                    className={`${
+                        !review ? "sm:w-4/5 lg:w-full" : "sm:w-2/5 lg:w-2/5"
+                    } py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg`}
+                    type="submit"
+                    value={review ? "Submit Edits" : "Submit Changes"}
+                    onClick={review ? handleEdit : handleSubmit}
+                ></input>
+                {review && (
+                    <input
+                        className="sm:w-2/5 lg:w-2/5  py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg"
+                        type="submit"
+                        value="Delete Review"
+                        onClick={handleDelete}
+                    ></input>
+                )}
+            </div>
         </div>
     );
 };

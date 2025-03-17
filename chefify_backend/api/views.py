@@ -366,3 +366,17 @@ class ReviewView(APIView):
             return Response(
                 {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
             )
+        
+    def delete(self, request, recipeId):
+        try:
+            review = Review.objects.get(user=request.user, recipe=Recipe.objects.get(id=recipeId))
+            if(review):
+                review.delete()
+                return(Response({"Success": "Review has been deleted"}))
+            return Response(
+                {"error": f"Review could not be found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+            )
