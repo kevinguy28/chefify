@@ -32,13 +32,21 @@ const RecipeEdit = () => {
                 <div className="sm:flex sm:flex-col lg:grid lg:grid-cols-[2fr_4fr_2fr] max-w-screen-xl mx-auto">
                     <div className="xxx p-4 lg:max-h-screen overflow-y-auto scrollbar-custom">
                         <div className="sm:block lg:hidden">
-                            <RecipeCard recipe={recipe} />
+                            <RecipeCard
+                                recipe={recipe}
+                                traverseMode={false}
+                                editMode={false}
+                            />
                         </div>
                         <RecipeEditForm recipe={recipe} setLoaded={setLoaded} />
                     </div>
                     <div className="xxx p-4 max-h-screen overflow-y-auto scrollbar-custom">
                         <div className="sm:hidden lg:block mb-4">
-                            <RecipeCard recipe={recipe} />
+                            <RecipeCard
+                                recipe={recipe}
+                                traverseMode={false}
+                                editMode={false}
+                            />
                         </div>
                         <RecipeStepsDisplay edit={true} />
                     </div>

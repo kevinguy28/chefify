@@ -1,55 +1,103 @@
 import { useState, useEffect } from "react";
-import Banner from "../components/Banner";
 import { readRecipes, logout } from "../endpoints/api";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/useAuth";
 import "../index.css";
 import RecipeForm from "@/forms/recipe/RecipeForm";
-import RecipeCard from "@/components/RecipeCard";
+import RecipeCatalog from "@/components/RecipeCatalog";
+import { readCuisines } from "../endpoints/api";
 
 const Home = () => {
+    const [cuisine, setCuisine] = useState("");
+    const [recipeCuisine, setRecipeCuisine] = useState<Array<any>>([]);
     const [recipes, setRecipes] = useState<Array<any>>([]);
-    const [loaded, setLoaded] = useState<Boolean>(false);
-    const { user } = useAuth();
-    const nav = useNavigate();
+    const [loaded, setLoaded] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [hasNext, setHasNext] = useState<boolean>(false);
+    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
+    const [totalPages] = useState<number | null>(null);
+    const [filterInput, setFilterInput] = useState<string>("");
 
-    const fetchRecipes = async () => {
-        const response = await readRecipes();
-        if (Array.isArray(response)) {
-            setRecipes(response);
-            setLoaded(true);
+    const fetchRecipes = async (page: number) => {
+        const response = await readRecipes(page, false, "public");
+        if (response) {
+            setCurrentPage(response.page);
+            setHasNext(response.hasNext);
+            setHasPrevious(response.hasPrevious);
+            setRecipes(response.recipes);
         }
     };
 
-    const handleLogout = async () => {
-        const success = await logout();
+    const fetchCuisines = async () => {
+        const cuisines = await readCuisines();
+        if (Array.isArray(cuisines)) {
+            setRecipeCuisine(cuisines);
+        }
+    };
 
-        if (success) {
-            nav("/login");
+    const submitSearch = async () => {
+        if (!(cuisine.length == 0 && filterInput.length == 0)) {
+            const response = await readRecipes(
+                1,
+                false,
+                "public",
+                filterInput,
+                cuisine
+            );
+            if (response) {
+                setCurrentPage(response.page);
+                setHasNext(response.hasNext);
+                setHasPrevious(response.hasPrevious);
+                setRecipes(response.recipes);
+            }
         }
     };
 
     useEffect(() => {
         if (!loaded) {
-            fetchRecipes();
+            fetchRecipes(1);
+            fetchCuisines();
+            setLoaded(true);
         }
     }, [loaded]);
 
     return (
         <div>
             <div className="grid grid-cols-[2fr_5fr_2fr] mt-8 max-w-screen-2xl mx-auto">
-                <div>ss</div>
-                <div className="flex flex-wrap gap-y-4 justify-evenly items-center">
-                    {recipes &&
-                        recipes.map((recipe) => <RecipeCard recipe={recipe} />)}
+                <div className="bg-amber-900">
+                    <input
+                        className="w-70 p-4 bg-duck-yellow rounded-xl"
+                        placeholder="Filter Name"
+                        name="selectRecipeName"
+                        type="text"
+                        onChange={(e) => setFilterInput(e.target.value)}
+                    />
+                    <select
+                        className="w-70  p-4 bg-duck-yellow rounded-xl"
+                        name="selectCuisine"
+                        onChange={(e) => setCuisine(e.target.value)}
+                        value={cuisine}
+                    >
+                        <option key="N/A">N/A</option>
+                        {recipeCuisine.map((cuisine) => (
+                            <option key={cuisine.id}>{cuisine.name}</option>
+                        ))}
+                    </select>
+                    <div onClick={submitSearch}>Submit</div>
+                    <div onClick={() => fetchRecipes(1)}>Clear</div>
                 </div>
-
+                <div>
+                    <RecipeCatalog
+                        recipes={recipes}
+                        currentPage={currentPage}
+                        hasNext={hasNext}
+                        hasPrevious={hasPrevious}
+                        editMode={false}
+                        fetchRecipes={fetchRecipes}
+                    />
+                </div>
                 <div>
                     <RecipeForm />
                 </div>
-            </div>
-            <div onClick={handleLogout} className="ml-auto">
-                Logout
             </div>
         </div>
     );

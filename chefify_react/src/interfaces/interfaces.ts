@@ -33,6 +33,8 @@ export interface RecipeEditFormProps {
 
 export interface RecipeCardProp {
     recipe: Recipe | null;
+    traverseMode: boolean;
+    editMode: boolean;
 }
 
 export interface Review {
@@ -44,12 +46,22 @@ export interface Review {
 }
 
 export interface ReviewCardProps {
-    review: Review | null;
-    recipe: Recipe | null;
+    reviewUser: User | undefined;
+    reviewRating: number | undefined;
+    reviewText: string | undefined;
+    isUserReview: boolean;
 }
 
 export interface ReviewFormProps {
     review: Review | null;
-    setReview: React.Dispatch<React.SetStateAction<Review | null>>;
     setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface RecipeCatalogProps {
+    recipes: Array<Recipe>;
+    currentPage: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+    editMode: boolean;
+    fetchRecipes: (page: number) => Promise<void>;
 }

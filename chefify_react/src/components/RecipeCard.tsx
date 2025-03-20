@@ -2,7 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { RecipeCardProp } from "@/interfaces/interfaces";
 
-const RecipeCard: React.FC<RecipeCardProp> = ({ recipe }) => {
+const RecipeCard: React.FC<RecipeCardProp> = ({
+    recipe,
+    traverseMode,
+    editMode,
+}) => {
+    console.log(window.location.pathname);
     return (
         <div key={recipe?.id} className="rounded-xl bg-dark w-90 mx-auto">
             <img
@@ -16,12 +21,17 @@ const RecipeCard: React.FC<RecipeCardProp> = ({ recipe }) => {
             />
 
             <h1 className="p-2 flex flex-col justify-between">
-                <Link
-                    to={`/recipe/${recipe?.id}`}
-                    className="font-bold hover:text-duck-pale-yellow"
-                >
-                    {recipe?.name}{" "}
-                </Link>
+                {traverseMode ? (
+                    <Link
+                        to={`/recipe/${recipe?.id}`}
+                        className="font-bold hover:text-duck-pale-yellow"
+                    >
+                        {recipe?.name}{" "}
+                    </Link>
+                ) : (
+                    <div className="font-bold">{recipe?.name} </div>
+                )}
+
                 <span className="text-darker-text text-sm">
                     {recipe?.cuisine?.name ? recipe.cuisine.name : "N/A"} |{" "}
                     {recipe?.user.username}
@@ -31,6 +41,11 @@ const RecipeCard: React.FC<RecipeCardProp> = ({ recipe }) => {
             <p className="p-2 text-darker-text text-sm">
                 {recipe?.description}
             </p>
+            {editMode && (
+                <Link to={`/recipe/update/${recipe?.id}`} className="p-2">
+                    Edit
+                </Link>
+            )}
         </div>
     );
 };

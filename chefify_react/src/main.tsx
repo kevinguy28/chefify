@@ -12,6 +12,7 @@ import Register from "./pages/Register.tsx";
 import RecipePage from "./pages/RecipePage.tsx";
 import RecipeEdit from "./pages/RecipeEdit.tsx";
 import Banner from "./components/Banner.tsx";
+import RecipeEditCatalog from "./components/RecipeEditCatalog.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -35,6 +36,15 @@ createRoot(document.getElementById("root")!).render(
                             <PrivateRoutesAuthenticated>
                                 <Banner />
                                 <RecipePage />
+                            </PrivateRoutesAuthenticated>
+                        }
+                    />
+                    <Route
+                        path="/recipe/edit-catalog/"
+                        element={
+                            <PrivateRoutesAuthenticated>
+                                <Banner />
+                                <RecipeEditCatalog />
                             </PrivateRoutesAuthenticated>
                         }
                     />

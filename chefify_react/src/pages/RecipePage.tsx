@@ -35,27 +35,40 @@ const RecipePage = () => {
     return (
         <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] max-w-screen-xl mx-auto ">
             <div className="mt-4 flex flex-col gap-4">
-                <RecipeCard recipe={recipe} />
-                <ReviewCard review={review} recipe={null} />
-                {review ? (
-                    <ReviewForm
-                        review={review}
-                        setReview={setReview}
-                        setLoaded={setLoaded}
-                    />
+                {loaded && (
+                    <>
+                        <RecipeCard
+                            recipe={recipe}
+                            traverseMode={false}
+                            editMode={false}
+                        />
+                        <ReviewCard
+                            reviewUser={review?.user}
+                            reviewRating={review?.rating}
+                            reviewText={review?.review_text}
+                            isUserReview={true}
+                        />
+                    </>
+                )}
+
+                {loaded && review ? (
+                    <ReviewForm review={review} setLoaded={setLoaded} />
                 ) : (
-                    <ReviewForm
-                        review={null}
-                        setReview={setReview}
-                        setLoaded={setLoaded}
-                    />
+                    <ReviewForm review={null} setLoaded={setLoaded} />
                 )}
             </div>
             <div className="mt-4">
-                <RecipeStepsDisplay edit={false} />
+                {loaded && <RecipeStepsDisplay edit={false} />}
             </div>
             <div className="mt-4">
-                <ReviewCard review={null} recipe={recipe} />
+                {loaded && (
+                    <ReviewCard
+                        reviewUser={undefined}
+                        reviewRating={recipe?.rating}
+                        reviewText={undefined}
+                        isUserReview={false}
+                    />
+                )}
             </div>
         </div>
     );

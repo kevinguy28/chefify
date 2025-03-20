@@ -1,5 +1,4 @@
-import axios, { AxiosResponse } from "axios";
-import { WiNightClear } from "react-icons/wi";
+import axios from "axios";
 const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
 const READ_URL = "read/";
@@ -146,15 +145,37 @@ export const readUser = async () => {
 
 // Recipes
 
-export const readRecipes = async () => {
+export const readRecipes = async (
+    page: number,
+    needUser: boolean,
+    privacy?: string,
+    filterInput?: string,
+    cuisine?: string
+) => {
     try {
         const response = await axios.get(RECIPES_READ_URL, {
+            params: {
+                page,
+                needUser,
+                ...(privacy && { privacy }),
+                ...(filterInput && { filterInput }),
+                ...(cuisine && { cuisine }),
+            },
             withCredentials: true,
         });
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(RECIPES_READ_URL, { withCredentials: true })
+            axios.get(RECIPES_READ_URL, {
+                params: {
+                    page,
+                    needUser,
+                    ...(privacy && { privacy }),
+                    ...(filterInput && { filterInput }),
+                    ...(cuisine && { cuisine }),
+                },
+                withCredentials: true,
+            })
         );
     }
 };

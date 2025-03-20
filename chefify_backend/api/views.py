@@ -1,5 +1,7 @@
 import json
+from django.db.models import Q
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from .models import Recipe, RecipeSteps, Review
 from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer
@@ -135,10 +137,38 @@ def readCuisines(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def readRecipes(request):
-    user = request.user
-    recipes = Recipe.objects.filter(user=user)
-    serializer = RecipeSerializer(recipes, many=True)
-    return Response(serializer.data)
+
+    pageNumber = request.GET.get("page", 1)
+    needUser = request.GET.get("needUser")
+    privacy = request.GET.get("privacy")
+    filterInput = request.GET.get("filterInput") 
+    cuisine = Cuisine.objects.get(name=request.GET.get("cuisine")) if request.GET.get("cuisine") else None
+    
+    filters = Q()
+
+    if needUser == "true":
+        filters &= Q(user=request.user)
+    if filterInput:
+        filters &= Q(name__icontains=filterInput)
+    if privacy:
+        filters &= Q(privacy__icontains=privacy)
+    if cuisine:
+        filters &= Q(cuisine=cuisine)
+
+    print(filters)
+
+    recipes = Recipe.objects.filter(filters)
+    paginator = Paginator(recipes, 6)
+    page_obj = paginator.get_page(pageNumber)
+    serializer = RecipeSerializer(page_obj, many=True)
+
+    return Response({
+        "recipes": serializer.data,
+        "page": page_obj.number,  # Current page
+        "totalPages": paginator.num_pages,  # Total number of pages
+        "hasNext": page_obj.has_next(),  # If there's a next page
+        "hasPrevious": page_obj.has_previous()  # If there's a previous page
+    })
 
 
 # ----- Recipe -----

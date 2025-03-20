@@ -4,11 +4,7 @@ import { createReview, deleteReview, updateReview } from "@/endpoints/api";
 
 import { ReviewFormProps } from "@/interfaces/interfaces";
 
-const ReviewForm: React.FC<ReviewFormProps> = ({
-    review,
-    setReview,
-    setLoaded,
-}) => {
+const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
     const { recipeId } = useParams();
     const [userRating, setUserRating] = useState<number>(0);
     const [userReviewText, setUserReviewText] = useState<string>("");
@@ -17,7 +13,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         const response = await deleteReview(String(recipeId));
 
         if (response) {
-            setReview(null);
             setLoaded(false);
             const recipeRatings = document.querySelectorAll(
                 "[id^='recipeRating']"
@@ -36,7 +31,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             userReviewText
         );
         if (response) {
-            setReview(response.data);
+            setLoaded(false);
         }
     };
 
@@ -47,7 +42,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             userReviewText
         );
         if (response) {
-            setReview(response.data);
+            setLoaded(false);
         }
     };
 

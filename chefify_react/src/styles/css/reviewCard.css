@@ -43,3 +43,49 @@
   .rateReviewCard .label:hover ~ input:checked ~ .label /* highlight previous selected stars */ {
     color: var(--color-duck-pale-yellow);
 }
+
+/* Ratings widget */
+.reviewCardPublicRating {
+    display: inline-block;
+    border: 0;
+}
+
+/* Hide radio */
+.reviewCardPublicRating > input {
+    display: none;
+}
+
+/* Order correctly by floating highest to the right */
+.reviewCardPublicRating > .label {
+    float: right;
+}
+
+/* The star of the show */
+.reviewCardPublicRating > .label:before {
+    display: inline-block;
+    font-size: 1rem;
+    padding: 0.3rem 0.2rem;
+    margin: 0;
+    cursor: pointer;
+    font-family: FontAwesome;
+    content: "\f005 "; /* full star */
+}
+
+/* Half star trick */
+.reviewCardPublicRating .half:before {
+    content: "\f089 "; /* half star no outline */
+    position: absolute;
+    padding-right: 0;
+}
+/* Click + hover color */
+.reviewCardPublicRating input:checked ~ .label, /* color current and previous stars on checked */
+  .reviewCardPublicRating .label:hover, .label:hover ~ .label {
+    color: var(--color-duck-yellow);
+} /* color previous stars on hover */
+
+/* Hover highlights */
+.reviewCardPublicRating input:checked + .label:hover, input:checked ~ .label:hover, /* highlight current and previous stars */
+  .reviewCardPublicRating input:checked ~ .label:hover ~ .label, /* highlight previous selected stars for new rating */
+  .reviewCardPublicRating .label:hover ~ input:checked ~ .label /* highlight previous selected stars */ {
+    color: var(--color-duck-pale-yellow);
+}

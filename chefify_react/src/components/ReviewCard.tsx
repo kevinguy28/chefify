@@ -2,257 +2,350 @@ import React, { useEffect } from "react";
 import { ReviewCardProps } from "@/interfaces/interfaces";
 import "@/styles/css/reviewCard.css";
 
-const ReviewCard: React.FC<ReviewCardProps> = ({ review, recipe }) => {
+const ReviewCard: React.FC<ReviewCardProps> = ({
+    reviewUser,
+    reviewRating,
+    reviewText,
+    isUserReview,
+}) => {
     useEffect(() => {
-        if (review) {
-            const ratingValue = review.rating * 2;
-            const recipeRating: HTMLInputElement = document.getElementById(
-                `reviewCardUserRating${ratingValue}`
-            ) as HTMLInputElement;
-            recipeRating.checked = true;
-        } else {
-            const recipeRatings = document.querySelectorAll(
-                "[id^='reviewCardUserRating']"
-            );
-            for (const rating of recipeRatings) {
-                const input = rating as HTMLInputElement;
-                input.checked = false;
-            }
-
-            if (recipe) {
-                const recipeRatings = document.querySelectorAll(
-                    "[id^='reviewCardPublicRating']"
-                );
-                for (const rating of recipeRatings) {
-                    const input = rating as HTMLInputElement;
-                    input.checked = false;
+        // Public Rating
+        if (!isUserReview) {
+            if (reviewRating) {
+                const publicRating = reviewRating * 2;
+                const publicReview = document.getElementById(
+                    `publicRating-${publicRating}`
+                ) as HTMLInputElement;
+                if (publicReview) {
+                    publicReview.checked = true;
                 }
-                const ratingValuePublic = recipe.rating * 2;
-                console.log(recipe.rating);
-                const recipeRatingPublic: HTMLInputElement =
-                    document.getElementById(
-                        `reviewCardPublicRating${ratingValuePublic}`
-                    ) as HTMLInputElement;
-
-                console.log("XXXXXXXXXX");
-                console.log(recipeRatingPublic);
-                recipeRatingPublic.checked = true;
+            }
+            // User Rating
+        } else {
+            if (reviewUser && reviewRating) {
+                const userRating = reviewRating * 2;
+                const userReview = document.getElementById(
+                    `userRating-${reviewUser.id}-${userRating}`
+                ) as HTMLInputElement;
+                if (userReview) {
+                    userReview.checked = true;
+                }
             }
         }
-    }, [review, recipe]);
+    }, [reviewUser, reviewRating, reviewText]);
 
     return (
         <div className="bg-dark p-4 rounded-xl">
-            {review?.rating}
-            {recipe?.rating}
             <div className="flex justify-between items-center">
-                {review ? (
+                {!isUserReview && <h1>Public Review</h1>}
+                {isUserReview && (
                     <h1>
-                        {review ? review.user.username : "No "} review{" "}
-                        {!review && "yet"}
+                        {typeof reviewUser === "object"
+                            ? `${reviewUser.username} `
+                            : "No "}{" "}
+                        review
                     </h1>
-                ) : (
-                    <h1>Public Rating</h1>
                 )}
-                <fieldset
-                    className="rateReviewCard pointer-events-none "
-                    name={`${review ? "userReview" : "recipeRatingPublic"}`}
-                >
+                <fieldset className="rateReviewCard pointer-events-none">
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating10"
-                                : "reviewCardPublicRating10"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-10"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-10`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="5.0"
                     />
                     <label
                         className="label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating10"
-                                : "reviewCardPublicRating10"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-10"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-10`
+                                : undefined
+                        }
                         title="5 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating9"
-                                : "reviewCardPublicRating9"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-9"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-9`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="4.5"
                     />
                     <label
                         className="half label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating9"
-                                : "reviewCardPublicRating9"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-9"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-9`
+                                : undefined
+                        }
                         title="4 1/2 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating8"
-                                : "reviewCardPublicRating8"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-8"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-8`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="4.0"
                     />
                     <label
                         className="label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating8"
-                                : "reviewCardPublicRating8"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-8"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-8`
+                                : undefined
+                        }
                         title="4 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating7"
-                                : "reviewCardPublicRating7"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-7"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-7`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="3.5"
                     />
                     <label
                         className="half label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating7"
-                                : "reviewCardPublicRating7"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-7"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-7`
+                                : undefined
+                        }
                         title="3 1/2 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating6"
-                                : "reviewCardPublicRating6"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-6"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-6`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="3.0"
                     />
                     <label
                         className="label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating6"
-                                : "reviewCardPublicRating6"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-6"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-6`
+                                : undefined
+                        }
                         title="3 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating5"
-                                : "reviewCardPublicRating5"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-5"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-5`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="2.5"
                     />
                     <label
                         className="half label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating5"
-                                : "reviewCardPublicRating5"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-5"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-5`
+                                : undefined
+                        }
                         title="2 1/2 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating4"
-                                : "reviewCardPublicRating4"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-4"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-4`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="2.0"
                     />
                     <label
                         className="label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating4"
-                                : "reviewCardPublicRating4"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-4"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-4`
+                                : undefined
+                        }
                         title="2 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating3"
-                                : "reviewCardPublicRating3"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-3"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-3`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="1.5"
                     />
                     <label
                         className="half label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating3"
-                                : "reviewCardPublicRating3"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-3"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-3`
+                                : undefined
+                        }
                         title="1 1/2 stars"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating2"
-                                : "reviewCardPublicRating2"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-2"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-2`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="1.0"
                     />
                     <label
                         className="label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating2"
-                                : "reviewCardPublicRating2"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-2"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-2`
+                                : undefined
+                        }
                         title="1 star"
                     ></label>
                     <input
                         type="radio"
-                        id={`${
-                            review
-                                ? "reviewCardUserRating1"
-                                : "reviewCardPublicRating1"
-                        }`}
-                        name={`${review ? "userReview" : "recipeRatingPublic"}`}
+                        id={
+                            !isUserReview
+                                ? "publicRating-1"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-1`
+                                : undefined
+                        }
+                        name={
+                            !isUserReview
+                                ? "publicRating"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}`
+                                : "userRating"
+                        }
                         value="0.5"
                     />
                     <label
                         className="half label"
-                        htmlFor={`${
-                            review
-                                ? "reviewCardUserRating1"
-                                : "reviewCardPublicRating1"
-                        }`}
+                        htmlFor={
+                            !isUserReview
+                                ? "publicRating-1"
+                                : typeof reviewUser === "object"
+                                ? `userRating-${reviewUser.id}-1`
+                                : undefined
+                        }
                         title="1/2 star"
                     ></label>
                 </fieldset>
             </div>
-            {review && (
+            {isUserReview && (
                 <p className="bg-bg p-2 rounded-sm text-darker-text text-sm">
-                    {review?.review_text || "No review available"}
+                    {typeof reviewUser === "object" &&
+                    reviewText != undefined &&
+                    reviewText?.length > 0
+                        ? reviewText
+                        : "No Comments Available"}
                 </p>
             )}
         </div>

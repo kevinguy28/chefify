@@ -21,7 +21,7 @@ const Banner = () => {
             <div className="flex items-center gap-4 bg-duck-yellow p-3">
                 <div className="text-duck-dark-orange font-bold">Chefify</div>
                 <Link to={`/`}>Home</Link>
-                <div>Recipes</div>{" "}
+                <Link to={"/recipe/edit-catalog/"}>Recipes</Link>
                 <div onClick={handleLogout} className="ml-auto">
                     Logout
                 </div>
