@@ -5,6 +5,7 @@ import "../index.css";
 import RecipeForm from "@/forms/recipe/RecipeForm";
 import RecipeCatalog from "@/components/RecipeCatalog";
 import { readCuisines } from "../endpoints/api";
+import ShoppingListForm from "@/forms/ShoppingListForm";
 
 const Home = () => {
     const [cuisine, setCuisine] = useState("");
@@ -91,12 +92,14 @@ const Home = () => {
                         currentPage={currentPage}
                         hasNext={hasNext}
                         hasPrevious={hasPrevious}
+                        traverseMode={true}
                         editMode={false}
                         fetchRecipes={fetchRecipes}
                     />
                 </div>
                 <div>
                     <RecipeForm />
+                    <ShoppingListForm />
                 </div>
             </div>
         </div>

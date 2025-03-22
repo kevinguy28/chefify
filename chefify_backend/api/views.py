@@ -1,9 +1,10 @@
 import json
+import nltk
 from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from .models import Recipe, RecipeSteps, Review
+from .models import Recipe, RecipeSteps, Review, Ingredient
 from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -18,6 +19,11 @@ from rest_framework_simplejwt.views import (
 
 from .models import Recipe, Cuisine
 
+
+import nltk
+# nltk.download('wordnet')
+from nltk.stem import WordNetLemmatizer
+lemmatizer = WordNetLemmatizer()
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -410,3 +416,22 @@ class ReviewView(APIView):
             return Response(
                 {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
             )
+        
+# Ingredient
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def createIngredient(request):
+    name = request.data['name'].lower()
+    if not (Ingredient.objects.filter(name=name)):
+        Ingredient.objects.create(name=name).save
+
+    return Response({"success": True})
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def updateUserProfile(request):
+    print(request.data['ingredient'])
+    print(request.data['isOwned'])
+
+    return Response({"success": True})

@@ -4,6 +4,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+class Ingredient(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Cuisine(models.Model):
     name = models.CharField(max_length=100)
 
@@ -99,3 +106,11 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review: {self.rating}"
+    
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    ownedIngredients = models.ManyToManyField('Ingredient', related_name="users", blank=True)
+    buyIngredients = models.ManyToManyField('Ingredient', blank=True)
+    
+    def __str__(self):
+        return self.user.username

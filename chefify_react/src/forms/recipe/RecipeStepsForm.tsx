@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { createRecipeStep } from "@/endpoints/api";
+
 const RecipeStepsForm = () => {
     const { recipeId } = useParams();
 
@@ -25,7 +26,8 @@ const RecipeStepsForm = () => {
 
     return (
         <div>
-            <form className="sm:w-4/5 lg:h-[calc(100vh-48px)] mx-auto sticky top-12 flex flex-col justify-center p-4 gap-4">
+            {/* <form className="sm:w-4/5 lg:h-[calc(100vh-48px)] mx-auto sticky top-12 flex flex-col justify-center p-4 gap-4"> */}
+            <form className="sm:w-4/5 mx-auto sticky top-12 flex flex-col justify-center p-4 gap-4">
                 <h1 className="font-bold text-xl">Add Steps to your Recipe</h1>
                 <div>
                     <label className="text-xl">Title</label>

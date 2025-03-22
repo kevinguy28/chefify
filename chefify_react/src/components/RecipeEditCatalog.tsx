@@ -43,6 +43,7 @@ const RecipeEditCatalog = () => {
                 currentPage={currentPage}
                 hasNext={hasNext}
                 hasPrevious={hasPrevious}
+                traverseMode={false}
                 editMode={true}
                 fetchRecipes={fetchRecipes}
             />

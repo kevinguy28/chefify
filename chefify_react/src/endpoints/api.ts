@@ -45,11 +45,19 @@ const RECIPE_STEPS_READ_URL = `${RECIPE_STEPS_URL}${READ_URL}`;
 const REVIEW_URL = (recipeId: string) =>
     `${BASE_URL}recipe/${recipeId}/review/`;
 
-//
+// Ingredient
+
+const INGREDIENT_URL = `${BASE_URL}ingredient/`;
+const INGREDIENT_READ_URL = (ingredientId: string) =>
+    `${INGREDIENT_URL}/${ingredientId}/`;
 
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
 const REGISTER_URL = `${BASE_URL}register/`;
+
+// User Profile
+
+const USER_PROFILE_URL = `${BASE_URL}user-profile/`;
 
 export const call_refresh = async (error: any, func: () => Promise<any>) => {
     if (error.response && error.response.status === 401) {
@@ -452,6 +460,48 @@ export const deleteReview = async (recipeId: string) => {
     } catch (error) {
         return await call_refresh(error, () =>
             axios.delete(REVIEW_URL(recipeId), { withCredentials: true })
+        );
+    }
+};
+
+// Ingredient
+
+export const createIngredient = async (name: string) => {
+    try {
+        console.log(name);
+        const response = await axios.post(
+            INGREDIENT_URL,
+            { name },
+            { withCredentials: true }
+        );
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.post(INGREDIENT_URL, { name }, { withCredentials: true })
+        );
+    }
+};
+
+// User Profile
+
+export const updateUserProfile = async (
+    ingredient: string,
+    isOwned: string
+) => {
+    try {
+        const response = await axios.patch(
+            USER_PROFILE_URL,
+            { ingredient, isOwned },
+            { withCredentials: true }
+        );
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(
+                USER_PROFILE_URL,
+                { ingredient, isOwned },
+                { withCredentials: true }
+            )
         );
     }
 };

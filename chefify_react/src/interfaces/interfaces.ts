@@ -62,6 +62,11 @@ export interface RecipeCatalogProps {
     currentPage: number;
     hasNext: boolean;
     hasPrevious: boolean;
+    traverseMode: boolean;
     editMode: boolean;
     fetchRecipes: (page: number) => Promise<void>;
+}
+
+export interface Ingredient {
+    name: string;
 }

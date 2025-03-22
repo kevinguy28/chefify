@@ -7,6 +7,7 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
     currentPage,
     hasNext,
     hasPrevious,
+    traverseMode,
     editMode,
     fetchRecipes,
 }) => {
@@ -17,7 +18,7 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
                     recipes.map((recipe) => (
                         <RecipeCard
                             recipe={recipe}
-                            traverseMode={true}
+                            traverseMode={traverseMode}
                             editMode={editMode}
                         />
                     ))}
