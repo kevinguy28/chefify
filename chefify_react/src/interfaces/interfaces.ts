@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, SetStateAction } from "react";
 
 export interface PrivateRouteProps {
     children: ReactNode;
@@ -69,4 +69,27 @@ export interface RecipeCatalogProps {
 
 export interface Ingredient {
     name: string;
+    id: number;
+}
+
+export interface ShoppingListFormProp {
+    isOwned: boolean;
+    setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface UserProfileIngredientListCardProp {
+    isOwned: boolean;
+}
+
+export interface DropDownMenuProp {
+    type:
+        | "dairy"
+        | "fruitsVegetables"
+        | "grains"
+        | "herbsSpices"
+        | "protein"
+        | "other";
+    ingredientList: Array<Ingredient>;
+    name: string;
+    suffix: string;
 }

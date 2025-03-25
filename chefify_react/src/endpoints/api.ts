@@ -57,7 +57,7 @@ const REGISTER_URL = `${BASE_URL}register/`;
 
 // User Profile
 
-const USER_PROFILE_URL = `${BASE_URL}user-profile/`;
+const USER_PROFILE_URL = `${BASE_URL}user-profile/ingredient/`;
 
 export const call_refresh = async (error: any, func: () => Promise<any>) => {
     if (error.response && error.response.status === 401) {
@@ -343,7 +343,6 @@ export const updateRecipeStep = async (
 };
 
 export const deleteRecipeStep = async (stepId: string) => {
-    // const url = `${RECIPE_STEP_DELETE_URL}${stepId}/`;
     try {
         const response = await axios.delete(STEP_URL(stepId), {
             withCredentials: true,
@@ -484,14 +483,32 @@ export const createIngredient = async (name: string) => {
 
 // User Profile
 
-export const updateUserProfile = async (
+export const getIngredientUserProfile = async (isOwned: string) => {
+    try {
+        const response = axios.get(USER_PROFILE_URL, {
+            withCredentials: true,
+            params: { isOwned },
+        });
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(USER_PROFILE_URL, {
+                withCredentials: true,
+                params: { isOwned },
+            })
+        );
+    }
+};
+
+export const updateIngredientUserProfile = async (
     ingredient: string,
+    ingredientType: string,
     isOwned: string
 ) => {
     try {
         const response = await axios.patch(
             USER_PROFILE_URL,
-            { ingredient, isOwned },
+            { ingredient, ingredientType, isOwned },
             { withCredentials: true }
         );
         return response;
@@ -499,9 +516,34 @@ export const updateUserProfile = async (
         return await call_refresh(error, () =>
             axios.patch(
                 USER_PROFILE_URL,
-                { ingredient, isOwned },
+                { ingredient, ingredientType, isOwned },
                 { withCredentials: true }
             )
+        );
+    }
+};
+
+export const deleteIngredientUserProfile = async (
+    isOwned: string,
+    id?: number,
+    ingredient?: string
+) => {
+    try {
+        const response = await axios.delete(USER_PROFILE_URL, {
+            withCredentials: true,
+            data: {
+                isOwned,
+                ...(id && { id }),
+                ...(ingredient && { ingredient }),
+            },
+        });
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(USER_PROFILE_URL, {
+                withCredentials: true,
+                data: { ingredient, isOwned },
+            })
         );
     }
 };

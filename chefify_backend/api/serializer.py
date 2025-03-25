@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Recipe, Cuisine, RecipeSteps, Review
+from .models import Recipe, Cuisine, RecipeSteps, Review, Ingredient, UserProfile
 
 class UserSerializer(ModelSerializer):
     class Meta:
@@ -47,3 +47,22 @@ class ReviewSerializer(ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+
+class IngredientSerializer(ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = '__all__'
+
+class UserProfileIngredientListSerializer(ModelSerializer):
+    ownedIngredients = IngredientSerializer(many=True)
+    buyIngredients = IngredientSerializer(many=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ['ownedIngredients', 'buyIngredients', 'id']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['ownedIngredients'] = sorted(representation['ownedIngredients'], key=lambda x: x['ingredientType'].lower())
+        representation['buyIngredients'] = sorted(representation['buyIngredients'], key=lambda x: x['ingredientType'].lower())
+        return representation

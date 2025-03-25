@@ -21,6 +21,13 @@
     --color-bg: #32373b;
     --color-dark: #4a5859;
     --color-dark-light: #576566a3;
+
+    --color-blue-dairy: #4287f5;
+    --color-green-fruitsVegetable: #0cb34c;
+    --color-yellow-grains: #d6bc3a;
+    --color-orange-herbsSpices: #ebb37f;
+    --color-red-protein: #e82727;
+    --color-purple-other: #a87be3;
 }
 
 :root {
@@ -38,7 +45,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.xxx {
+.scrollbar {
     &::-webkit-scrollbar {
         background-color: transparent;
         width: 6px;
@@ -48,9 +55,16 @@
     }
 }
 
-.xxx:hover {
+.scrollbar:hover {
     &::-webkit-scrollbar-thumb {
         background-color: rgba(235, 228, 208, 1);
+        border-radius: 10px;
+    }
+}
+
+.scrollbar-2:hover {
+    &::-webkit-scrollbar-thumb {
+        background-color: rgb(0, 0, 0);
         border-radius: 10px;
     }
 }

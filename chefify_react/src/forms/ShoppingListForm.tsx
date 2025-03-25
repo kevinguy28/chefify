@@ -1,39 +1,67 @@
 import { useEffect, useState } from "react";
-import { createIngredient, updateUserProfile } from "@/endpoints/api";
+import {
+    createIngredient,
+    updateIngredientUserProfile,
+    deleteIngredientUserProfile,
+} from "@/endpoints/api";
+import { ShoppingListFormProp } from "@/interfaces/interfaces";
 
-const ShoppingListForm = () => {
-    const [ingredient, setIngredient] = useState<string>("");
+const ShoppingListForm: React.FC<ShoppingListFormProp> = ({
+    isOwned,
+    setLoaded,
+}) => {
     const [ingredientAdd, setIngredientAdd] = useState<string>("");
+    const [ingredientType, setIngredientType] = useState<string>("other");
 
-    const submitIngredient = async () => {
-        const response = await createIngredient(ingredient);
-        if (response) {
-            console.log(response);
-        }
-    };
     const submitIngredientAdd = async () => {
-        const response = await updateUserProfile(ingredientAdd, "true");
+        setLoaded(false);
+        if (ingredientAdd.length === 0) {
+            alert("Please make sure the Ingredient you're adding has a name!");
+            return;
+        }
+        const response = await updateIngredientUserProfile(
+            ingredientAdd,
+            ingredientType,
+            isOwned.toString()
+        );
         if (response) {
-            console.log(response);
+            console.log("xp");
+            setLoaded(false);
         }
     };
 
     return (
-        <div>
+        <div className="h-auto">
             <input
-                className="w-full mt-60 p-4 bg-duck-yellow text-alt-text  rounded-xl"
-                placeholder="Name of Step"
-                type="text"
-                onChange={(e) => setIngredient(e.target.value)}
-            />
-            <div onClick={submitIngredient}>Submit</div>
-            <input
-                className="w-full mt-60 p-4 bg-duck-yellow text-alt-text  rounded-xl"
+                className="w-1/1 p-4 bg-dark-light text-white rounded-xl"
                 placeholder="Add Ingredient"
                 type="text"
                 onChange={(e) => setIngredientAdd(e.target.value)}
             />
-            <div onClick={submitIngredientAdd}>Add</div>
+            <div className="flex gap-4 mt-4">
+                <select
+                    className="w-4/5 p-4 bg-dark-light rounded-xl"
+                    name="selectIngredientType"
+                    onChange={(e) => setIngredientType(e.target.value)}
+                    value={ingredientType}
+                >
+                    <option value="other">Other</option>
+                    <option value="dairy">Dairy</option>
+                    <option value="fruitsVegetables">
+                        Fruits & Vegetables
+                    </option>
+                    <option value="grains">Grains</option>
+                    <option value="herbsSpices">Herbs & Spices</option>
+                    <option value="protein">Protein</option>
+                </select>
+
+                <div
+                    className="bg-pepper-green w-1/5 py-2 rounded-lg flex items-center justify-center"
+                    onClick={submitIngredientAdd}
+                >
+                    Add
+                </div>
+            </div>
         </div>
     );
 };

@@ -99,7 +99,6 @@ const Home = () => {
                 </div>
                 <div>
                     <RecipeForm />
-                    <ShoppingListForm />
                 </div>
             </div>
         </div>

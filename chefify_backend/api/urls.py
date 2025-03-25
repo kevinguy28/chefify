@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, readCuisines, readRecipes, readRecipe, createRecipe, updateRecipe, createRecipeStep, updateRecipeStepOrder, StepView, readRecipeSteps, ReviewView, register, createIngredient, updateUserProfile
+from .views import CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, readCuisines, readRecipes, readRecipe, createRecipe, updateRecipe, createRecipeStep, updateRecipeStepOrder, StepView, readRecipeSteps, ReviewView, register, createIngredient, UserProfileIngredientView
 
 urlpatterns = [
     path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -36,7 +36,7 @@ urlpatterns = [
 
     # User Profie
     
-    path('user-profile/', updateUserProfile),
-
+    path('user-profile/ingredient/', UserProfileIngredientView.as_view()),
+    
     path('register/', register),
 ]

@@ -7,7 +7,6 @@ const RecipeCard: React.FC<RecipeCardProp> = ({
     traverseMode,
     editMode,
 }) => {
-    console.log(window.location.pathname);
     return (
         <div key={recipe?.id} className="rounded-xl bg-dark w-90 mx-auto">
             <img

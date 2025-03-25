@@ -4,8 +4,8 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from .models import Recipe, RecipeSteps, Review, Ingredient
-from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer
+from .models import Recipe, RecipeSteps, Review, Ingredient, UserProfile
+from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer, UserProfileIngredientListSerializer, IngredientSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -160,8 +160,6 @@ def readRecipes(request):
         filters &= Q(privacy__icontains=privacy)
     if cuisine:
         filters &= Q(cuisine=cuisine)
-
-    print(filters)
 
     recipes = Recipe.objects.filter(filters)
     paginator = Paginator(recipes, 6)
@@ -327,7 +325,6 @@ class StepView(APIView):
     def delete(self, request, stepId):
         try:
             step = RecipeSteps.objects.get(id=stepId)
-            print(step)
             step.delete()
             return Response({"success": "Recipe step deleted successfully"}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -428,10 +425,60 @@ def createIngredient(request):
 
     return Response({"success": True})
 
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated])
-def updateUserProfile(request):
-    print(request.data['ingredient'])
-    print(request.data['isOwned'])
+# User Profile - Ingredient
 
-    return Response({"success": True})
+class UserProfileIngredientView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+        is_owned = request.GET.get('isOwned')
+        categories = {
+            "dairy": user_profile.buyIngredients.filter(ingredientType="dairy"),
+            "fruitsVegetables": user_profile.buyIngredients.filter(ingredientType="fruitsVegetables"),
+            "grains": user_profile.buyIngredients.filter(ingredientType="grains"),
+            "herbsSpices": user_profile.buyIngredients.filter(ingredientType="herbsSpices"),
+            "protein": user_profile.buyIngredients.filter(ingredientType="protein"),
+            "other": user_profile.buyIngredients.filter(ingredientType="other"),
+        }
+
+        # Serialize each category and format as list of dictionaries
+        serialized_data = [
+            {category: IngredientSerializer(ingredients, many=True).data}
+            for category, ingredients in categories.items()
+        ]
+
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        user = request.user
+        userProfile = UserProfile.objects.get(user=user)
+        is_owned = str(request.data.get('isOwned')).lower() == "true"
+        try:
+            ingredient = Ingredient.objects.get(name=request.data.get('ingredient'))
+        except Ingredient.DoesNotExist:
+            ingredient = Ingredient.objects.create(name=request.data.get('ingredient'), ingredientType=request.data.get('ingredientType'))
+            
+        if is_owned:
+            userProfile.ownedIngredients.add(ingredient)
+        else:
+            userProfile.buyIngredients.add(ingredient)
+
+        return Response({"success": True})
+    
+    def delete(self, request):
+        user = request.user
+        userProfile = UserProfile.objects.get(user=user)
+        userProfileIngredientList = userProfile.ownedIngredients if request.data.get('isowned') == "true" else userProfile.buyIngredients
+
+        try:
+            userProfileIngredientList.remove(Ingredient.objects.get(name=request.data.get('ingredient').lower()))
+        except:
+            userProfileIngredientList.remove(Ingredient.objects.get(id=request.data.get('id')))
+
+
+        return Response({"success": True})
+
+
+

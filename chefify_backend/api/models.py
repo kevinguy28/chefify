@@ -5,10 +5,24 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Ingredient(models.Model):
+    TYPE ={
+        "fruitsVegetables": "Fruits & Vegetables",
+        "protein": "Protein",
+        "grains": "Grains",
+        "dairy": "Dairy",
+        "herbsSpices": "Herbs & Spices",
+        "other": "Other"
+    }
     name = models.CharField(max_length=100)
+    ingredientType = models.CharField(max_length=30,choices=TYPE, default='other')
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'ingredientType'], name='unique_ingredient_name_type')
+        ]
+        
     def __str__(self):
-        return self.name
+        return self.name.capitalize() if self.name else "Unnamed Ingredient"
 
 
 class Cuisine(models.Model):
@@ -109,8 +123,8 @@ class Review(models.Model):
     
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    ownedIngredients = models.ManyToManyField('Ingredient', related_name="users", blank=True)
-    buyIngredients = models.ManyToManyField('Ingredient', blank=True)
+    ownedIngredients = models.ManyToManyField(Ingredient, related_name="owned_by", blank=True)
+    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
     
     def __str__(self):
         return self.user.username

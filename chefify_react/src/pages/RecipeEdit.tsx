@@ -30,7 +30,7 @@ const RecipeEdit = () => {
         <div>
             {recipe && (
                 <div className="sm:flex sm:flex-col lg:grid lg:grid-cols-[2fr_4fr_2fr] max-w-screen-xl mx-auto">
-                    <div className="xxx p-4 lg:max-h-screen overflow-y-auto scrollbar-custom">
+                    <div className="scrollbar p-4 lg:max-h-screen overflow-y-auto ">
                         <div className="sm:block lg:hidden">
                             <RecipeCard
                                 recipe={recipe}
@@ -40,7 +40,7 @@ const RecipeEdit = () => {
                         </div>
                         <RecipeEditForm recipe={recipe} setLoaded={setLoaded} />
                     </div>
-                    <div className="xxx p-4 max-h-screen overflow-y-auto scrollbar-custom">
+                    <div className="scrollbar-2 p-4 max-h-screen overflow-y-auto ">
                         <div className="sm:hidden lg:block mb-4">
                             <RecipeCard
                                 recipe={recipe}
