@@ -1,9 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-    createIngredient,
-    updateIngredientUserProfile,
-    deleteIngredientUserProfile,
-} from "@/endpoints/api";
+import { useState } from "react";
+import { updateIngredientUserProfile } from "@/endpoints/api";
 import { ShoppingListFormProp } from "@/interfaces/interfaces";
 
 const ShoppingListForm: React.FC<ShoppingListFormProp> = ({
@@ -14,7 +10,6 @@ const ShoppingListForm: React.FC<ShoppingListFormProp> = ({
     const [ingredientType, setIngredientType] = useState<string>("other");
 
     const submitIngredientAdd = async () => {
-        setLoaded(false);
         if (ingredientAdd.length === 0) {
             alert("Please make sure the Ingredient you're adding has a name!");
             return;
@@ -25,20 +20,19 @@ const ShoppingListForm: React.FC<ShoppingListFormProp> = ({
             isOwned.toString()
         );
         if (response) {
-            console.log("xp");
             setLoaded(false);
         }
     };
 
     return (
-        <div className="h-auto">
+        <div className="h-auto bg-bg p-4 rounded-lg">
             <input
                 className="w-1/1 p-4 bg-dark-light text-white rounded-xl"
                 placeholder="Add Ingredient"
                 type="text"
                 onChange={(e) => setIngredientAdd(e.target.value)}
             />
-            <div className="flex gap-4 mt-4">
+            <form className="flex gap-4 mt-4">
                 <select
                     className="w-4/5 p-4 bg-dark-light rounded-xl"
                     name="selectIngredientType"
@@ -55,13 +49,12 @@ const ShoppingListForm: React.FC<ShoppingListFormProp> = ({
                     <option value="protein">Protein</option>
                 </select>
 
-                <div
-                    className="bg-pepper-green w-1/5 py-2 rounded-lg flex items-center justify-center"
+                <input
+                    className="bg-pepper-green w-1/5 py-2 rounded-lg flex items-center justify-center text-center"
                     onClick={submitIngredientAdd}
-                >
-                    Add
-                </div>
-            </div>
+                    defaultValue={"Add"}
+                ></input>
+            </form>
         </div>
     );
 };

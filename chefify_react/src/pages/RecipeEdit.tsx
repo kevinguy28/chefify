@@ -6,6 +6,8 @@ import RecipeCard from "@/components/RecipeCard";
 import { Recipe } from "@/interfaces/interfaces";
 import { readRecipe } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
+import RecipeIngredientForm from "@/forms/recipe/RecipeIngredientForm";
+import RecipeComponentDisplay from "@/display/RecipeComponentDisplay";
 
 const RecipeEdit = () => {
     const { recipeId } = useParams();
@@ -29,7 +31,7 @@ const RecipeEdit = () => {
     return (
         <div>
             {recipe && (
-                <div className="sm:flex sm:flex-col lg:grid lg:grid-cols-[2fr_4fr_2fr] max-w-screen-xl mx-auto">
+                <div className="sm:flex sm:flex-col lg:grid lg:grid-cols-[3fr_4fr_3fr] max-w-screen-xl mx-auto">
                     <div className="scrollbar p-4 lg:max-h-screen overflow-y-auto ">
                         <div className="sm:block lg:hidden">
                             <RecipeCard
@@ -40,7 +42,7 @@ const RecipeEdit = () => {
                         </div>
                         <RecipeEditForm recipe={recipe} setLoaded={setLoaded} />
                     </div>
-                    <div className="scrollbar-2 p-4 max-h-screen overflow-y-auto ">
+                    <div className="scrollbar p-4 max-h-screen overflow-y-auto ">
                         <div className="sm:hidden lg:block mb-4">
                             <RecipeCard
                                 recipe={recipe}
@@ -48,10 +50,13 @@ const RecipeEdit = () => {
                                 editMode={false}
                             />
                         </div>
+                        <RecipeComponentDisplay recipe={recipe} />
                         <RecipeStepsDisplay edit={true} />
                     </div>
                     <div>
                         <RecipeStepsForm />
+
+                        {recipe && <RecipeIngredientForm recipe={recipe} />}
                     </div>
                 </div>
             )}

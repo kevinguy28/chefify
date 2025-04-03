@@ -4,9 +4,12 @@ import { UserProfileIngredientListCardProp } from "@/interfaces/interfaces";
 import React, { useState, useEffect } from "react";
 import DropDownMenu from "./DropDownMenu";
 
+import cart from "@/assets/cart.png";
+import checkmark from "@/assets/checkmark.png";
+
 const UserProfileIngredientListCard: React.FC<
     UserProfileIngredientListCardProp
-> = ({ isOwned }) => {
+> = ({ isOwned, suffix, refresh, setRefresh }) => {
     const [loaded, setLoaded] = useState<boolean>(false);
     const [dairy, setDairy] = useState<Array<any>>([]);
     const [fruitsVegetable, setFruitsVegetables] = useState<Array<any>>([]);
@@ -18,7 +21,7 @@ const UserProfileIngredientListCard: React.FC<
     const fetchIngredients = async () => {
         const response = await getIngredientUserProfile(isOwned.toString());
         if (response) {
-            console.log("hereee");
+            console.log(response.data[0]["dairy"]);
             setDairy(response.data[0]["dairy"]);
             setFruitsVegetables(response.data[1]["fruitsVegetables"]);
             setGrains(response.data[2]["grains"]);
@@ -34,50 +37,73 @@ const UserProfileIngredientListCard: React.FC<
         }
     }, [loaded]);
 
+    useEffect(() => {
+        if (refresh) {
+            fetchIngredients().then(() => setRefresh(false));
+        }
+    }, [refresh]);
+
     return (
-        <div className="bg-dark h-180 w-100 p-4 flex flex-col">
-            <h1 className="text-4xl underline mb-4">
-                {isOwned ? "Owned List" : "Shopping List"}
-            </h1>
-            <div className="grow overflow-y-auto scrollbar scrollbar-2 mb-8">
+        <div className="bg-dark h-180 w-100 p-4 flex flex-col rounded-lg">
+            <div className="text-4xl flex flex-row justify-between items-center h-16 bg-bg p-4 mb-4 rounded-t-lg">
+                <h1>{isOwned ? "Stocked Items" : "Shopping List"}</h1>
+                {isOwned ? (
+                    <img className="h-1/1 invert" src={checkmark}></img>
+                ) : (
+                    <img className="h-1/1 invert" src={cart}></img>
+                )}
+            </div>
+            <div className="grow overflow-y-auto scrollbar scrollbar-2 mb-8 max-w-1/1">
                 <DropDownMenu
                     ingredientList={dairy}
                     type={"dairy"}
                     name={"Dairy"}
-                    suffix={"sl"}
+                    suffix={suffix}
+                    isOwned={isOwned}
+                    setRefresh={setRefresh}
                 />
                 <DropDownMenu
                     ingredientList={fruitsVegetable}
                     type={"fruitsVegetables"}
                     name={"Fruits & Vegetables"}
-                    suffix={"sl"}
+                    suffix={suffix}
+                    isOwned={isOwned}
+                    setRefresh={setRefresh}
                 />
                 <DropDownMenu
                     ingredientList={grains}
                     type={"grains"}
                     name={"Grains"}
-                    suffix={"sl"}
+                    suffix={suffix}
+                    isOwned={isOwned}
+                    setRefresh={setRefresh}
                 />
                 <DropDownMenu
                     ingredientList={herbsSpices}
                     type={"herbsSpices"}
                     name={"Herbs & Spices"}
-                    suffix={"sl"}
+                    suffix={suffix}
+                    isOwned={isOwned}
+                    setRefresh={setRefresh}
                 />
                 <DropDownMenu
                     ingredientList={protein}
                     type={"protein"}
                     name={"Protein"}
-                    suffix={"sl"}
+                    suffix={suffix}
+                    isOwned={isOwned}
+                    setRefresh={setRefresh}
                 />
                 <DropDownMenu
                     ingredientList={other}
                     type={"other"}
                     name={"Other"}
-                    suffix={"sl"}
+                    suffix={suffix}
+                    isOwned={isOwned}
+                    setRefresh={setRefresh}
                 />
             </div>
-            <ShoppingListForm isOwned={false} setLoaded={setLoaded} />
+            <ShoppingListForm isOwned={isOwned} setLoaded={setLoaded} />
         </div>
     );
 };

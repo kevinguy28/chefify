@@ -25,7 +25,6 @@ const RecipeEditCatalog = () => {
             setHasNext(response.hasNext);
             setHasPrevious(response.hasPrevious);
             setRecipes(response.recipes);
-            console.log(response.recipes);
         }
     };
 

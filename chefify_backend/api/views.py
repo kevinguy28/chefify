@@ -4,8 +4,8 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from .models import Recipe, RecipeSteps, Review, Ingredient, UserProfile
-from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer, UserProfileIngredientListSerializer, IngredientSerializer
+from .models import Recipe, RecipeSteps, Review, Ingredient, UserProfile, RecipeIngredient, RecipeComponent
+from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer, UserProfileIngredientListSerializer, IngredientSerializer, RecipeIngredientSerializer, RecipeComponentSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -19,6 +19,7 @@ from rest_framework_simplejwt.views import (
 
 from .models import Recipe, Cuisine
 
+from .functions import capitalize
 
 import nltk
 # nltk.download('wordnet')
@@ -434,13 +435,18 @@ class UserProfileIngredientView(APIView):
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
         is_owned = request.GET.get('isOwned')
+        if(is_owned == "true"):
+            user_profile = user_profile.ownedIngredients
+        else:
+            user_profile = user_profile.buyIngredients
+
         categories = {
-            "dairy": user_profile.buyIngredients.filter(ingredientType="dairy"),
-            "fruitsVegetables": user_profile.buyIngredients.filter(ingredientType="fruitsVegetables"),
-            "grains": user_profile.buyIngredients.filter(ingredientType="grains"),
-            "herbsSpices": user_profile.buyIngredients.filter(ingredientType="herbsSpices"),
-            "protein": user_profile.buyIngredients.filter(ingredientType="protein"),
-            "other": user_profile.buyIngredients.filter(ingredientType="other"),
+            "dairy": user_profile.filter(ingredientType="dairy"),
+            "fruitsVegetables": user_profile.filter(ingredientType="fruitsVegetables"),
+            "grains": user_profile.filter(ingredientType="grains"),
+            "herbsSpices": user_profile.filter(ingredientType="herbsSpices"),
+            "protein": user_profile.filter(ingredientType="protein"),
+            "other": user_profile.filter(ingredientType="other"),
         }
 
         # Serialize each category and format as list of dictionaries
@@ -456,9 +462,9 @@ class UserProfileIngredientView(APIView):
         userProfile = UserProfile.objects.get(user=user)
         is_owned = str(request.data.get('isOwned')).lower() == "true"
         try:
-            ingredient = Ingredient.objects.get(name=request.data.get('ingredient'))
+            ingredient = Ingredient.objects.get(name=request.data.get('ingredient'), ingredientType=request.data.get('ingredientType'))
         except Ingredient.DoesNotExist:
-            ingredient = Ingredient.objects.create(name=request.data.get('ingredient'), ingredientType=request.data.get('ingredientType'))
+            ingredient = Ingredient.objects.create(name=capitalize(request.data.get('ingredient').lower()), ingredientType=request.data.get('ingredientType'))
             
         if is_owned:
             userProfile.ownedIngredients.add(ingredient)
@@ -470,7 +476,7 @@ class UserProfileIngredientView(APIView):
     def delete(self, request):
         user = request.user
         userProfile = UserProfile.objects.get(user=user)
-        userProfileIngredientList = userProfile.ownedIngredients if request.data.get('isowned') == "true" else userProfile.buyIngredients
+        userProfileIngredientList = userProfile.ownedIngredients if request.data.get('isOwned') == "true" else userProfile.buyIngredients
 
         try:
             userProfileIngredientList.remove(Ingredient.objects.get(name=request.data.get('ingredient').lower()))
@@ -479,6 +485,90 @@ class UserProfileIngredientView(APIView):
 
 
         return Response({"success": True})
+    
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def UserProfileIngredientMove(request):
+    user = request.user
+    userProfile = UserProfile.objects.get(user=user)
+    ingredient = Ingredient.objects.get(id=request.data.get('id'))
+    isOwned = request.data.get("isOwned")
+    
+    if(isOwned == "true"):
+            userProfile.ownedIngredients.remove(ingredient)
+            userProfile.buyIngredients.add(ingredient)
+    else:
+            userProfile.buyIngredients.remove(ingredient)
+            userProfile.ownedIngredients.add(ingredient)
 
+    return Response({"success": True})
 
+# User Ingredient View
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getRecipeIngredient(request, recipeId):
+    recipe = Recipe.objects.get(id=recipeId)
+    componentId = request.GET.get('componentId')
+    recipeComponent = RecipeComponent.objects.get(id=componentId)
+    recipeIngredient = RecipeIngredient.objects.filter(recipe=recipe, recipeComponent=recipeComponent)
+    serializer = RecipeIngredientSerializer(recipeIngredient, many=True)
+    return Response(serializer.data, status=200)
+
+class RecipeIngredientView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        recipeId = request.data.get('recipeId')
+        if not(Recipe.objects.get(id=recipeId).user == request.user):
+           return Response({"error": "You are not authorized to modify this recipe."}, status=403)
+        recipe = Recipe.objects.get(id=recipeId)
+
+        ingredientName = request.data.get("ingredient")
+        ingredientType = request.data.get("ingredientType")
+
+        quantity = request.data.get('quantity')
+
+        if(quantity <= 0):
+            return Response({"success": False})
+        
+        try: 
+            ingredient = Ingredient.objects.get(name=ingredientName, ingredientType = ingredientType)
+        except Ingredient.DoesNotExist:
+            ingredient = Ingredient.objects.create(name=ingredientName, ingredientType=ingredientType)
+
+        unit = request.data.get('unit')
+        recipeIngredient = RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient, quantity=quantity, unit=unit)
+        serializer = RecipeIngredientSerializer(recipeIngredient)
+        return Response(serializer.data, status=200)
+    
+# Recipe Component
+
+class RecipeComponentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, recipeId):
+        print("hio")
+        recipe = Recipe.objects.get(id=recipeId)
+        recipeComponent = RecipeComponent.objects.filter(recipe=recipe)
+        serializer = RecipeComponentSerializer(recipeComponent, many=True)
+        print(serializer.data)
+        return Response(serializer.data, status=200)
+
+    def post(self, request, recipeId):
+        recipeComponentName = request.data['recipeComponentName']
+        recipeComponentDesc = request.data['recipeComponentDescription']
+        recipe = Recipe.objects.get(id=recipeId)
+        recipeComponent = RecipeComponent.objects.create(name=recipeComponentName, description=recipeComponentDesc,recipe=recipe)
+        serializer = RecipeComponentSerializer(recipeComponent)
+
+        return Response(serializer.data, status=200)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def deleteRecipeComponent(request, componentId):
+    user = request.user
+    recipeComponent = RecipeComponent.objects.get(id=componentId)
+    if(recipeComponent.recipe.user == user):
+        recipeComponent.delete()
+    return Response({"success": True})

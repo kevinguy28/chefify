@@ -26,6 +26,14 @@ export interface Recipe {
     image?: string;
 }
 
+export interface RecipeComponent {
+    id: number;
+    name: string;
+    recipe: Recipe;
+    description: string;
+    order: number;
+}
+
 export interface RecipeEditFormProps {
     recipe: Recipe | null;
     setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
@@ -79,6 +87,9 @@ export interface ShoppingListFormProp {
 
 export interface UserProfileIngredientListCardProp {
     isOwned: boolean;
+    suffix: "own" | "sl";
+    refresh: boolean;
+    setRefresh: React.Dispatch<SetStateAction<boolean>>;
 }
 
 export interface DropDownMenuProp {
@@ -92,4 +103,33 @@ export interface DropDownMenuProp {
     ingredientList: Array<Ingredient>;
     name: string;
     suffix: string;
+    isOwned: boolean;
+    setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface UnitProp {
+    unit:
+        | "tbsp"
+        | "tsp"
+        | "cup"
+        | "oz"
+        | "g"
+        | "kg"
+        | "ml"
+        | "L"
+        | "pinch"
+        | "dish";
+}
+
+export interface RecipeIngredientFormProp {
+    recipe: Recipe;
+}
+
+export interface RecipeComponentDisplayProp {
+    recipe: Recipe;
+}
+
+export interface RecipeComponentCardProp {
+    component: RecipeComponent;
+    updateRecipeComponents: (componentId: number) => Promise<void>;
 }

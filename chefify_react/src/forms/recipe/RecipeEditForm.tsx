@@ -111,7 +111,7 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 <hr />
                 <br />
                 <select
-                    className="w-full  p-4 bg-duck-yellow text-alt-text rounded-xl"
+                    className="w-full p-4 bg-duck-yellow text-alt-text rounded-xl"
                     name="selectPrivacy"
                     onChange={(e) => setRecipePrivacy(e.target.value)}
                     value={recipePrivacy}
@@ -175,7 +175,7 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                             <img
                                 src={`${recipeImageUrl}`}
                                 alt="Uploaded Recipe"
-                                className="sm:w-90 h-50 rounded-lg mx-auto" // Add your desired styles
+                                className="sm:w-90 h-50 rounded-lg mx-auto"
                             />
                         </div>
                     </>

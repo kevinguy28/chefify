@@ -24,7 +24,6 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name.capitalize() if self.name else "Unnamed Ingredient"
 
-
 class Cuisine(models.Model):
     name = models.CharField(max_length=100)
 
@@ -46,6 +45,7 @@ class Recipe(models.Model):
     privacy = models.CharField(max_length=15, choices=STATUS_CHOICES, default='private')
     description = models.TextField(max_length=400, blank=True)
     image = models.ImageField(upload_to='images/recipes/', blank=True, null=True)
+    ingredients = models.ManyToManyField("Ingredient", through="RecipeIngredient", blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -120,11 +120,56 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review: {self.rating}"
-    
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ownedIngredients = models.ManyToManyField(Ingredient, related_name="owned_by", blank=True)
     buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
-    
+
     def __str__(self):
         return self.user.username
+    
+class RecipeComponent(models.Model):
+    name = models.CharField(max_length=255)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    description = models.TextField(null=True, blank=True)
+    order = models.PositiveIntegerField(blank=True, null=True)
+
+    class Meta:
+        ordering = ["order"]
+
+    def save(self, *args, **kwargs):
+        if not self.order:
+            last_order = RecipeComponent.objects.filter(recipe=self.recipe).aggregate(models.Max("order"))["order__max"]
+            self.order = (last_order + 1) if last_order else 1
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        RecipeComponent.objects.filter(order__gt=self.order).update(order=F('order') - 1)
+        super(RecipeComponent, self).delete(*args, **kwargs)
+
+    def __str__(self):
+        return("Step-"+ str(self.order) + ": " + self.name[0:30])
+    
+class RecipeIngredient(models.Model):
+    UNIT_CHOICES = {
+        'tbsp': 'Tablespoon',
+        'tsp': 'Teaspoon',
+        'cup': 'Cup',
+        'oz': 'Ounce',
+        'g': 'Gram',
+        'kg': 'Kilogram',
+        'ml': 'Milliliter',
+        'L':'Liter',
+        'pinch': 'Pinch',
+        'dash': 'Dash',
+    }
+    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='units')
+    unit = models.CharField(max_length=15, choices=UNIT_CHOICES)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    recipeComponent = models.ForeignKey(RecipeComponent, related_name="ingredients", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.quantity} {self.unit} {self.ingredient.name} in {self.recipe.name}"
+    

@@ -23,11 +23,17 @@
     --color-dark-light: #576566a3;
 
     --color-blue-dairy: #4287f5;
-    --color-green-fruitsVegetable: #0cb34c;
+    --color-blue-dairy-light: #5d98f5;
+    --color-green-fruitsVegetables: #0cb34c;
+    --color-green-fruitsVegetables-light: #36cf70;
     --color-yellow-grains: #d6bc3a;
-    --color-orange-herbsSpices: #ebb37f;
+    --color-yellow-grains-light: #d1c482;
+    --color-orange-herbsSpices: #e38834;
+    --color-orange-herbsSpices-light: #e39954;
     --color-red-protein: #e82727;
+    --color-red-protein-light: #ed4e4e;
     --color-purple-other: #a87be3;
+    --color-purple-other-light: #b591e6;
 }
 
 :root {
@@ -62,7 +68,7 @@
     }
 }
 
-.scrollbar-2:hover {
+.scrollbar2:hover {
     &::-webkit-scrollbar-thumb {
         background-color: rgb(0, 0, 0);
         border-radius: 10px;

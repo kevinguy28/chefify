@@ -1,4 +1,6 @@
+import RecipeEditCatalog from "@/components/RecipeEditCatalog";
 import axios from "axios";
+import { Component } from "react";
 const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
 const READ_URL = "read/";
@@ -58,6 +60,23 @@ const REGISTER_URL = `${BASE_URL}register/`;
 // User Profile
 
 const USER_PROFILE_URL = `${BASE_URL}user-profile/ingredient/`;
+const USER_PROFILE_URL_MOVE = `${BASE_URL}user-profile/ingredient/move/`;
+
+// Recipe Ingredient
+
+const RECIPE_INGREDIENT_URL = `${BASE_URL}recipe/ingredient/`;
+const RECIPE_INGREDIENT_URL_GET = (recipeId: number) =>
+    `${BASE_URL}recipe/ingredient/${recipeId}`;
+
+// Recipe Component
+
+const RECIPE_COMPONENT_URL = (recipeId: string) =>
+    `${BASE_URL}recipe/${recipeId}/component/`;
+
+const RECIPE_COMPONENT_DELETE_URL = (componentId: string) =>
+    `${BASE_URL}recipe/component/${componentId}/`;
+
+// ------------------------------------------------------------
 
 export const call_refresh = async (error: any, func: () => Promise<any>) => {
     if (error.response && error.response.status === 401) {
@@ -467,7 +486,6 @@ export const deleteReview = async (recipeId: string) => {
 
 export const createIngredient = async (name: string) => {
     try {
-        console.log(name);
         const response = await axios.post(
             INGREDIENT_URL,
             { name },
@@ -543,6 +561,129 @@ export const deleteIngredientUserProfile = async (
             axios.patch(USER_PROFILE_URL, {
                 withCredentials: true,
                 data: { ingredient, isOwned },
+            })
+        );
+    }
+};
+
+export const moveIngredientsUserProfile = async (
+    isOwned: string,
+    id: number
+) => {
+    try {
+        const response = await axios.patch(
+            USER_PROFILE_URL_MOVE,
+            { isOwned, id },
+            { withCredentials: true }
+        );
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(
+                USER_PROFILE_URL_MOVE,
+                { isOwned, id },
+                { withCredentials: true }
+            )
+        );
+    }
+};
+
+// Recipe Ingredient
+
+export const getRecipeIngredients = async (
+    recipeId: number,
+    componentId: number
+) => {
+    try {
+        const response = await axios.get(RECIPE_INGREDIENT_URL_GET(recipeId), {
+            params: { componentId },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(RECIPE_INGREDIENT_URL_GET(recipeId), {
+                params: { componentId },
+                withCredentials: true,
+            })
+        );
+    }
+};
+
+export const createRecipeIngredient = async (
+    quantity: number,
+    unit: string,
+    ingredient: string,
+    ingredientType: string,
+    recipeId: number
+) => {
+    try {
+        const response = await axios.post(
+            RECIPE_INGREDIENT_URL,
+            { quantity, unit, ingredient, ingredientType, recipeId },
+            { withCredentials: true }
+        );
+        return response;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.post(
+                RECIPE_INGREDIENT_URL,
+                { quantity, unit, ingredient, ingredientType, recipeId },
+                { withCredentials: true }
+            )
+        );
+    }
+};
+
+// Recipe Component
+
+export const getRecipeComponent = async (recipeId: string) => {
+    try {
+        const response = await axios.get(RECIPE_COMPONENT_URL(recipeId), {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(RECIPE_COMPONENT_URL(recipeId), { withCredentials: true })
+        );
+    }
+};
+
+export const createRecipeComponent = async (
+    recipeComponentName: string,
+    recipeComponentDescription: string,
+    recipeId: string
+) => {
+    try {
+        const response = await axios.post(
+            RECIPE_COMPONENT_URL(recipeId),
+            { recipeComponentName, recipeComponentDescription },
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.post(
+                RECIPE_COMPONENT_URL(recipeId),
+                { recipeComponentName, recipeComponentDescription },
+                { withCredentials: true }
+            )
+        );
+    }
+};
+
+export const deleteRecipeComponent = async (componentId: string) => {
+    try {
+        const response = await axios.delete(
+            RECIPE_COMPONENT_DELETE_URL(componentId.toString()),
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.delete(RECIPE_COMPONENT_DELETE_URL(componentId.toString()), {
+                withCredentials: true,
             })
         );
     }
