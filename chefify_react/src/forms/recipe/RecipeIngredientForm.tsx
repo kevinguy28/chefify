@@ -4,6 +4,9 @@ import { RecipeIngredientFormProp } from "@/interfaces/interfaces";
 
 const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
     recipe,
+    recipeComponents,
+    updateRecipeComponentsAdd,
+    fetchRecipeComponents,
 }) => {
     const UNIT_CHOICES: Record<string, string> = {
         tbsp: "Tablespoon",
@@ -25,7 +28,7 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
     const [recipeComponentName, setRecipeComponentName] = useState<string>("");
     const [recipeComponentDescription, setRecipeComponentDescription] =
         useState<string>("");
-    const [recipeComponents, setRecipeComponents] = useState<Array<any>>([]);
+    const [componentId, setComponentId] = useState<string>("");
 
     const isValidNumber = (value: string) => {
         const num = parseFloat(value);
@@ -41,7 +44,7 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                 recipe.id.toString()
             );
             if (response) {
-                console.log(response);
+                updateRecipeComponentsAdd(response);
             }
         } else {
             alert(
@@ -52,17 +55,18 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
 
     const handleSubmitRecipeIngredient = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (isValidNumber(quantity) && ingredient.length > 0) {
             const response = await createRecipeIngredient(
                 parseFloat(quantity),
                 unit,
                 ingredient,
                 ingredientType,
-                recipe.id
+                recipe.id,
+                componentId
             );
             if (response) {
-                console.log(response);
+                console.log(response.data);
+                fetchRecipeComponents();
             }
         } else {
             alert(
@@ -71,11 +75,11 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
         }
     };
 
-    const fetchRecipeComponents = async () => {
-        console.log("hello");
-    };
-
-    useEffect(() => {}, []);
+    useEffect(() => {
+        if (recipeComponents.length > 0) {
+            setComponentId(recipeComponents[0].id.toString());
+        }
+    }, [recipeComponents]);
 
     return (
         <>
@@ -101,6 +105,7 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                     value="Submit Recipe Component"
                 />
             </form>
+
             <form className="space-y-4" onSubmit={handleSubmitRecipeIngredient}>
                 <input
                     className="w-4/5 p-4 bg-duck-yellow rounded-xl mx-auto text-alt-text"
@@ -143,6 +148,19 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                     <option value="grains">Grains</option>
                     <option value="herbsSpices">Herbs & Spices</option>
                     <option value="protein">Protein</option>
+                </select>
+                <select
+                    className="w-4/5 p-4 bg-dark-light rounded-xl"
+                    name="selectRecipeComponents"
+                    onChange={(e) => setComponentId(e.target.value)}
+                    value={componentId}
+                >
+                    {recipeComponents &&
+                        recipeComponents.map((comp) => (
+                            <option value={comp.id.toString()}>
+                                {comp.name}
+                            </option>
+                        ))}
                 </select>
                 <input
                     className="sm:w-4/5 lg:w-full py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg mx-auto"

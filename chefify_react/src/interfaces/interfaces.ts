@@ -123,10 +123,15 @@ export interface UnitProp {
 
 export interface RecipeIngredientFormProp {
     recipe: Recipe;
+    recipeComponents: Array<any>;
+    updateRecipeComponentsAdd: (component: RecipeComponent) => Promise<void>;
+    fetchRecipeComponents: () => Promise<void>;
 }
 
 export interface RecipeComponentDisplayProp {
     recipe: Recipe;
+    updateRecipeComponents: (componentId: number) => Promise<void>;
+    recipeComponents: Array<any>;
 }
 
 export interface RecipeComponentCardProp {

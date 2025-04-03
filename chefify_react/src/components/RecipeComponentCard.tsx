@@ -4,6 +4,7 @@ import { getRecipeIngredients, deleteRecipeComponent } from "@/endpoints/api";
 
 const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     component,
+    updateRecipeComponents,
 }) => {
     const [recipeIngredients, setRecipeIngredients] = useState<Array<any>>([]);
 
@@ -20,7 +21,7 @@ const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     const handleDeleteCard = async () => {
         const response = await deleteRecipeComponent(component.id.toString());
         if (response) {
-            console.log("as");
+            updateRecipeComponents(component.id);
         }
     };
 

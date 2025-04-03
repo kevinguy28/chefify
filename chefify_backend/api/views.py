@@ -532,13 +532,19 @@ class RecipeIngredientView(APIView):
         if(quantity <= 0):
             return Response({"success": False})
         
+        componentId = request.data.get('componentId')
+        try:
+            recipeComponent = RecipeComponent.objects.get(id=componentId)
+        except RecipeComponent.DoesNotExist:
+            return Response({"success": False})
+        
         try: 
             ingredient = Ingredient.objects.get(name=ingredientName, ingredientType = ingredientType)
         except Ingredient.DoesNotExist:
             ingredient = Ingredient.objects.create(name=ingredientName, ingredientType=ingredientType)
 
         unit = request.data.get('unit')
-        recipeIngredient = RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient, quantity=quantity, unit=unit)
+        recipeIngredient = RecipeIngredient.objects.create(recipe=recipe, ingredient=ingredient, quantity=quantity, unit=unit, recipeComponent=recipeComponent)
         serializer = RecipeIngredientSerializer(recipeIngredient)
         return Response(serializer.data, status=200)
     

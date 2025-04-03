@@ -3,8 +3,8 @@ import RecipeEditForm from "@/forms/recipe/RecipeEditForm";
 import RecipeStepsForm from "@/forms/recipe/RecipeStepsForm";
 import RecipeStepsDisplay from "@/display/RecipeStepsDisplay";
 import RecipeCard from "@/components/RecipeCard";
-import { Recipe } from "@/interfaces/interfaces";
-import { readRecipe } from "@/endpoints/api";
+import { Recipe, RecipeComponent } from "@/interfaces/interfaces";
+import { readRecipe, getRecipeComponent } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
 import RecipeIngredientForm from "@/forms/recipe/RecipeIngredientForm";
 import RecipeComponentDisplay from "@/display/RecipeComponentDisplay";
@@ -13,6 +13,7 @@ const RecipeEdit = () => {
     const { recipeId } = useParams();
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
+    const [recipeComponents, setRecipeComponents] = useState<Array<any>>([]);
 
     const fetchRecipe = async () => {
         const response = await readRecipe(String(recipeId));
@@ -22,11 +23,38 @@ const RecipeEdit = () => {
         }
     };
 
+    const fetchRecipeComponents = async () => {
+        console.log("x");
+        if (recipe) {
+            console.log("ran");
+            const response = await getRecipeComponent(recipe.id.toString());
+            if (response) {
+                console.log("paste");
+                setRecipeComponents(response);
+            }
+        }
+    };
+
+    const updateRecipeComponents = async (componentId: number) => {
+        setRecipeComponents(
+            recipeComponents.filter((component) => component.id !== componentId)
+        );
+    };
+
+    const updateRecipeComponentsAdd = async (component: RecipeComponent) => {
+        setRecipeComponents([...recipeComponents, component]);
+        console.log("gag");
+    };
+
     useEffect(() => {
         if (!loaded) {
             fetchRecipe();
         }
     }, [loaded]);
+
+    useEffect(() => {
+        fetchRecipeComponents();
+    }, [recipe]);
 
     return (
         <div>
@@ -50,13 +78,26 @@ const RecipeEdit = () => {
                                 editMode={false}
                             />
                         </div>
-                        <RecipeComponentDisplay recipe={recipe} />
+                        <RecipeComponentDisplay
+                            recipe={recipe}
+                            updateRecipeComponents={updateRecipeComponents}
+                            recipeComponents={recipeComponents}
+                        />
                         <RecipeStepsDisplay edit={true} />
                     </div>
                     <div>
                         <RecipeStepsForm />
 
-                        {recipe && <RecipeIngredientForm recipe={recipe} />}
+                        {recipe && (
+                            <RecipeIngredientForm
+                                recipe={recipe}
+                                recipeComponents={recipeComponents}
+                                updateRecipeComponentsAdd={
+                                    updateRecipeComponentsAdd
+                                }
+                                fetchRecipeComponents={fetchRecipeComponents}
+                            />
+                        )}
                     </div>
                 </div>
             )}

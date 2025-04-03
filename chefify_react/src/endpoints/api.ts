@@ -615,12 +615,20 @@ export const createRecipeIngredient = async (
     unit: string,
     ingredient: string,
     ingredientType: string,
-    recipeId: number
+    recipeId: number,
+    componentId: string
 ) => {
     try {
         const response = await axios.post(
             RECIPE_INGREDIENT_URL,
-            { quantity, unit, ingredient, ingredientType, recipeId },
+            {
+                quantity,
+                unit,
+                ingredient,
+                ingredientType,
+                recipeId,
+                componentId,
+            },
             { withCredentials: true }
         );
         return response;
@@ -628,7 +636,14 @@ export const createRecipeIngredient = async (
         return await call_refresh(error, () =>
             axios.post(
                 RECIPE_INGREDIENT_URL,
-                { quantity, unit, ingredient, ingredientType, recipeId },
+                {
+                    quantity,
+                    unit,
+                    ingredient,
+                    ingredientType,
+                    recipeId,
+                    componentId,
+                },
                 { withCredentials: true }
             )
         );
