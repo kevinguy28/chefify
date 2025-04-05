@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { RecipeComponentDisplayProp } from "@/interfaces/interfaces";
-import { getRecipeComponent } from "@/endpoints/api";
 import RecipeComponentCard from "@/components/RecipeComponentCard";
 const RecipeComponentDisplay: React.FC<RecipeComponentDisplayProp> = ({
-    recipe,
     updateRecipeComponents,
     recipeComponents,
+    fetchIngredients,
+    setFetchIngredients,
 }) => {
     return (
         <div className="px-4 sm:w-4/5 lg:w-full mx-auto ">
@@ -14,6 +14,8 @@ const RecipeComponentDisplay: React.FC<RecipeComponentDisplayProp> = ({
                     <RecipeComponentCard
                         component={component}
                         updateRecipeComponents={updateRecipeComponents}
+                        fetchIngredients={fetchIngredients}
+                        setFetchIngredients={setFetchIngredients}
                     />
                 ))}
         </div>

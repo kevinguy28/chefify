@@ -125,16 +125,19 @@ export interface RecipeIngredientFormProp {
     recipe: Recipe;
     recipeComponents: Array<any>;
     updateRecipeComponentsAdd: (component: RecipeComponent) => Promise<void>;
-    fetchRecipeComponents: () => Promise<void>;
+    setFetchIngredients: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface RecipeComponentDisplayProp {
-    recipe: Recipe;
     updateRecipeComponents: (componentId: number) => Promise<void>;
     recipeComponents: Array<any>;
+    fetchIngredients: boolean;
+    setFetchIngredients: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface RecipeComponentCardProp {
     component: RecipeComponent;
     updateRecipeComponents: (componentId: number) => Promise<void>;
+    fetchIngredients: boolean;
+    setFetchIngredients: React.Dispatch<React.SetStateAction<boolean>>;
 }

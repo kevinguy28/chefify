@@ -65,8 +65,10 @@ const USER_PROFILE_URL_MOVE = `${BASE_URL}user-profile/ingredient/move/`;
 // Recipe Ingredient
 
 const RECIPE_INGREDIENT_URL = `${BASE_URL}recipe/ingredient/`;
-const RECIPE_INGREDIENT_URL_GET = (recipeId: number) =>
-    `${BASE_URL}recipe/ingredient/${recipeId}`;
+const RECIPE_INGREDIENT_GET_URL = (recipeId: number) =>
+    `${BASE_URL}recipe/${recipeId}/ingredient/`;
+const RECIPE_INGREDIENT_DELETE_URL = (ingredientId: number) =>
+    `${BASE_URL}recipe/ingredient/${ingredientId}/`;
 
 // Recipe Component
 
@@ -595,14 +597,14 @@ export const getRecipeIngredients = async (
     componentId: number
 ) => {
     try {
-        const response = await axios.get(RECIPE_INGREDIENT_URL_GET(recipeId), {
+        const response = await axios.get(RECIPE_INGREDIENT_GET_URL(recipeId), {
             params: { componentId },
             withCredentials: true,
         });
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(RECIPE_INGREDIENT_URL_GET(recipeId), {
+            axios.get(RECIPE_INGREDIENT_GET_URL(recipeId), {
                 params: { componentId },
                 withCredentials: true,
             })
@@ -646,6 +648,23 @@ export const createRecipeIngredient = async (
                 },
                 { withCredentials: true }
             )
+        );
+    }
+};
+
+export const deleteRecipeIngredient = async (ingredeintId: number) => {
+    try {
+        console.log("sssss");
+        const response = await axios.delete(
+            RECIPE_INGREDIENT_DELETE_URL(ingredeintId),
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.delete(RECIPE_INGREDIENT_DELETE_URL(ingredeintId), {
+                withCredentials: true,
+            })
         );
     }
 };

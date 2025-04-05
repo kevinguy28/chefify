@@ -14,6 +14,7 @@ const RecipeEdit = () => {
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [recipeComponents, setRecipeComponents] = useState<Array<any>>([]);
+    const [fetchIngredients, setFetchIngredients] = useState<boolean>(false);
 
     const fetchRecipe = async () => {
         const response = await readRecipe(String(recipeId));
@@ -24,12 +25,9 @@ const RecipeEdit = () => {
     };
 
     const fetchRecipeComponents = async () => {
-        console.log("x");
         if (recipe) {
-            console.log("ran");
             const response = await getRecipeComponent(recipe.id.toString());
             if (response) {
-                console.log("paste");
                 setRecipeComponents(response);
             }
         }
@@ -43,7 +41,6 @@ const RecipeEdit = () => {
 
     const updateRecipeComponentsAdd = async (component: RecipeComponent) => {
         setRecipeComponents([...recipeComponents, component]);
-        console.log("gag");
     };
 
     useEffect(() => {
@@ -79,9 +76,10 @@ const RecipeEdit = () => {
                             />
                         </div>
                         <RecipeComponentDisplay
-                            recipe={recipe}
                             updateRecipeComponents={updateRecipeComponents}
                             recipeComponents={recipeComponents}
+                            fetchIngredients={fetchIngredients}
+                            setFetchIngredients={setFetchIngredients}
                         />
                         <RecipeStepsDisplay edit={true} />
                     </div>
@@ -95,7 +93,7 @@ const RecipeEdit = () => {
                                 updateRecipeComponentsAdd={
                                     updateRecipeComponentsAdd
                                 }
-                                fetchRecipeComponents={fetchRecipeComponents}
+                                setFetchIngredients={setFetchIngredients}
                             />
                         )}
                     </div>

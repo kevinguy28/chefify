@@ -515,6 +515,15 @@ def getRecipeIngredient(request, recipeId):
     serializer = RecipeIngredientSerializer(recipeIngredient, many=True)
     return Response(serializer.data, status=200)
 
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def deleteRecipeIngredient(request, ingredientId):
+    recipeIngredient = RecipeIngredient.objects.get(id=ingredientId)
+    if(request.user == recipeIngredient.recipe.user):
+        recipeIngredient.delete()
+    return Response({"Success": True}, status=200)
+
+
 class RecipeIngredientView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -554,11 +563,9 @@ class RecipeComponentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, recipeId):
-        print("hio")
         recipe = Recipe.objects.get(id=recipeId)
         recipeComponent = RecipeComponent.objects.filter(recipe=recipe)
         serializer = RecipeComponentSerializer(recipeComponent, many=True)
-        print(serializer.data)
         return Response(serializer.data, status=200)
 
     def post(self, request, recipeId):

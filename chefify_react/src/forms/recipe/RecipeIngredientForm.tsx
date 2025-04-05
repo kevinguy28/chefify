@@ -6,7 +6,7 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
     recipe,
     recipeComponents,
     updateRecipeComponentsAdd,
-    fetchRecipeComponents,
+    setFetchIngredients,
 }) => {
     const UNIT_CHOICES: Record<string, string> = {
         tbsp: "Tablespoon",
@@ -65,8 +65,7 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                 componentId
             );
             if (response) {
-                console.log(response.data);
-                fetchRecipeComponents();
+                setFetchIngredients(true);
             }
         } else {
             alert(

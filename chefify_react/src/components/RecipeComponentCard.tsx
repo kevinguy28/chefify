@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { RecipeComponentCardProp } from "@/interfaces/interfaces";
-import { getRecipeIngredients, deleteRecipeComponent } from "@/endpoints/api";
+import {
+    getRecipeIngredients,
+    deleteRecipeComponent,
+    deleteRecipeIngredient,
+} from "@/endpoints/api";
 
 const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     component,
     updateRecipeComponents,
+    fetchIngredients,
+    setFetchIngredients,
 }) => {
     const [recipeIngredients, setRecipeIngredients] = useState<Array<any>>([]);
 
@@ -14,6 +20,7 @@ const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
             component.id
         );
         if (response) {
+            console.log(response);
             setRecipeIngredients(response);
         }
     };
@@ -25,23 +32,56 @@ const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
         }
     };
 
+    const handleDeleteIngredient = async (ingredientId: number) => {
+        const response = await deleteRecipeIngredient(ingredientId);
+        if (response) {
+            setRecipeIngredients(
+                recipeIngredients.filter(
+                    (ingredient) => ingredient.id !== ingredientId
+                )
+            );
+        }
+    };
+
     useEffect(() => {
         fetchRecipeIngredients();
     }, []);
+
+    useEffect(() => {
+        console.log(fetchIngredients);
+        if (fetchIngredients === true) {
+            fetchRecipeIngredients();
+            setFetchIngredients(false);
+        }
+    }, [fetchIngredients]);
+
     return (
         <div className="bg-dark-light p-2 rounded-xl mb-4">
             <h1 className="font-bold text-xl flex gap-4">{component.name}</h1>
             <p>{component.description}</p>
             <hr />
-            {recipeIngredients &&
-                recipeIngredients.map((ingredient) => (
-                    <>
-                        <div>
-                            {ingredient.quantity} {ingredient.unit} -{" "}
-                            {ingredient.ingredient.name}
-                        </div>
-                    </>
-                ))}
+            <div className="py-4">
+                {recipeIngredients &&
+                    recipeIngredients.map((ingredient) => (
+                        <>
+                            <div className="flex justify-between">
+                                <div>
+                                    {ingredient.quantity} {ingredient.unit} -{" "}
+                                    {ingredient.ingredient.name}
+                                </div>
+                                <div
+                                    onClick={() =>
+                                        handleDeleteIngredient(ingredient.id)
+                                    }
+                                >
+                                    Delete
+                                </div>
+                            </div>
+                        </>
+                    ))}
+            </div>
+
+            <hr />
             <div className="flex gap-4 justify-end">
                 <div>Edit</div>
                 <div onClick={handleDeleteCard}>Delete</div>
