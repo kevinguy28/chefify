@@ -60,8 +60,11 @@ const REGISTER_URL = `${BASE_URL}register/`;
 
 // User Profile
 
-const USER_PROFILE_URL = `${BASE_URL}user-profile/ingredient/`;
-const USER_PROFILE_URL_MOVE = `${BASE_URL}user-profile/ingredient/move/`;
+const USER_PROFILE_URL = `${BASE_URL}user-profile/`;
+const USER_PROFILE_FAVOURITE_URL = (recipeId: string) =>
+    `${USER_PROFILE_URL}favourite/${recipeId}/`;
+const USER_PROFILE_INGREDIENT_URL = `${USER_PROFILE_URL}ingredient/`;
+const USER_PROFILE_MOVE_URL = `${USER_PROFILE_INGREDIENT_URL}move/`;
 
 // Recipe Ingredient
 
@@ -571,14 +574,14 @@ export const createIngredient = async (name: string) => {
 
 export const readIngredientUserProfile = async (isOwned: string) => {
     try {
-        const response = axios.get(USER_PROFILE_URL, {
+        const response = axios.get(USER_PROFILE_INGREDIENT_URL, {
             withCredentials: true,
             params: { isOwned },
         });
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(USER_PROFILE_URL, {
+            axios.get(USER_PROFILE_INGREDIENT_URL, {
                 withCredentials: true,
                 params: { isOwned },
             })
@@ -593,7 +596,7 @@ export const updateIngredientUserProfile = async (
 ) => {
     try {
         const response = await axios.patch(
-            USER_PROFILE_URL,
+            USER_PROFILE_INGREDIENT_URL,
             { ingredient, ingredientType, isOwned },
             { withCredentials: true }
         );
@@ -601,7 +604,7 @@ export const updateIngredientUserProfile = async (
     } catch (error) {
         return await call_refresh(error, () =>
             axios.patch(
-                USER_PROFILE_URL,
+                USER_PROFILE_INGREDIENT_URL,
                 { ingredient, ingredientType, isOwned },
                 { withCredentials: true }
             )
@@ -615,7 +618,7 @@ export const deleteIngredientUserProfile = async (
     ingredient?: string
 ) => {
     try {
-        const response = await axios.delete(USER_PROFILE_URL, {
+        const response = await axios.delete(USER_PROFILE_INGREDIENT_URL, {
             withCredentials: true,
             data: {
                 isOwned,
@@ -626,7 +629,7 @@ export const deleteIngredientUserProfile = async (
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.patch(USER_PROFILE_URL, {
+            axios.patch(USER_PROFILE_INGREDIENT_URL, {
                 withCredentials: true,
                 data: { ingredient, isOwned },
             })
@@ -640,7 +643,7 @@ export const moveIngredientsUserProfile = async (
 ) => {
     try {
         const response = await axios.patch(
-            USER_PROFILE_URL_MOVE,
+            USER_PROFILE_MOVE_URL,
             { isOwned, id },
             { withCredentials: true }
         );
@@ -648,8 +651,27 @@ export const moveIngredientsUserProfile = async (
     } catch (error) {
         return await call_refresh(error, () =>
             axios.patch(
-                USER_PROFILE_URL_MOVE,
+                USER_PROFILE_MOVE_URL,
                 { isOwned, id },
+                { withCredentials: true }
+            )
+        );
+    }
+};
+
+export const updateFavouriteRecipeUserProfile = async (recipeId: string) => {
+    try {
+        const response = await axios.patch(
+            USER_PROFILE_FAVOURITE_URL(recipeId),
+            {},
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(
+                USER_PROFILE_FAVOURITE_URL(recipeId),
+                {},
                 { withCredentials: true }
             )
         );

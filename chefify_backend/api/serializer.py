@@ -58,7 +58,7 @@ class IngredientSerializer(ModelSerializer):
 class UserProfileIngredientListSerializer(ModelSerializer):
     ownedIngredients = IngredientSerializer(many=True)
     buyIngredients = IngredientSerializer(many=True)
-
+    favouriteRecipes = RecipeSerializer(many=True)
     class Meta:
         model = UserProfile
         fields = ['ownedIngredients', 'buyIngredients', 'id']

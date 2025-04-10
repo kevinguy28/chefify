@@ -144,7 +144,8 @@ class Review(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ownedIngredients = models.ManyToManyField(Ingredient, related_name="owned_by", blank=True)
-    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
+    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True),
+    favouriteRecipes = models.ManyToManyField(Recipe, related_name="favourite_to", blank=True)
 
     def __str__(self):
         return self.user.username

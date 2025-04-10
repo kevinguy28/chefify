@@ -509,6 +509,18 @@ def createIngredient(request):
 
     return Response({"success": True})
 
+# User Profile - Favourite Recipes
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def updateFavouriteUserProfile(request, recipeId):
+      userProfile = UserProfile.objects.get(user=request.user)
+      recipe = Recipe.objects.get(id=recipeId)
+      userProfile.favouriteRecipes.add(recipe)
+      userProfile.save()
+
+      return Response({"success":True}, status=200)
+
 # User Profile - Ingredient
 
 class UserProfileIngredientView(APIView):
