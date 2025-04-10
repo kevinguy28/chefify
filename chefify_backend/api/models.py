@@ -108,6 +108,10 @@ class Review(models.Model):
     RATING_CHOICES = [(i/2, str(i/2)) for i in range(1, 11)]
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     rating = models.DecimalField(max_digits=2, decimal_places=1,choices=RATING_CHOICES,validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    likedBy = models.ManyToManyField(User, related_name="liked_by_reviews", blank=True)
+    dislikedBy = models.ManyToManyField(User, related_name="disliked_by_reviews", blank=True)
+    likes = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    dislikes = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     review_text = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     updated = models.DateTimeField(auto_now=True)
@@ -117,6 +121,22 @@ class Review(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'], name='unique_review_per_user_per_recipe')
         ]
+
+    def addLike(self):
+        self.likes = self.likes + 1
+        self.save()
+
+    def removeLike(self):
+        self.likes = self.likes - 1
+        self.save()
+
+    def addDislike(self):
+        self.dislikes = self.dislikes + 1
+        self.save()
+
+    def removeDislike(self):
+        self.dislikes = self.dislikes - 1
+        self.save()
 
     def __str__(self):
         return f"Review: {self.rating}"
@@ -172,4 +192,3 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.quantity} {self.unit} {self.ingredient.name} in {self.recipe.name}"
-    

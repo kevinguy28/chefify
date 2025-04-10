@@ -44,6 +44,8 @@ class RecipeStepsSerializer(ModelSerializer):
 class ReviewSerializer(ModelSerializer):
     user = UserSerializer()
     recipe = RecipeSerializer()
+    likedBy = UserSerializer(many=True)
+    dislikedBy = UserSerializer(many=True)
     class Meta:
         model = Review
         fields = '__all__'

@@ -8,7 +8,7 @@ const RecipeCard: React.FC<RecipeCardProp> = ({
     editMode,
 }) => {
     return (
-        <div key={recipe?.id} className="rounded-xl bg-dark w-90 mx-auto">
+        <div key={recipe?.id} className="rounded-xl bg-dark w-full mx-auto">
             <img
                 className="rounded-t-xl w-full h-50"
                 alt={recipe?.name ?? "Recipe Image"}
@@ -28,7 +28,9 @@ const RecipeCard: React.FC<RecipeCardProp> = ({
                         {recipe?.name}{" "}
                     </Link>
                 ) : (
-                    <div className="font-bold">{recipe?.name} </div>
+                    <div className="font-bold  break-words">
+                        {recipe?.name}{" "}
+                    </div>
                 )}
 
                 <span className="text-darker-text text-sm">

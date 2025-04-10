@@ -28,7 +28,7 @@ const PrivateRoutesUserRecipe = ({ children }: PrivateRouteProps) => {
     useEffect(() => {
         if (recipe) {
             // Check if the logged-in user is the owner of the recipe
-            if (recipe.user.id === user) {
+            if (recipe.user.id === user?.id) {
                 setVerifiedUser(true); // The user is the owner
             } else {
                 setVerifiedUser(false); // The user is not the owner

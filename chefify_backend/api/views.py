@@ -1,6 +1,6 @@
 import json
 import nltk
-from django.db.models import Q
+from django.db.models import Q, Count, F
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
@@ -372,18 +372,78 @@ class ReviewView(APIView):
             )
 
     def get(self, request, recipeId):
-        try:
+        if(request.GET.get("reviewAll") == "false"):
+            try:
+                recipe = Recipe.objects.get(id=recipeId)
+                try:
+                    review = Review.objects.filter(recipe=recipe).get(user=request.user)
+                except Exception as e:
+                    return Response(None, status=status.HTTP_200_OK)
+                serializer = ReviewSerializer(review)
+                return Response(serializer.data, status = 200)
+            except Exception as e:
+                return Response(
+                    {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+                )
+        elif(request.GET.get("reviewAll") == "true"):
             recipe = Recipe.objects.get(id=recipeId)
             try:
-                review = Review.objects.filter(recipe=recipe).get(user=request.user)
+                reviews = Review.objects.filter(recipe=recipe)
+
+                # Apply ordering based on query parameters
+                order_params = []
+
+                # Check if "relevant" is true and add it to the order parameters
+                if request.GET.get("relevant") == "true":  # Fixed the condition here
+                    print("rel")
+                    reviews = reviews.annotate(
+                        liked_count=Count('likedBy'),
+                        disliked_count=Count('dislikedBy'),
+                        like_dislike_diff=F('liked_count') - F('disliked_count')
+                    )
+                    # Order by the biggest difference between likes and dislikes (descending)
+                    order_params.append("-like_dislike_diff")
+                    order_params.append("-liked_count")
+
+                if request.GET.get("newest") == "true":
+                    print("new")
+                    order_params.append("-updated")
+
+                # Check if "oldest" is true and add it to the order parameters
+                if request.GET.get("oldest") == "true":
+                    print("oldest")
+                    order_params.append("updated")
+
+                # Check if "highest" is true and add it to the order parameters
+                if request.GET.get("highest") == "true":
+                    print("highest")
+                    order_params.append("-rating")
+
+                # Check if "lowest" is true and add it to the order parameters
+                if request.GET.get("lowest") == "true":
+                    print("lowest")
+                    order_params.append("rating")
+
+                # Apply the ordering to the queryset if there are any order parameters
+                if order_params:
+                    reviews = reviews.order_by(*order_params)
+
+                pageNumber = request.GET.get("page", 1)
+                paginator = Paginator(reviews, 2)
+                page_obj = paginator.get_page(pageNumber)
             except Exception as e:
                 return Response(None, status=status.HTTP_200_OK)
-            serializer = ReviewSerializer(review)
-            return Response(serializer.data, status = 200)
-        except Exception as e:
-            return Response(
-                {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
-            )
+
+            serializer = ReviewSerializer(page_obj, many=True)
+            print(serializer.data)
+            return Response({
+                "reviews": serializer.data,
+                "page": page_obj.number,
+                "totalPages": paginator.num_pages,  # Total number of pages
+                "hasNext": page_obj.has_next(),  # If there's a next page
+                "hasPrevious": page_obj.has_previous()  # If there's a previous page
+
+            })
 
     def put(self, request, recipeId):
         data = request.data
@@ -415,6 +475,29 @@ class ReviewView(APIView):
                 {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
             )
         
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateReviewLikes(request, reviewId):
+    review = Review.objects.get(id=reviewId)
+    isLike = request.data['isLike']
+    if(isLike):
+        if(request.user in review.likedBy.all()):
+            review.likedBy.remove(request.user)
+        else:
+            review.likedBy.add(request.user)
+            if(request.user in review.dislikedBy.all()):
+                review.dislikedBy.remove(request.user)
+    else:
+        if(request.user in review.dislikedBy.all()):
+            review.dislikedBy.remove(request.user)
+        else:
+            review.dislikedBy.add(request.user)
+            if(request.user in review.likedBy.all()):
+                review.likedBy.remove(request.user)
+    review.save()
+    serializer = ReviewSerializer(review)
+    return Response(serializer.data, status=200)
+
 # Ingredient
 
 @api_view(['POST'])

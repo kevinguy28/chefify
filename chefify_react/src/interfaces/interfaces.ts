@@ -34,6 +34,15 @@ export interface RecipeComponent {
     order: number;
 }
 
+export interface RecipeIngredient {
+    id: number;
+    recipe: Recipe;
+    ingredient: Ingredient;
+    unit: string;
+    quantity: number;
+    recipeComponent: RecipeComponent;
+}
+
 export interface RecipeEditFormProps {
     recipe: Recipe | null;
     setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
@@ -46,11 +55,16 @@ export interface RecipeCardProp {
 }
 
 export interface Review {
+    id: number;
     review: number;
     recipe: Recipe;
     rating: number;
     review_text: string;
     user: User;
+    likedBy: Array<User>;
+    dislikedBy: Array<User>;
+    likes: number;
+    dislikes: number;
 }
 
 export interface ReviewCardProps {
@@ -77,7 +91,22 @@ export interface RecipeCatalogProps {
 
 export interface Ingredient {
     name: string;
+    ingredientType: string;
     id: number;
+}
+
+export interface Unit {
+    unit:
+        | "tbsp"
+        | "tsp"
+        | "cup"
+        | "oz"
+        | "g"
+        | "kg"
+        | "ml"
+        | "L"
+        | "pinch"
+        | "dish";
 }
 
 export interface ShoppingListFormProp {
@@ -107,20 +136,6 @@ export interface DropDownMenuProp {
     setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export interface UnitProp {
-    unit:
-        | "tbsp"
-        | "tsp"
-        | "cup"
-        | "oz"
-        | "g"
-        | "kg"
-        | "ml"
-        | "L"
-        | "pinch"
-        | "dish";
-}
-
 export interface RecipeIngredientFormProp {
     recipe: Recipe;
     recipeComponents: Array<any>;
@@ -140,4 +155,13 @@ export interface RecipeComponentCardProp {
     updateRecipeComponents: (componentId: number) => Promise<void>;
     fetchIngredients: boolean;
     setFetchIngredients: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface ComponentIngredientProp {
+    recipeId: number;
+    component: RecipeComponent;
+}
+
+export interface RecipeReviewDisplayProp {
+    recipe: Recipe;
 }

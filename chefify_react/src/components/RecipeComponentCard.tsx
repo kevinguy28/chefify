@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { RecipeComponentCardProp } from "@/interfaces/interfaces";
 import {
-    getRecipeIngredients,
+    readRecipeIngredients,
     deleteRecipeComponent,
     deleteRecipeIngredient,
 } from "@/endpoints/api";
@@ -15,12 +15,11 @@ const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     const [recipeIngredients, setRecipeIngredients] = useState<Array<any>>([]);
 
     const fetchRecipeIngredients = async () => {
-        const response = await getRecipeIngredients(
+        const response = await readRecipeIngredients(
             component.recipe.id,
             component.id
         );
         if (response) {
-            console.log(response);
             setRecipeIngredients(response);
         }
     };
@@ -48,7 +47,6 @@ const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     }, []);
 
     useEffect(() => {
-        console.log(fetchIngredients);
         if (fetchIngredients === true) {
             fetchRecipeIngredients();
             setFetchIngredients(false);

@@ -29,3 +29,19 @@ def reviewers_changed(sender, instance, action, reverse, model, pk_set, using, *
         instance.update_rating()
         instance.save()
 
+
+@receiver(m2m_changed, sender=Review.likedBy.through)
+def liked_by_changed(sender, instance, action, pk_set, **kwargs):
+    if action == "post_add":
+        instance.addLike()
+    if action =="post_remove":
+        instance.removeLike()
+
+@receiver(m2m_changed, sender=Review.dislikedBy.through)
+def liked_by_changed(sender, instance, action, pk_set, **kwargs):
+    if action == "post_add":
+        instance.addDislike()
+    if action =="post_remove":
+        instance.removeDislike()
+
+

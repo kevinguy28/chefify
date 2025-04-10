@@ -1,17 +1,24 @@
 import { Recipe, Review } from "@/interfaces/interfaces";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { readRecipe, createReview, readReview } from "@/endpoints/api";
+import {
+    readRecipe,
+    readReviewUser,
+    readRecipeComponent,
+} from "@/endpoints/api";
 
+import ComponentIngredientCard from "@/components/ComponentIngredientCard";
 import RecipeStepsDisplay from "@/display/RecipeStepsDisplay";
 import RecipeCard from "@/components/RecipeCard";
 import ReviewCard from "@/components/ReviewCard";
 import ReviewForm from "@/forms/review/ReviewForm";
+import RecipeReviewDisplay from "@/display/RecipeReviewDisplay";
 
 const RecipePage = () => {
     const { recipeId } = useParams();
     const [recipe, setRecipe] = useState<Recipe | null>(null);
     const [review, setReview] = useState<Review | null>(null);
+    const [recipeComponent, setRecipeComponent] = useState<Array<any>>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
 
     const loadData = async () => {
@@ -19,9 +26,15 @@ const RecipePage = () => {
         if (responseRecipe) {
             setRecipe(responseRecipe);
         }
-        const responseReview = await readReview(String(recipeId));
+        const responseReview = await readReviewUser(String(recipeId), "false");
         if (responseReview.data) {
             setReview(responseReview.data);
+        }
+        const responseRecipeComponent = await readRecipeComponent(
+            String(recipeId)
+        );
+        if (responseRecipeComponent) {
+            setRecipeComponent(responseRecipeComponent);
         }
         setLoaded(true);
     };
@@ -34,7 +47,7 @@ const RecipePage = () => {
 
     return (
         <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] max-w-screen-xl mx-auto ">
-            <div className="mt-4 flex flex-col gap-4">
+            <div className="mt-4 flex flex-col gap-4 min-w-0">
                 {loaded && (
                     <>
                         <RecipeCard
@@ -42,6 +55,14 @@ const RecipePage = () => {
                             traverseMode={false}
                             editMode={false}
                         />
+                        {loaded && (
+                            <ReviewCard
+                                reviewUser={undefined}
+                                reviewRating={recipe?.rating}
+                                reviewText={undefined}
+                                isUserReview={false}
+                            />
+                        )}
                         <ReviewCard
                             reviewUser={review?.user}
                             reviewRating={review?.rating}
@@ -56,19 +77,19 @@ const RecipePage = () => {
                 ) : (
                     <ReviewForm review={null} setLoaded={setLoaded} />
                 )}
+                {loaded && recipe && <RecipeReviewDisplay recipe={recipe} />}
             </div>
-            <div className="mt-4">
+            <div className="mt-4 min-w-0">
                 {loaded && <RecipeStepsDisplay edit={false} />}
             </div>
-            <div className="mt-4">
-                {loaded && (
-                    <ReviewCard
-                        reviewUser={undefined}
-                        reviewRating={recipe?.rating}
-                        reviewText={undefined}
-                        isUserReview={false}
-                    />
-                )}
+            <div className="mt-4 min-w-0">
+                {loaded &&
+                    recipeComponent.map((component) => (
+                        <ComponentIngredientCard
+                            recipeId={Number(recipeId)}
+                            component={component}
+                        />
+                    ))}
             </div>
         </div>
     );

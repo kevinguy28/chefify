@@ -13,7 +13,7 @@ import { User } from "@/interfaces/interfaces";
 // Define the type for the AuthContext
 interface AuthContextType {
     isAuthenticated: boolean;
-    user: number;
+    user: User | null;
     loading: boolean;
     login_user: (username: string, password: string) => Promise<void>; // Add the login_user function type
     register_user: (
@@ -34,7 +34,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState<number>(-1);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
 
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const response = await is_authenticated();
             if (response) {
                 setIsAuthenticated(response.authenticated);
-                setUser(response.user.id);
+                setUser(response.user);
             }
         } catch {
             setIsAuthenticated(false);

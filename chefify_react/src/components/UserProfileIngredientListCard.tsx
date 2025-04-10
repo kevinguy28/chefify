@@ -1,4 +1,4 @@
-import { getIngredientUserProfile } from "@/endpoints/api";
+import { readIngredientUserProfile } from "@/endpoints/api";
 import ShoppingListForm from "@/forms/ShoppingListForm";
 import { UserProfileIngredientListCardProp } from "@/interfaces/interfaces";
 import React, { useState, useEffect } from "react";
@@ -19,9 +19,8 @@ const UserProfileIngredientListCard: React.FC<
     const [other, setOther] = useState<Array<any>>([]);
 
     const fetchIngredients = async () => {
-        const response = await getIngredientUserProfile(isOwned.toString());
+        const response = await readIngredientUserProfile(isOwned.toString());
         if (response) {
-            console.log(response.data[0]["dairy"]);
             setDairy(response.data[0]["dairy"]);
             setFruitsVegetables(response.data[1]["fruitsVegetables"]);
             setGrains(response.data[2]["grains"]);

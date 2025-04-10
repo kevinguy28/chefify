@@ -13,14 +13,16 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
 }) => {
     return (
         <div>
-            <div className="flex flex-wrap gap-y-4 justify-evenly items-center">
+            <div className="flex flex-wrap gap-y-4 justify-evenly items-center ">
                 {recipes &&
                     recipes.map((recipe) => (
-                        <RecipeCard
-                            recipe={recipe}
-                            traverseMode={traverseMode}
-                            editMode={editMode}
-                        />
+                        <div className="w-90">
+                            <RecipeCard
+                                recipe={recipe}
+                                traverseMode={traverseMode}
+                                editMode={editMode}
+                            />
+                        </div>
                     ))}
             </div>
 

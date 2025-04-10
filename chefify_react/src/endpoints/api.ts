@@ -46,6 +46,7 @@ const RECIPE_STEPS_READ_URL = `${RECIPE_STEPS_URL}${READ_URL}`;
 
 const REVIEW_URL = (recipeId: string) =>
     `${BASE_URL}recipe/${recipeId}/review/`;
+const REVIEW_LIKE_URL = (reviewId: string) => `${BASE_URL}review/${reviewId}/`;
 
 // Ingredient
 
@@ -435,15 +436,61 @@ export const createReview = async (
     }
 };
 
-export const readReview = async (recipeId: string) => {
+export const readReviewUser = async (recipeId: string, reviewAll: string) => {
     try {
         const response = await axios.get(REVIEW_URL(recipeId), {
             withCredentials: true,
+            params: { reviewAll },
         });
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(REVIEW_URL(recipeId), { withCredentials: true })
+            axios.get(REVIEW_URL(recipeId), {
+                withCredentials: true,
+                params: { reviewAll },
+            })
+        );
+    }
+};
+
+export const readRecipeReviews = async (
+    recipeId: string,
+    reviewAll: string,
+    page: number,
+    relevant: string,
+    newest: string,
+    oldest: string,
+    highest: string,
+    lowest: string
+) => {
+    try {
+        const response = await axios.get(REVIEW_URL(recipeId), {
+            withCredentials: true,
+            params: {
+                reviewAll,
+                page,
+                relevant,
+                newest,
+                oldest,
+                highest,
+                lowest,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(REVIEW_URL(recipeId), {
+                withCredentials: true,
+                params: {
+                    reviewAll,
+                    page,
+                    relevant,
+                    newest,
+                    oldest,
+                    highest,
+                    lowest,
+                },
+            })
         );
     }
 };
@@ -484,6 +531,25 @@ export const deleteReview = async (recipeId: string) => {
     }
 };
 
+export const updateReviewLiked = async (reviewId: string, isLike: boolean) => {
+    try {
+        const response = await axios.put(
+            REVIEW_LIKE_URL(reviewId),
+            { isLike },
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.put(
+                REVIEW_LIKE_URL(reviewId),
+                { isLike },
+                { withCredentials: true }
+            )
+        );
+    }
+};
+
 // Ingredient
 
 export const createIngredient = async (name: string) => {
@@ -503,7 +569,7 @@ export const createIngredient = async (name: string) => {
 
 // User Profile
 
-export const getIngredientUserProfile = async (isOwned: string) => {
+export const readIngredientUserProfile = async (isOwned: string) => {
     try {
         const response = axios.get(USER_PROFILE_URL, {
             withCredentials: true,
@@ -592,7 +658,7 @@ export const moveIngredientsUserProfile = async (
 
 // Recipe Ingredient
 
-export const getRecipeIngredients = async (
+export const readRecipeIngredients = async (
     recipeId: number,
     componentId: number
 ) => {
@@ -654,7 +720,6 @@ export const createRecipeIngredient = async (
 
 export const deleteRecipeIngredient = async (ingredeintId: number) => {
     try {
-        console.log("sssss");
         const response = await axios.delete(
             RECIPE_INGREDIENT_DELETE_URL(ingredeintId),
             { withCredentials: true }
@@ -671,7 +736,7 @@ export const deleteRecipeIngredient = async (ingredeintId: number) => {
 
 // Recipe Component
 
-export const getRecipeComponent = async (recipeId: string) => {
+export const readRecipeComponent = async (recipeId: string) => {
     try {
         const response = await axios.get(RECIPE_COMPONENT_URL(recipeId), {
             withCredentials: true,
