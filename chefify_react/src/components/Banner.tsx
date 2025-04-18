@@ -23,6 +23,8 @@ const Banner = () => {
                 <Link to={`/`}>Home</Link>
                 <Link to={"/recipe/edit-catalog/"}>Recipes</Link>
                 <Link to={"/shopping-list/"}>Shopping List</Link>
+                <Link to={"/favourites/"}>Favourites</Link>
+                <Link to={"/friends/"}>Friends</Link>
                 <div onClick={handleLogout} className="ml-auto">
                     Logout
                 </div>

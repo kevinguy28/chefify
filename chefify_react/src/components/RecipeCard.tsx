@@ -2,26 +2,40 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RecipeCardProp } from "@/interfaces/interfaces";
 import { updateFavouriteRecipeUserProfile } from "@/endpoints/api";
+import { useAuth } from "@/contexts/useAuth";
 
 const RecipeCard: React.FC<RecipeCardProp> = ({
     recipe,
     traverseMode,
     editMode,
 }) => {
+    const { userProfile } = useAuth();
+
     const [favourited, setFavourited] = useState<boolean>(false);
 
-    const favouriteRecipe = async () => {
+    const handleFavourute = async () => {
         if (recipe) {
             const response = await updateFavouriteRecipeUserProfile(
-                recipe?.id.toString()
+                recipe?.id.toString(),
+                favourited.toString()
             );
             if (response) {
-                console.log(response);
+                setFavourited((favourited) => !favourited);
             }
         }
     };
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        if (recipe) {
+            setFavourited(false);
+            const isIn = userProfile?.favouriteRecipes.find(
+                (favRec) => favRec.id === recipe.id
+            );
+            if (isIn) {
+                setFavourited(true);
+            }
+        }
+    }, [recipe]);
 
     return (
         <div key={recipe?.id} className="rounded-xl bg-dark w-full mx-auto">
@@ -61,7 +75,12 @@ const RecipeCard: React.FC<RecipeCardProp> = ({
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className="m-2 w-8 h-8 text-duck-yellow"
+                        className={`m-2 w-8 h-8 ${`${
+                            favourited
+                                ? "text-orange-herbsSpices-light"
+                                : "text-duck-yellow"
+                        }`}`}
+                        onClick={handleFavourute}
                     >
                         <path
                             fill-rule="evenodd"

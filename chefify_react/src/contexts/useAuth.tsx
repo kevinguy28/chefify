@@ -5,17 +5,23 @@ import {
     useState,
     ReactNode,
 } from "react";
-import { is_authenticated, login, register } from "@/endpoints/api";
+import {
+    is_authenticated,
+    login,
+    readUserProfile,
+    register,
+} from "@/endpoints/api";
 import { useLocation } from "react-router-dom"; // If using React Router
 import { useNavigate } from "react-router-dom";
-import { User } from "@/interfaces/interfaces";
+import { User, UserProfile } from "@/interfaces/interfaces";
 
 // Define the type for the AuthContext
 interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
     loading: boolean;
-    login_user: (username: string, password: string) => Promise<void>; // Add the login_user function type
+    userProfile: UserProfile | null;
+    login_user: (username: string, password: string) => Promise<void>;
     register_user: (
         username: string,
         email: string,
@@ -34,6 +40,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
@@ -47,6 +54,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             if (response) {
                 setIsAuthenticated(response.authenticated);
                 setUser(response.user);
+                const responseUserProfile = await readUserProfile();
+                if (responseUserProfile) {
+                    setUserProfile(responseUserProfile);
+                }
             }
         } catch {
             setIsAuthenticated(false);
@@ -91,6 +102,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 isAuthenticated,
                 user,
                 loading,
+                userProfile,
                 login_user,
                 register_user,
             }}

@@ -142,10 +142,12 @@ class Review(models.Model):
         return f"Review: {self.rating}"
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    friendsList = models.ManyToManyField(User, related_name="friends_with", blank=True)
     ownedIngredients = models.ManyToManyField(Ingredient, related_name="owned_by", blank=True)
-    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True),
+    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
     favouriteRecipes = models.ManyToManyField(Recipe, related_name="favourite_to", blank=True)
+    profilePicture = models.ImageField(upload_to='images/profilePicture/', blank=True, null=True)
 
     def __str__(self):
         return self.user.username

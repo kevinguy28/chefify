@@ -14,6 +14,8 @@ import RecipeEdit from "./pages/RecipeEdit.tsx";
 import Banner from "./components/Banner.tsx";
 import RecipeEditCatalog from "./components/RecipeEditCatalog.tsx";
 import Shoppinglist from "./pages/Shoppinglist.tsx";
+import FavouriteRecipes from "./pages/FavouriteRecipes.tsx";
+import Friends from "./pages/Friends.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
@@ -66,6 +68,24 @@ createRoot(document.getElementById("root")!).render(
                             <PrivateRoutesAuthenticated>
                                 <Banner />
                                 <Shoppinglist />
+                            </PrivateRoutesAuthenticated>
+                        }
+                    />
+                    <Route
+                        path="/favourites/"
+                        element={
+                            <PrivateRoutesAuthenticated>
+                                <Banner />
+                                <FavouriteRecipes />
+                            </PrivateRoutesAuthenticated>
+                        }
+                    />
+                    <Route
+                        path="/friends/"
+                        element={
+                            <PrivateRoutesAuthenticated>
+                                <Banner />
+                                <Friends />
                             </PrivateRoutesAuthenticated>
                         }
                     />

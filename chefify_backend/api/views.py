@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from .models import Recipe, RecipeSteps, Review, Ingredient, UserProfile, RecipeIngredient, RecipeComponent
-from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer, UserProfileIngredientListSerializer, IngredientSerializer, RecipeIngredientSerializer, RecipeComponentSerializer
+from .serializer import UserRegistrationSerializer, UserSerializer, CuisineSerializer, RecipeSerializer, RecipeStepsSerializer, ReviewSerializer, UserProfileIngredientListSerializer, UserProfileSerializer, IngredientSerializer, RecipeIngredientSerializer, RecipeComponentSerializer
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -509,17 +509,63 @@ def createIngredient(request):
 
     return Response({"success": True})
 
+# User Profile
+
+class UserProfileFriendView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        userProfile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfileSerializer(userProfile)
+        return Response(serializer.data, status=200)
+    
+    def patch(self, request):
+        userProfile = UserProfile.objects.get(user=request.user)
+        if(request.data['action'] == "add"):
+            print("add")
+        elif(request.data['action'] == "remove"):
+            userProfileId = request.data['userProfileId']
+            userRemove = UserProfile.objects.get(id=userProfileId)
+            userProfile.friendsList.remove(userRemove.user)
+            userProfile.save()
+        return Response({"Success": True}, status=200)
+
+
+# User Profile - Friends
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getFriendsUserProfile(request):
+    userProfile = UserProfile.objects.get(user=request.user)
+    friendsProfile = []
+    for user in userProfile.friendsList.all():
+        friendsProfile.append(user.profile)
+    serializer = UserProfileSerializer(friendsProfile, many=True)
+    return Response(serializer.data, status=200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getQueryUserProfile(request):
+    usernameQuery = request.GET.get('usernameQuery')
+    user_profiles = UserProfile.objects.filter(user__username__icontains=usernameQuery)
+    serializer = UserProfileSerializer(user_profiles, many=True)
+    print(serializer.data)
+    return Response(serializer.data, status=200)
+
 # User Profile - Favourite Recipes
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def updateFavouriteUserProfile(request, recipeId):
-      userProfile = UserProfile.objects.get(user=request.user)
-      recipe = Recipe.objects.get(id=recipeId)
+    userProfile = UserProfile.objects.get(user=request.user)
+    recipe = Recipe.objects.get(id=recipeId)
+    isFavourited = request.data['isFavourite']
+    if(isFavourited == "true"):
+        userProfile.favouriteRecipes.remove(recipe)
+    else:
       userProfile.favouriteRecipes.add(recipe)
-      userProfile.save()
-
-      return Response({"success":True}, status=200)
+    userProfile.save()
+    return Response({"success":True}, status=200)
 
 # User Profile - Ingredient
 

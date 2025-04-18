@@ -6,7 +6,7 @@ from .models import Recipe, Cuisine, RecipeSteps, Review, Ingredient, UserProfil
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = '__all__'
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -55,10 +55,26 @@ class IngredientSerializer(ModelSerializer):
         model = Ingredient
         fields = '__all__'
 
+class UserProfileSerializer(ModelSerializer):
+    user = UserSerializer()
+    favouriteRecipes = RecipeSerializer(many=True)
+    ownedIngredients = IngredientSerializer(many=True)
+    buyIngredients = IngredientSerializer(many=True)
+    friendsList = UserSerializer(many=True)
+
+    class Meta:
+        model = UserProfile
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['ownedIngredients'] = sorted(representation['ownedIngredients'], key=lambda x: x['ingredientType'].lower())
+        representation['buyIngredients'] = sorted(representation['buyIngredients'], key=lambda x: x['ingredientType'].lower())
+        return representation
+    
 class UserProfileIngredientListSerializer(ModelSerializer):
     ownedIngredients = IngredientSerializer(many=True)
     buyIngredients = IngredientSerializer(many=True)
-    favouriteRecipes = RecipeSerializer(many=True)
     class Meta:
         model = UserProfile
         fields = ['ownedIngredients', 'buyIngredients', 'id']

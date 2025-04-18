@@ -8,6 +8,18 @@ export interface User {
     id: number;
     username: string;
     email: string;
+    first_name: string;
+    last_name: string;
+}
+
+export interface UserProfile {
+    id: number;
+    user: User;
+    ownedIngredients: Array<Ingredient>;
+    buyIngredients: Array<Ingredient>;
+    favouriteRecipes: Array<Recipe>;
+    friendsList: Array<User>;
+    profilePicture?: string;
 }
 
 export interface Cuisine {
@@ -164,4 +176,10 @@ export interface ComponentIngredientProp {
 
 export interface RecipeReviewDisplayProp {
     recipe: Recipe;
+}
+
+export interface FriendsListDisplayProp {
+    friend: UserProfile;
+    friendsList: Array<UserProfile>;
+    setFriendsList: React.Dispatch<React.SetStateAction<UserProfile[]>>;
 }

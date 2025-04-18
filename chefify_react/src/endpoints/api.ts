@@ -61,6 +61,8 @@ const REGISTER_URL = `${BASE_URL}register/`;
 // User Profile
 
 const USER_PROFILE_URL = `${BASE_URL}user-profile/`;
+const USER_PROFILE_QUERY_URL = `${USER_PROFILE_URL}query/`;
+const USER_PROFILE_FRIENDS_URL = `${BASE_URL}user-profile/friends/`;
 const USER_PROFILE_FAVOURITE_URL = (recipeId: string) =>
     `${USER_PROFILE_URL}favourite/${recipeId}/`;
 const USER_PROFILE_INGREDIENT_URL = `${USER_PROFILE_URL}ingredient/`;
@@ -572,6 +574,71 @@ export const createIngredient = async (name: string) => {
 
 // User Profile
 
+export const readUserProfile = async () => {
+    try {
+        const response = await axios.get(USER_PROFILE_URL, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(USER_PROFILE_URL, {
+                withCredentials: true,
+            })
+        );
+    }
+};
+
+export const readQueryUserProfile = async (usernameQuery?: string) => {
+    try {
+        const response = await axios.get(USER_PROFILE_QUERY_URL, {
+            params: { usernameQuery },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(USER_PROFILE_QUERY_URL, {
+                params: { usernameQuery },
+                withCredentials: true,
+            })
+        );
+    }
+};
+
+export const readFriendsUserProfile = async () => {
+    try {
+        const response = await axios.get(USER_PROFILE_FRIENDS_URL, {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(USER_PROFILE_FRIENDS_URL, { withCredentials: true })
+        );
+    }
+};
+
+export const updateRemoveFriendUserProfile = async (
+    userProfileId: string,
+    action: string
+) => {
+    try {
+        const response = await axios.patch(
+            USER_PROFILE_URL,
+            { userProfileId, action },
+            {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(USER_PROFILE_URL, { withCredentials: true })
+        );
+    }
+};
+
 export const readIngredientUserProfile = async (isOwned: string) => {
     try {
         const response = axios.get(USER_PROFILE_INGREDIENT_URL, {
@@ -659,11 +726,14 @@ export const moveIngredientsUserProfile = async (
     }
 };
 
-export const updateFavouriteRecipeUserProfile = async (recipeId: string) => {
+export const updateFavouriteRecipeUserProfile = async (
+    recipeId: string,
+    isFavourite: string
+) => {
     try {
         const response = await axios.patch(
             USER_PROFILE_FAVOURITE_URL(recipeId),
-            {},
+            { isFavourite },
             { withCredentials: true }
         );
         return response.data;
@@ -671,7 +741,7 @@ export const updateFavouriteRecipeUserProfile = async (recipeId: string) => {
         return await call_refresh(error, () =>
             axios.patch(
                 USER_PROFILE_FAVOURITE_URL(recipeId),
-                {},
+                { isFavourite },
                 { withCredentials: true }
             )
         );
