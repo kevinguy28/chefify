@@ -619,6 +619,26 @@ export const readFriendsUserProfile = async () => {
     }
 };
 
+export const updateAddFriendUserProfile = async (
+    userProfileId: string,
+    action: string
+) => {
+    try {
+        const response = await axios.patch(
+            USER_PROFILE_URL,
+            { userProfileId, action },
+            {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.patch(USER_PROFILE_URL, { withCredentials: true })
+        );
+    }
+};
+
 export const updateRemoveFriendUserProfile = async (
     userProfileId: string,
     action: string

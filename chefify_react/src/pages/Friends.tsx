@@ -4,6 +4,7 @@ import {
     readFriendsUserProfile,
     readQueryUserProfile,
     readUserProfile,
+    updateAddFriendUserProfile,
     updateRemoveFriendUserProfile,
 } from "@/endpoints/api";
 import { UserProfile } from "@/interfaces/interfaces";
@@ -13,6 +14,7 @@ const Friends = () => {
     const { userProfile } = useAuth();
 
     const [friendsList, setFriendsList] = useState<Array<UserProfile>>([]);
+    const [queryProfile, setQueryProfile] = useState<Array<UserProfile>>([]);
     const [usernameQuery, setUsernameQuery] = useState<string>("");
 
     const fetchFriendsProfiles = async () => {
@@ -28,6 +30,21 @@ const Friends = () => {
         e.preventDefault();
         const response = await readQueryUserProfile(usernameQuery);
         if (response) {
+            setQueryProfile(response);
+        }
+    };
+
+    const handleAddFriend = async (userProfileId: number) => {
+        const response = await updateAddFriendUserProfile(
+            userProfileId.toString(),
+            "add"
+        );
+        if (response) {
+            setQueryProfile(
+                queryProfile.filter(
+                    (friendAdd) => friendAdd.id !== userProfileId
+                )
+            );
             console.log(response);
         }
     };
@@ -36,7 +53,7 @@ const Friends = () => {
         if (userProfile) {
             fetchFriendsProfiles();
         }
-    }, []);
+    }, [queryProfile]);
 
     return (
         <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] max-w-screen-xl mx-auto bg-blue-950 mt-4">
@@ -66,6 +83,26 @@ const Friends = () => {
                         onClick={(e) => searchForUser(e)}
                     />
                 </form>
+                {queryProfile.map((profile) => (
+                    <div>
+                        <img
+                            className="w-32 h-32  bg-blue-500"
+                            alt={profile?.user.username ?? "Recipe Image"}
+                            src={
+                                profile?.profilePicture
+                                    ? `http://localhost:8000${profile?.profilePicture}`
+                                    : `http://localhost:8000/media/images/recipes/default-recipe.png`
+                            }
+                        />
+                        <div>
+                            {profile.user.username} | {profile.user.first_name}{" "}
+                            {profile.user.last_name}
+                        </div>
+                        <div onClick={() => handleAddFriend(profile.id)}>
+                            Add Friend
+                        </div>
+                    </div>
+                ))}
             </div>
             <div></div>
         </div>

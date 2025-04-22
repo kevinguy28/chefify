@@ -522,7 +522,10 @@ class UserProfileFriendView(APIView):
     def patch(self, request):
         userProfile = UserProfile.objects.get(user=request.user)
         if(request.data['action'] == "add"):
-            print("add")
+            userProfileId = request.data['userProfileId']
+            userRemove = UserProfile.objects.get(id=userProfileId)
+            userProfile.friendsList.add(userRemove.user)
+            userProfile.save()
         elif(request.data['action'] == "remove"):
             userProfileId = request.data['userProfileId']
             userRemove = UserProfile.objects.get(id=userProfileId)
@@ -546,10 +549,18 @@ def getFriendsUserProfile(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getQueryUserProfile(request):
+    userFriendList = UserProfile.objects.get(user=request.user).friendsList.all()
+    print(userFriendList)
     usernameQuery = request.GET.get('usernameQuery')
     user_profiles = UserProfile.objects.filter(user__username__icontains=usernameQuery)
+
+    friend_user_ids = [user.id for user in userFriendList]
+
+    user_profiles = user_profiles.exclude(user__id__in=friend_user_ids).exclude(user_id=request.user.id)
+    print(user_profiles) 
+    
     serializer = UserProfileSerializer(user_profiles, many=True)
-    print(serializer.data)
+    # print(serializer.data)
     return Response(serializer.data, status=200)
 
 # User Profile - Favourite Recipes
