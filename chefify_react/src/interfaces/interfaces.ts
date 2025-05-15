@@ -36,6 +36,7 @@ export interface Recipe {
     description: string;
     privacy: string;
     image?: string;
+    created: string;
 }
 
 export interface RecipeComponent {
@@ -180,6 +181,11 @@ export interface RecipeReviewDisplayProp {
 
 export interface FriendsListDisplayProp {
     friend: UserProfile;
-    friendsList: Array<UserProfile>;
-    setFriendsList: React.Dispatch<React.SetStateAction<UserProfile[]>>;
+    handleRemoveFriend: (userProfileId: number) => Promise<void>;
+    handleAddFriend: (userProfileId: number) => Promise<void>;
+    addMode: boolean;
+}
+
+export interface RecipeContainerProp {
+    recipe: Recipe;
 }

@@ -144,7 +144,7 @@ def readCuisines(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def readRecipes(request):
-
+    print('ass')
     pageNumber = request.GET.get("page", 1)
     needUser = request.GET.get("needUser")
     privacy = request.GET.get("privacy")
@@ -158,7 +158,8 @@ def readRecipes(request):
     if filterInput:
         filters &= Q(name__icontains=filterInput)
     if privacy:
-        filters &= Q(privacy__icontains=privacy)
+        if(privacy == "friends"):
+            filters &= Q(privacy__icontains=privacy)
     if cuisine:
         filters &= Q(cuisine=cuisine)
 
@@ -175,7 +176,34 @@ def readRecipes(request):
         "hasPrevious": page_obj.has_previous()  # If there's a previous page
     })
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def readRecipesTimeline(request):
+    pageNumber = request.GET.get("page", 1)
+    needUser = request.GET.get("needUser")
+    privacy = request.GET.get("privacy")
+    filterInput = request.GET.get("filterInput") 
+    cuisine = Cuisine.objects.get(name=request.GET.get("cuisine")) if request.GET.get("cuisine") else None
+    
+    friendsList = UserProfile.objects.get(user=request.user).friendsList.all()
+    recipeList = []
+    for friend in friendsList:
+        userRecipes = Recipe.objects.filter(user=friend).exclude(privacy='private').order_by("-updated")
+        recipeList.extend(userRecipes)
+    print(recipeList)
+    paginator = Paginator(recipeList, 3)
+    main_page = paginator.get_page(pageNumber)
+    serializer = RecipeSerializer(main_page, many=True)
+    print(main_page.has_next)
+    return Response({
+        "recipes": serializer.data,
+        "page": main_page.number,  # Current page
+        "totalPages": paginator.num_pages,  # Total number of pages
+        "hasNext": main_page.has_next(),  # If there's a next page
+        "hasPrevious": main_page.has_previous()  # If there's a previous page
+    })
 
+    
 # ----- Recipe -----
 
 

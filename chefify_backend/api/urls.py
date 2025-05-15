@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, readCuisines, readRecipes, readRecipe, createRecipe, updateRecipe, createRecipeStep, updateRecipeStepOrder, StepView, readRecipeSteps, ReviewView, register, createIngredient, UserProfileIngredientView, UserProfileIngredientMove, RecipeIngredientView, getRecipeIngredient, RecipeComponentView, deleteRecipeComponent, deleteRecipeIngredient, updateReviewLikes, updateFavouriteUserProfile, UserProfileFriendView, getFriendsUserProfile, getQueryUserProfile
+from .views import CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, readCuisines, readRecipes, readRecipe, createRecipe, updateRecipe, createRecipeStep, updateRecipeStepOrder, StepView, readRecipeSteps, ReviewView, register, createIngredient, UserProfileIngredientView, UserProfileIngredientMove, RecipeIngredientView, getRecipeIngredient, RecipeComponentView, deleteRecipeComponent, deleteRecipeIngredient, updateReviewLikes, updateFavouriteUserProfile, UserProfileFriendView, getFriendsUserProfile, getQueryUserProfile, readRecipesTimeline
 
 urlpatterns = [
     path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -12,7 +12,7 @@ urlpatterns = [
 
     # Recipes Endpoints
     path('recipes/read/', readRecipes),
-
+    path('recipes/timeline/', readRecipesTimeline),
     # Recipe Endpoints
     path('recipe/read/<int:recipeId>/', readRecipe),
     path('recipe/create/', createRecipe),

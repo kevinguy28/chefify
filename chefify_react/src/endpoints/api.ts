@@ -22,6 +22,7 @@ const CUISINE_READ_URL = `${CUISINE_URL}${READ_URL}`;
 // Recipes
 const RECIPES_URL = `${BASE_URL}recipes/`;
 const RECIPES_READ_URL = `${RECIPES_URL}${READ_URL}`;
+const RECIPE_TIMELINE_URL = `${RECIPES_URL}timeline/`;
 
 // Recipe
 const RECIPE_URL = `${BASE_URL}recipe/`;
@@ -202,6 +203,41 @@ export const readRecipes = async (
     } catch (error) {
         return await call_refresh(error, () =>
             axios.get(RECIPES_READ_URL, {
+                params: {
+                    page,
+                    needUser,
+                    ...(privacy && { privacy }),
+                    ...(filterInput && { filterInput }),
+                    ...(cuisine && { cuisine }),
+                },
+                withCredentials: true,
+            })
+        );
+    }
+};
+
+export const readTimeline = async (
+    page: number,
+    needUser: boolean,
+    privacy?: string,
+    filterInput?: string,
+    cuisine?: string
+) => {
+    try {
+        const response = await axios.get(RECIPE_TIMELINE_URL, {
+            params: {
+                page,
+                needUser,
+                ...(privacy && { privacy }),
+                ...(filterInput && { filterInput }),
+                ...(cuisine && { cuisine }),
+            },
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(RECIPE_TIMELINE_URL, {
                 params: {
                     page,
                     needUser,

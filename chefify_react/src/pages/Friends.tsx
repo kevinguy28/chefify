@@ -1,13 +1,17 @@
 import { useAuth } from "@/contexts/useAuth";
 import FriendsListDisplay from "@/display/FriendsListDisplay";
+import RecipeCard from "@/components/RecipeCard";
+import RecipeCatalog from "@/components/RecipeCatalog";
 import {
+    readRecipes,
     readFriendsUserProfile,
     readQueryUserProfile,
     readUserProfile,
     updateAddFriendUserProfile,
     updateRemoveFriendUserProfile,
+    readTimeline,
 } from "@/endpoints/api";
-import { UserProfile } from "@/interfaces/interfaces";
+import { UserProfile, Recipe } from "@/interfaces/interfaces";
 import React, { useState, useEffect } from "react";
 
 const Friends = () => {
@@ -16,6 +20,12 @@ const Friends = () => {
     const [friendsList, setFriendsList] = useState<Array<UserProfile>>([]);
     const [queryProfile, setQueryProfile] = useState<Array<UserProfile>>([]);
     const [usernameQuery, setUsernameQuery] = useState<string>("");
+
+    const [recipes, setRecipes] = useState<Array<Recipe>>([]);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [hasNext, setHasNext] = useState<boolean>(false);
+    const [hasPrevious, setHasPrevious] = useState<boolean>(false);
+    const [totalPages] = useState<number | null>(null);
 
     const fetchFriendsProfiles = async () => {
         const response = await readFriendsUserProfile();
@@ -34,6 +44,21 @@ const Friends = () => {
         }
     };
 
+    const handleRemoveFriend = async (userProfileId: number) => {
+        const response = await updateRemoveFriendUserProfile(
+            userProfileId.toString(),
+            "remove"
+        );
+        if (response) {
+            setFriendsList(
+                friendsList.filter(
+                    (friendRemove) => friendRemove.id !== userProfileId
+                )
+            );
+            console.log(response);
+        }
+    };
+
     const handleAddFriend = async (userProfileId: number) => {
         const response = await updateAddFriendUserProfile(
             userProfileId.toString(),
@@ -49,25 +74,46 @@ const Friends = () => {
         }
     };
 
+    const fetchTimeline = async (currentPage: number) => {
+        const response = await readTimeline(
+            currentPage,
+            false,
+            "friends",
+            undefined,
+            undefined
+        );
+        if (response) {
+            setRecipes(response.recipes);
+            setCurrentPage(response.page);
+            setHasNext(response.hasNext);
+            setHasPrevious(response.hasPrevious);
+            setRecipes(response.recipes);
+        }
+    };
+
     useEffect(() => {
         if (userProfile) {
             fetchFriendsProfiles();
         }
     }, [queryProfile]);
 
+    useEffect(() => {
+        fetchTimeline(1);
+    }, []);
+
     return (
-        <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] max-w-screen-xl mx-auto bg-blue-950 mt-4">
-            <div>
-                <h1>Friends List</h1>
+        <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] gap-4 max-w-screen-xl mx-auto mt-4">
+            <div className="p-4 rounded-sm max-w-full overflow-hidden bg-blue-400">
                 {friendsList.map((friends) => (
                     <FriendsListDisplay
                         friend={friends}
-                        friendsList={friendsList}
-                        setFriendsList={setFriendsList}
+                        handleRemoveFriend={handleRemoveFriend}
+                        handleAddFriend={handleAddFriend}
+                        addMode={false}
                     />
                 ))}
             </div>
-            <div>
+            <div className="max-w-full overflow-hidden bg-red-400">
                 {" "}
                 <form>
                     <input
@@ -83,28 +129,32 @@ const Friends = () => {
                         onClick={(e) => searchForUser(e)}
                     />
                 </form>
-                {queryProfile.map((profile) => (
-                    <div>
-                        <img
-                            className="w-32 h-32  bg-blue-500"
-                            alt={profile?.user.username ?? "Recipe Image"}
-                            src={
-                                profile?.profilePicture
-                                    ? `http://localhost:8000${profile?.profilePicture}`
-                                    : `http://localhost:8000/media/images/recipes/default-recipe.png`
-                            }
+                <div className="flex flex-wrap gap-y-4 justify-evenly  ">
+                    {queryProfile.map((profile) => (
+                        <FriendsListDisplay
+                            friend={profile}
+                            handleRemoveFriend={handleRemoveFriend}
+                            handleAddFriend={handleAddFriend}
+                            addMode={true}
                         />
-                        <div>
-                            {profile.user.username} | {profile.user.first_name}{" "}
-                            {profile.user.last_name}
-                        </div>
-                        <div onClick={() => handleAddFriend(profile.id)}>
-                            Add Friend
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-            <div></div>
+            <div className="max-w-full bg-green-400 overflow-hidden">
+                {recipes && (
+                    <div>
+                        <RecipeCatalog
+                            recipes={recipes}
+                            currentPage={currentPage}
+                            hasNext={hasNext}
+                            hasPrevious={hasPrevious}
+                            traverseMode={false}
+                            editMode={false}
+                            fetchRecipes={fetchTimeline}
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

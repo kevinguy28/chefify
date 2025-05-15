@@ -1,6 +1,7 @@
 import React from "react";
 import RecipeCard from "./RecipeCard";
 import { RecipeCatalogProps } from "@/interfaces/interfaces";
+import RecipeContainer from "./RecipeContainer";
 
 const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
     recipes,
@@ -13,40 +14,11 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
 }) => {
     return (
         <div>
-            <div className="flex flex-wrap gap-y-4 justify-evenly items-center ">
-                {recipes &&
-                    recipes.map((recipe) => (
-                        <div className="w-90">
-                            <RecipeCard
-                                recipe={recipe}
-                                traverseMode={traverseMode}
-                                editMode={editMode}
-                            />
-                        </div>
-                    ))}
-            </div>
-
-            <div className="relative flex justify-center my-10 ">
-                <span className="font-bold relative">
-                    {hasPrevious && (
-                        <span
-                            className="absolute right-20 cursor-pointer"
-                            onClick={() => fetchRecipes(currentPage - 1)}
-                        >
-                            Previous
-                        </span>
-                    )}
-                    {currentPage}
-                    {hasNext && (
-                        <span
-                            className="absolute left-20 cursor-pointer"
-                            onClick={() => fetchRecipes(currentPage + 1)}
-                        >
-                            Next
-                        </span>
-                    )}
-                </span>
-            </div>
+            {recipes.map((recipe) => (
+                <div>
+                    <RecipeContainer recipe={recipe} />
+                </div>
+            ))}
         </div>
     );
 };
