@@ -2,7 +2,8 @@ import { readRecipeReviews, updateReviewLiked } from "@/endpoints/api";
 import { Review, RecipeReviewDisplayProp } from "@/interfaces/interfaces";
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/useAuth";
-import { setHeapSnapshotNearHeapLimit } from "v8";
+import DislikeBtn from "@/assets/dislike-btn.svg?react";
+import LikeBtn from "@/assets/like-btn.svg?react";
 
 const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
     const { user } = useAuth();
@@ -56,7 +57,7 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
             );
         } else {
             return (
-                <div className="flex flex-row">
+                <div className="flex flex-row ">
                     {Array.from({ length: rating }).map((_, index) => (
                         <svg
                             key={index}
@@ -174,11 +175,12 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
     }, [checkedNewest, checkedOldest, checkedHighest, checkedLowest]);
 
     return (
-        <div>
-            <div className="my-4 flex flex-row flex-wrap gap-2 ">
+        <div className="mx-auto sm:w-120 md:w-150 ">
+            <h1 className="font-bold ">Public Reviews</h1>
+            <div className="flex flex-row flex-wrap gap-2 my-4 text-md">
                 <span
                     id="fltrBtn-review-rel"
-                    className={`p-2 bg-dark ${
+                    className={` text-sm p-2 bg-dark rounded-md flex items-center ${
                         checkedRelevant
                             ? "border-2 border-blue-500 border-solid"
                             : ""
@@ -189,7 +191,7 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                 </span>
                 <span
                     id="fltrBtn-review-new"
-                    className={`p-2 bg-dark  ${
+                    className={`text-sm p-2 bg-dark rounded-md flex items-center ${
                         checkedNewest
                             ? "border-2 border-blue-500 border-solid"
                             : ""
@@ -200,7 +202,7 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                 </span>
                 <span
                     id="fltrBtn-review-old"
-                    className={`p-2 bg-dark  ${
+                    className={`text-sm p-2 bg-dark rounded-md flex items-center ${
                         checkedOldest
                             ? "border-2 border-blue-500 border-solid"
                             : ""
@@ -211,7 +213,7 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                 </span>
                 <span
                     id="fltrBtn-review-high"
-                    className={`p-2 bg-dark  ${
+                    className={`text-sm p-2 bg-dark rounded-md flex items-center ${
                         checkedHighest
                             ? "border-2 border-blue-500 border-solid"
                             : ""
@@ -222,7 +224,7 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                 </span>
                 <span
                     id="fltrBtn-review-low"
-                    className={`p-2 bg-dark  ${
+                    className={`text-sm p-2 bg-dark rounded-md flex items-center ${
                         checkedLowest
                             ? "border-2 border-blue-500 border-solid"
                             : ""
@@ -232,88 +234,91 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                     Lowest
                 </span>
             </div>
+            <div className="flex flex-wrap gap-4 ">
+                {recipeReviews.map((review) => (
+                    <div className="p-4 bg-dark sm:w-120 lg:w-73">
+                        <div className="flex flex-row items-center justify-between min-w-0">
+                            <div className="flex items-center min-w-0 gap-2">
+                                <img
+                                    className="w-10 h-10 bg-blue-500 rounded-md"
+                                    alt={
+                                        review?.user.username ?? "Recipe Image"
+                                    }
+                                    src={
+                                        review.userProfile?.profilePicture
+                                            ? `http://localhost:8000${review?.userProfile.profilePicture}`
+                                            : `http://localhost:8000/media/images/recipes/default-recipe.png`
+                                    }
+                                />
+                                <h1 className="truncate min-w-0 overflow-hidden max-w-[10rem] ">
+                                    {review.user.username}
+                                </h1>
+                            </div>
 
-            {recipeReviews.map((review) => (
-                <div className="bg-dark p-4 my-2">
-                    {" "}
-                    <div className="flex flex-row  min-w-0 justify-between items-center">
-                        <h1 className="break-words overflow-hidden">
-                            {review.user.username}{" "}
-                        </h1>
-                        {imgStarReview(review.rating)}
+                            {imgStarReview(review.rating)}
+                        </div>
+
+                        {review.review_text && (
+                            <div className="my-4 text-sm">
+                                {review.review_text}
+                            </div>
+                        )}
+                        <div className="flex flex-row items-center gap-4">
+                            <LikeBtn
+                                className={`w-4 h-4 ${
+                                    user &&
+                                    review.likedBy
+                                        .flatMap((review) => review.id)
+                                        .includes(user.id)
+                                        ? "text-blue-500"
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    handleLike(review.id.toString(), true)
+                                }
+                            />
+
+                            <span>{review.likes}</span>
+                            <DislikeBtn
+                                className={`w-4 h-4 ${
+                                    user &&
+                                    review.dislikedBy
+                                        .flatMap((review) => review.id)
+                                        .includes(user.id)
+                                        ? "text-red-500"
+                                        : ""
+                                }`}
+                                onClick={() =>
+                                    handleLike(review.id.toString(), false)
+                                }
+                            />
+                            <span>{review.dislikes}</span>
+                        </div>
                     </div>
-                    {review.review_text && (
-                        <div className="my-4">{review.review_text}</div>
-                    )}
-                    <div className="flex gap-4 flex-row items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className={`w-4 h-4 ${
-                                user &&
-                                review.likedBy
-                                    .flatMap((review) => review.id)
-                                    .includes(user.id)
-                                    ? "text-blue-500"
-                                    : ""
-                            }`}
-                            onClick={() =>
-                                handleLike(review.id.toString(), true)
-                            }
+                ))}
+            </div>
+
+            <div className="relative flex justify-center my-10 ">
+                <span className="relative font-bold">
+                    {hasPrevious && (
+                        <span
+                            className="absolute cursor-pointer right-20"
+                            onClick={() => fetchRecipeReviews(currentPage - 1)}
                         >
-                            <path d="M12.3657 0.888071C12.6127 0.352732 13.1484 0 13.75 0C14.9922 0 15.9723 0.358596 16.4904 1.29245C16.7159 1.69889 16.8037 2.13526 16.8438 2.51718C16.8826 2.88736 16.8826 3.28115 16.8826 3.62846L16.8825 7H20.0164C21.854 7 23.2408 8.64775 22.9651 10.4549L21.5921 19.4549C21.3697 20.9128 20.1225 22 18.6434 22H8L8 9H8.37734L12.3657 0.888071Z" />
-                            <path d="M6 9H3.98322C2.32771 9 1 10.3511 1 12V19C1 20.6489 2.32771 22 3.98322 22H6L6 9Z" />
-                        </svg>
-                        <span>{review.likes}</span>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            className={`w-4 h-4 ${
-                                user &&
-                                review.dislikedBy
-                                    .flatMap((review) => review.id)
-                                    .includes(user.id)
-                                    ? "text-red-500"
-                                    : ""
-                            }`}
-                            onClick={() =>
-                                handleLike(review.id.toString(), false)
-                            }
-                        >
-                            <path d="M12.3657 23.1119C12.6127 23.6473 13.1484 24 13.75 24C14.9922 24 15.9723 23.6414 16.4904 22.7076C16.7159 22.3011 16.8037 21.8647 16.8438 21.4828C16.8826 21.1126 16.8826 20.7188 16.8826 20.3715L16.8825 17H20.0164C21.854 17 23.2408 15.3523 22.9651 13.5451L21.5921 4.54507C21.3697 3.08717 20.1225 2 18.6434 2H8L8 15H8.37734L12.3657 23.1119Z" />
-                            <path d="M6 15H3.98322C2.32771 15 1 13.6489 1 12V5C1 3.35111 2.32771 2 3.98322 2H6L6 15Z" />
-                        </svg>
-                        <span>{review.dislikes}</span>
-                    </div>
-                    <div className="relative flex justify-center my-10 ">
-                        <span className="font-bold relative">
-                            {hasPrevious && (
-                                <span
-                                    className="absolute right-20 cursor-pointer"
-                                    onClick={() =>
-                                        fetchRecipeReviews(currentPage - 1)
-                                    }
-                                >
-                                    Previous
-                                </span>
-                            )}
-                            {currentPage}
-                            {hasNext && (
-                                <span
-                                    className="absolute left-20 cursor-pointer"
-                                    onClick={() =>
-                                        fetchRecipeReviews(currentPage + 1)
-                                    }
-                                >
-                                    Next
-                                </span>
-                            )}
+                            Previous
                         </span>
-                    </div>
-                </div>
-            ))}
+                    )}
+                    {currentPage}
+                    {hasNext && (
+                        <span
+                            className="absolute cursor-pointer left-20"
+                            onClick={() => fetchRecipeReviews(currentPage + 1)}
+                        >
+                            Next
+                        </span>
+                    )}
+                </span>
+            </div>
         </div>
     );
 };

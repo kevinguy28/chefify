@@ -46,50 +46,63 @@ const RecipePage = () => {
     }, [loaded]);
 
     return (
-        <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] max-w-screen-xl mx-auto ">
-            <div className="mt-4 flex flex-col gap-4 min-w-0">
-                {loaded && (
-                    <>
-                        <RecipeCard
-                            recipe={recipe}
-                            traverseMode={false}
-                            editMode={false}
-                        />
-                        {loaded && (
-                            <ReviewCard
-                                reviewUser={undefined}
-                                reviewRating={recipe?.rating}
-                                reviewText={undefined}
-                                isUserReview={false}
-                            />
-                        )}
-                        <ReviewCard
-                            reviewUser={review?.user}
-                            reviewRating={review?.rating}
-                            reviewText={review?.review_text}
-                            isUserReview={true}
-                        />
-                    </>
-                )}
+        <div className="flex-col max-w-screen-xl grid-cols-2 gap-4 mx-auto sm:flex xl:grid">
+            <div className="flex flex-col gap-4">
+                <div className="mx-auto mt-16 sm:w-120 lg:w-150 bg-dark ">
+                    <img
+                        className="w-full sm:h-60 lg:h-90"
+                        alt={recipe?.name ?? "Recipe Image"}
+                        src={
+                            recipe?.image
+                                ? `http://localhost:8000${recipe.image}`
+                                : `http://localhost:8000/media/images/recipes/default-recipe.png`
+                        }
+                    />
 
-                {loaded && review ? (
-                    <ReviewForm review={review} setLoaded={setLoaded} />
-                ) : (
-                    <ReviewForm review={null} setLoaded={setLoaded} />
-                )}
-                {loaded && recipe && <RecipeReviewDisplay recipe={recipe} />}
-            </div>
-            <div className="mt-4 min-w-0">
-                {loaded && <RecipeStepsDisplay edit={false} />}
-            </div>
-            <div className="mt-4 min-w-0">
-                {loaded &&
-                    recipeComponent.map((component) => (
-                        <ComponentIngredientCard
-                            recipeId={Number(recipeId)}
-                            component={component}
+                    <div className="flex flex-col gap-2 p-4 ">
+                        <h1 className="text-lg font-bold">{recipe?.name}</h1>
+                        <p className="text-sm">
+                            {recipe?.cuisine.name} | {recipe?.user.username}
+                        </p>
+                        <ReviewCard
+                            reviewUser={undefined}
+                            reviewRating={recipe?.rating}
+                            reviewText={undefined}
+                            isUserReview={false}
                         />
-                    ))}
+
+                        <p className="text-sm text-darker-text">
+                            {recipe?.description}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap justify-center min-w-0 mx-auto sm:gap-4 lg:gap-8 sm:w-120 lg:w-150">
+                    {loaded &&
+                        recipeComponent.map((component) => (
+                            <ComponentIngredientCard
+                                recipeId={Number(recipeId)}
+                                component={component}
+                            />
+                        ))}
+                </div>
+            </div>
+
+            <div>{loaded && <RecipeStepsDisplay edit={false} />}</div>
+            <div className="flex flex-col gap-4">
+                <div className="mx-auto sm:w-120 lg:w-150">
+                    {loaded && review ? (
+                        <ReviewForm review={review} setLoaded={setLoaded} />
+                    ) : (
+                        <ReviewForm review={null} setLoaded={setLoaded} />
+                    )}
+                </div>
+
+                <div className="mx-auto sm:w-120 lg:w-150">
+                    {loaded && recipe && (
+                        <RecipeReviewDisplay recipe={recipe} />
+                    )}
+                </div>
             </div>
         </div>
     );

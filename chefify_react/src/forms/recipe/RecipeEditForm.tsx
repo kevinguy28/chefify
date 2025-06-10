@@ -3,6 +3,9 @@ import { readCuisines, readRecipe } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
 import { Cuisine, Recipe, RecipeEditFormProps } from "@/interfaces/interfaces";
 import { updateRecipe } from "@/endpoints/api";
+import CuisineLogo from "@/assets/cuisine.svg?react";
+import PrivacyLogo from "@/assets/lock.svg?react";
+import UploadLogo from "@/assets/upload.svg?react";
 
 import photo_png from "@/assets/add_photo_alternate_outlined.png";
 
@@ -71,30 +74,22 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
     }, [recipe]);
 
     return (
-        <form className="flex flex-col justify-center p-4 gap-4">
-            <h1 className="sm:w-4/5 lg:w-full mx-auto font-bold text-xl">
-                Edit Recipe: {recipe?.name}
-            </h1>
-            <div className="sm:w-4/5 lg:w-full mx-auto">
-                <label className=" text-xl">Name</label>
-                <hr />
-                <br />
-                <input
-                    className="w-full p-4 bg-duck-yellow rounded-xl mx-auto text-alt-text"
-                    placeholder={recipe?.name}
-                    value={recipeName}
-                    name="selectRecipeName"
-                    type="text"
-                    onChange={(e) => setRecipeName(e.target.value)}
-                />
-                <br />
-            </div>
-            <div className="sm:w-4/5 lg:w-full mx-auto">
-                <label className=" text-xl">Cuisine</label>
-                <hr />
-                <br />
+        <form className="flex flex-col justify-center gap-4 p-4 mx-auto sm:w-120">
+            <label className="font-bold">Name: </label>
+            <input
+                className="w-full p-4 mx-auto rounded-lg bg-dark "
+                placeholder={recipe?.name}
+                value={recipeName}
+                name="selectRecipeName"
+                type="text"
+                onChange={(e) => setRecipeName(e.target.value)}
+            />
+            <label className="font-bold">Cuisine:</label>
+
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-dark">
+                <CuisineLogo fill="currentColor" className="w-10 h-10" />
                 <select
-                    className="w-full p-4  bg-duck-yellow text-alt-text rounded-xl"
+                    className="p-2 rounded-lg grow outline-0 bg-dark"
                     name="selectCuisine"
                     onChange={(e) => setRecipeCuisine(e.target.value)}
                     value={recipeCuisine}
@@ -104,14 +99,13 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                         <option key={cuisine.id}>{cuisine.name}</option>
                     ))}
                 </select>
-                <br />
             </div>
-            <div className="sm:w-4/5 lg:w-full mx-auto">
-                <label className=" text-xl">Privacy</label>
-                <hr />
-                <br />
+
+            <label className="font-bold">Privacy:</label>
+            <div className="flex items-center gap-2 p-2 rounded-lg bg-dark">
+                <PrivacyLogo fill="currentColor" className="w-10 h-10" />
                 <select
-                    className="w-full p-4 bg-duck-yellow text-alt-text rounded-xl"
+                    className="p-2 rounded-lg grow outline-0 bg-dark"
                     name="selectPrivacy"
                     onChange={(e) => setRecipePrivacy(e.target.value)}
                     value={recipePrivacy}
@@ -120,71 +114,48 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                     <option value="public">Public</option>
                     <option value="friends">Friends Only</option>
                 </select>
-                <br />
             </div>
-            <div className="sm:w-4/5 lg:w-full mx-auto">
-                <label className=" text-xl">Description</label>
-                <hr />
-                <br />
-                <textarea
-                    className="w-full p-4 sm:h-40 lg:h-100 bg-duck-yellow text-alt-text rounded-xl resize-none"
-                    value={recipeDescription}
-                    placeholder={recipe?.description}
-                    onChange={(e) => setRecipeDescription(e.target.value)}
-                    maxLength={200}
-                ></textarea>
-                <br />
-            </div>
+
+            <label className="font-bold">Description:</label>
+            <textarea
+                className="w-full p-4 rounded-lg resize-none sm:h-40 lg:h-100 bg-dark "
+                value={recipeDescription}
+                placeholder={recipe?.description}
+                onChange={(e) => setRecipeDescription(e.target.value)}
+                maxLength={200}
+            ></textarea>
+
             {originalImageUrl && (
-                <div className="sm:w-4/5 lg:w-full mx-auto">
-                    <label className=" text-xl">Original Image</label>
-                    <hr />
-                    <br />
+                <div className="flex flex-col gap-4">
+                    <label className="font-bold">Current Image:</label>
                     <img
                         src={`http://localhost:8000${originalImageUrl}`}
                         alt="Uploaded Recipe"
-                        className="sm:w-90 h-50 rounded-lg mx-auto" // Add your desired styles
+                        className="mx-auto rounded-lg sm:w-90 h-50" // Add your desired styles
                     />
                 </div>
             )}
-            <div className="sm:w-4/5 lg:w-full mx-auto">
-                <label className="text-xl">Image</label>
-                <hr />
-                <br />
-                <label
-                    className={`flex p-2 w-full items-center justify-center cursor-pointer border-solid border-2 text-center rounded-xl ${
-                        recipeImage
-                            ? "bg-duck-yellow"
-                            : "bg-duck-less-pale-yellow"
-                    }`}
-                >
-                    <img src={photo_png}></img>
-                    <p className="flex-grow text-alt-text">Upload Image</p>
-                    <input
-                        className="hidden"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                    />
-                </label>
+            <label className="font-bold">Upload new Image:</label>
+            <label className="flex items-center justify-center w-full p-2 text-center border-2 border-solid rounded-lg cursor-pointer bg-dark">
+                <UploadLogo fill="currentColor" className="w-10 h-10" />
+                <p className="flex-grow ">Upload Image</p>
+                <input
+                    className="hidden"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                />
+            </label>
 
-                {recipeImage && (
-                    <>
-                        <br />
-                        <div className="w-full">
-                            <img
-                                src={`${recipeImageUrl}`}
-                                alt="Uploaded Recipe"
-                                className="sm:w-90 h-50 rounded-lg mx-auto"
-                            />
-                        </div>
-                    </>
-                )}
-                <br />
-                <hr />
-            </div>
+            {recipeImage && (
+                <img
+                    src={`${recipeImageUrl}`}
+                    alt="Uploaded Recipe"
+                    className="mx-auto rounded-lg sm:w-90 h-50"
+                />
+            )}
             <input
-                className="sm:w-4/5 lg:w-full py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg mx-auto"
+                className="py-2 mx-auto bg-green-600 rounded-lg w-80 h-14 hover:bg-green-700"
                 type="submit"
                 value="Submit Changes"
                 onClick={handleSubmit}

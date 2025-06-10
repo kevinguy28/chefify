@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { readCuisines, createRecipe } from "@/endpoints/api";
 import { useNavigate } from "react-router-dom";
+import CuisineLogo from "@/assets/cuisine.svg?react";
 
 const RecipeForm = () => {
     const [recipeName, setRecipeName] = useState("");
@@ -31,38 +32,46 @@ const RecipeForm = () => {
     }, []);
 
     return (
-        <form className="flex flex-col justify-center items-center p-4">
-            <h1 className="font-bold text-2xl text-center ">
-                Create a Recipe!
-            </h1>
-            <br />
-            <input
-                className="w-70 p-4 bg-duck-yellow rounded-xl"
-                placeholder="Name of Recipe"
-                value={recipeName}
-                name="selectRecipeName"
-                type="text"
-                onChange={(e) => setRecipeName(e.target.value)}
-            />
-            <br />
-            <select
-                className="w-70  p-4 bg-duck-yellow rounded-xl"
-                name="selectCuisine"
-                onChange={(e) => setCuisine(e.target.value)}
-                value={cuisine}
-            >
-                <option key="N/A">N/A</option>
-                {recipeCuisine.map((cuisine) => (
-                    <option key={cuisine.id}>{cuisine.name}</option>
-                ))}
-            </select>
-            <br />
-            <input
-                className="w-full py-4 bg-pepper-green hover:bg-pepper-dark-green rounded-lg "
-                type="submit"
-                value="Create Recipe"
-                onClick={handleSubmit}
-            />
+        <form className="flex flex-col gap-4 ">
+            <h1 className="text-xl font-bold">Create a Recipe</h1>
+            <div className="flex flex-col gap-4">
+                <label htmlFor="selectRecipeName" className="font-bold">
+                    Name:
+                </label>
+                <input
+                    className="p-2 rounded-lg w-80 h-14 bg-dark"
+                    placeholder="Name of Recipe"
+                    value={recipeName}
+                    name="selectRecipeName"
+                    type="text"
+                    onChange={(e) => setRecipeName(e.target.value)}
+                />
+                <label htmlFor="selectCuisine" className="font-bold">
+                    Cuisine:
+                </label>
+                <div className="flex items-center gap-2 p-2 rounded-lg w-80 bg-dark">
+                    <CuisineLogo fill="currentColor" className="w-10 h-10" />
+                    <select
+                        className="p-2 rounded-lg grow outline-0 bg-dark"
+                        name="selectCuisine"
+                        onChange={(e) => setCuisine(e.target.value)}
+                        value={cuisine}
+                    >
+                        <option key="N/A">N/A</option>
+                        {recipeCuisine.map((theCuisine) => (
+                            <option key={theCuisine.id}>
+                                {theCuisine.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <input
+                    className="py-2 bg-green-600 rounded-lg w-80 h-14 hover:bg-green-700 "
+                    type="submit"
+                    value="Create Recipe"
+                    onClick={handleSubmit}
+                />
+            </div>
         </form>
     );
 };

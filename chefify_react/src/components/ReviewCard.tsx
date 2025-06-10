@@ -35,18 +35,18 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
     }, [reviewUser, reviewRating, reviewText]);
 
     return (
-        <div className="bg-dark p-4 rounded-xl">
-            <div className="flex justify-between items-center">
-                {!isUserReview && <h1>Public Review</h1>}
+        <div className="">
+            <div className="flex items-center">
+                {!isUserReview && <h1 className="text-sm">Public Review | </h1>}
                 {isUserReview && (
-                    <h1>
+                    <h1 className="truncate max-w-[10rem]">
                         {typeof reviewUser === "object"
                             ? `${reviewUser.username} `
                             : "No "}{" "}
                         review
                     </h1>
                 )}
-                <fieldset className="rateReviewCard pointer-events-none">
+                <fieldset className="pointer-events-none rateReviewCard ">
                     <input
                         type="radio"
                         id={
@@ -340,7 +340,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                 </fieldset>
             </div>
             {isUserReview && (
-                <p className="bg-bg p-2 rounded-sm text-darker-text text-sm">
+                <p className="p-2 text-sm rounded-sm bg-bg text-darker-text">
                     {typeof reviewUser === "object" &&
                     reviewText != undefined &&
                     reviewText?.length > 0

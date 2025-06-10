@@ -61,7 +61,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
     }, [review]);
 
     return (
-        <div className="bg-dark p-4 rounded-xl">
+        <div className="w-full p-4 text-sm bg-dark">
             <h1>
                 {review
                     ? "Edit your review!"
@@ -188,7 +188,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
                     ></label>
                 </fieldset>
                 <textarea
-                    className="w-full p-2 border rounded-md resize-none overflow-hidden"
+                    className="w-full p-2 overflow-hidden border rounded-md resize-none"
                     rows={4}
                     value={userReviewText}
                     onChange={(e) => setUserReviewText(e.target.value)}
@@ -205,7 +205,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
                 ></input>
                 {review && (
                     <input
-                        className="sm:w-2/5 lg:w-2/5  py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg"
+                        className="py-4 rounded-lg sm:w-2/5 lg:w-2/5 bg-duck-pale-yellow hover:bg-white text-alt-text"
                         type="submit"
                         value="Delete Review"
                         onClick={handleDelete}

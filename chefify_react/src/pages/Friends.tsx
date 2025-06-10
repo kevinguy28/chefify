@@ -102,8 +102,9 @@ const Friends = () => {
     }, []);
 
     return (
-        <div className="lg:grid lg:grid-cols-[1fr_2fr_1fr] gap-4 max-w-screen-xl mx-auto mt-4">
-            <div className="p-4 rounded-sm max-w-full overflow-hidden bg-blue-400">
+        <div className="lg:grid lg:grid-cols-[1fr_2fr_2fr] gap-4 max-w-screen-2xl mx-auto mt-4 ">
+            <div className="flex items-baseline gap-4 p-4  sm:flex-wrap lg:flex-col">
+                <h1 className="font-bold text-lg">Your Friends</h1>
                 {friendsList.map((friends) => (
                     <FriendsListDisplay
                         friend={friends}
@@ -113,36 +114,40 @@ const Friends = () => {
                     />
                 ))}
             </div>
-            <div className="max-w-full overflow-hidden bg-red-400">
+            <div className="max-w-full overflow-hidden  p-4">
                 {" "}
-                <form>
-                    <input
-                        className="w-4/5 p-4 bg-duck-yellow rounded-xl mx-auto text-alt-text"
-                        placeholder="Search Username"
-                        type="text"
-                        onChange={(e) => setUsernameQuery(e.target.value)}
-                    />
-                    <input
-                        className="w-70 py-4 m-4 bg-duck-pale-yellow  rounded-lg font-bol"
-                        type="submit"
-                        value="Submit"
-                        onClick={(e) => searchForUser(e)}
-                    />
-                </form>
-                <div className="flex flex-wrap gap-y-4 justify-evenly  ">
-                    {queryProfile.map((profile) => (
-                        <FriendsListDisplay
-                            friend={profile}
-                            handleRemoveFriend={handleRemoveFriend}
-                            handleAddFriend={handleAddFriend}
-                            addMode={true}
+                <h1 className="font-bold text-lg">Search Users</h1>
+                <div className="p-3 flex flex-col gap-4">
+                    <form className="flex flex-col gap-4">
+                        <input
+                            className="p-4 mx-auto bg-dark rounded-md w-full "
+                            placeholder="Search Username"
+                            type="text"
+                            onChange={(e) => setUsernameQuery(e.target.value)}
                         />
-                    ))}
+                        <input
+                            className="p-4  rounded-md w-70  font-bold bg-green-600"
+                            type="submit"
+                            value="Submit"
+                            onClick={(e) => searchForUser(e)}
+                        />
+                    </form>
+                    <div className="flex flex-wrap gap-y-4 justify-evenly ">
+                        {queryProfile.map((profile) => (
+                            <FriendsListDisplay
+                                friend={profile}
+                                handleRemoveFriend={handleRemoveFriend}
+                                handleAddFriend={handleAddFriend}
+                                addMode={true}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
-            <div className="max-w-full bg-green-400 overflow-hidden">
+            <div className="max-w-full overflow-hidden ">
                 {recipes && (
-                    <div>
+                    <div className="p-4 ">
+                        <div className="font-bold mb-4">Friend Recipes</div>
                         <RecipeCatalog
                             recipes={recipes}
                             currentPage={currentPage}

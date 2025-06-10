@@ -43,8 +43,8 @@ const UserProfileIngredientListCard: React.FC<
     }, [refresh]);
 
     return (
-        <div className="bg-dark h-180 w-100 p-4 flex flex-col rounded-lg">
-            <div className="text-4xl flex flex-row justify-between items-center h-16 bg-bg p-4 mb-4 rounded-t-lg">
+        <div className="flex flex-col p-4 mx-auto rounded-lg bg-dark h-180 w-100">
+            <div className="flex flex-row items-center justify-between h-16 p-4 mb-4 text-4xl rounded-t-lg bg-bg">
                 <h1>{isOwned ? "Stocked Items" : "Shopping List"}</h1>
                 {isOwned ? (
                     <img className="h-1/1 invert" src={checkmark}></img>
@@ -52,7 +52,7 @@ const UserProfileIngredientListCard: React.FC<
                     <img className="h-1/1 invert" src={cart}></img>
                 )}
             </div>
-            <div className="grow overflow-y-auto scrollbar scrollbar-2 mb-8 max-w-1/1">
+            <div className="mb-8 overflow-y-auto grow scrollbar scrollbar-2 max-w-1/1">
                 <DropDownMenu
                     ingredientList={dairy}
                     type={"dairy"}

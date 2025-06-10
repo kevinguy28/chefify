@@ -78,6 +78,7 @@ export interface Review {
     dislikedBy: Array<User>;
     likes: number;
     dislikes: number;
+    userProfile: UserProfile;
 }
 
 export interface ReviewCardProps {
@@ -188,4 +189,24 @@ export interface FriendsListDisplayProp {
 
 export interface RecipeContainerProp {
     recipe: Recipe;
+    edit: boolean;
+}
+
+export interface RecipeQueryProp {
+    filterInput: string;
+    setFilterInput: React.Dispatch<React.SetStateAction<string>>;
+    setCuisine: React.Dispatch<React.SetStateAction<string>>;
+    cuisine: string;
+    recipeCuisine: Array<any>;
+    submitSearch: (e: React.FormEvent<HTMLDivElement>) => Promise<void>;
+    fetchRecipes: (page: number) => Promise<void>;
+    recent: boolean;
+    setRecent: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface RecipeEditPageStateProp {
+    pageState: "editRecipe" | "addStep" | "addIngredient";
+    setPageState: React.Dispatch<
+        React.SetStateAction<"editRecipe" | "addStep" | "addIngredient">
+    >;
 }

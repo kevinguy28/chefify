@@ -3,8 +3,11 @@ import { deleteRecipeStep, readRecipeSteps } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
 import { updateRecipeStep, updateRecipeStepOrder } from "@/endpoints/api";
 
-import arrowUp from "@/assets/arrow-up.svg";
-import arrowDown from "@/assets/arrow-down.svg";
+import ArrowUp from "@/assets/arrow-up.svg?react";
+import ArrowDown from "@/assets/arrow-down.svg?react";
+import TrashLogo from "@/assets/trash.svg?react";
+import EditLogo from "@/assets/edit.svg?react";
+import SaveFloppy from "@/assets/saveFloppy.svg?react";
 
 const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
     const { recipeId } = useParams();
@@ -89,20 +92,20 @@ const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
     }, [stepDescription]);
 
     return (
-        <div className="px-4 sm:w-4/5 lg:w-full mx-auto ">
+        <div className="flex flex-col gap-4 p-4 mx-auto sm:w-120">
             {recipeSteps.length > 0 ? (
                 recipeSteps.map((step, index) => (
-                    <>
+                    <div>
                         <div
-                            className="bg-dark-light p-2 rounded-xl"
+                            className="flex flex-col gap-4 p-8 bg-dark-light sm:w-110"
                             key={step.id}
                         >
-                            <h1 className="font-bold text-xl flex gap-4">
+                            <h1 className="flex items-center justify-center gap-4 text-lg font-bold text-darker-text">
                                 {editing && editStepId === step?.id ? (
-                                    <div className="flex flex-col w-full">
-                                        <div>Step - {step.order}:</div>
+                                    <div className="flex flex-col w-ful ">
+                                        <div>Step {step.order}:</div>
                                         <textarea
-                                            className="w-full p-2 border rounded-md resize-none overflow-hidden"
+                                            className="p-2 overflow-hidden text-lg border rounded-md resize-none "
                                             value={stepTitle}
                                             onChange={(e) =>
                                                 setStepTitle(e.target.value)
@@ -110,27 +113,21 @@ const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
                                         ></textarea>
                                     </div>
                                 ) : (
-                                    <span>
-                                        Step - {step.order}: {step?.title}
-                                    </span>
+                                    <div className="text-lg">{step?.title}</div>
                                 )}
-                                <div className="flex flex-row flex-grow gap-4 justify-end">
+                                <div className="flex flex-row items-center justify-end flex-grow gap-4">
                                     {index !== recipeSteps?.length - 1 &&
                                         edit && (
-                                            <img
-                                                src={arrowDown}
-                                                alt="Arrow Down"
-                                                className="w-5 h-5 ml-2"
+                                            <ArrowDown
+                                                className="w-8 h-8 hover:text-duck-yellow"
                                                 onClick={() =>
                                                     handleSwap(step.id, true)
                                                 }
                                             />
                                         )}
                                     {index !== 0 && edit && (
-                                        <img
-                                            src={arrowUp}
-                                            alt="Arrow Up"
-                                            className="w-5 h-5 ml-2"
+                                        <ArrowUp
+                                            className="w-8 h-8 hover:text-duck-yellow "
                                             onClick={() =>
                                                 handleSwap(step.id, false)
                                             }
@@ -138,15 +135,13 @@ const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
                                     )}
                                 </div>
                             </h1>
-                            <hr />
-                            <br />
 
                             <div>
                                 {editing && editStepId === step?.id ? (
                                     <form>
                                         <textarea
                                             ref={textareaRef}
-                                            className="w-full p-2 border rounded-md resize-none overflow-hidden"
+                                            className="w-full p-2 overflow-hidden border rounded-md resize-none"
                                             value={stepDescription}
                                             rows={1}
                                             onChange={(e) =>
@@ -157,43 +152,60 @@ const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
                                         ></textarea>
                                     </form>
                                 ) : (
-                                    <p>{step?.description}</p>
+                                    <p className="text-sm text-darker-text">
+                                        {step?.description}
+                                    </p>
                                 )}
                             </div>
-                            <br />
-                            <div className="flex gap-4 justify-end">
+                            <div className="flex items-center justify-end gap-4">
                                 {edit && (
                                     <>
-                                        <span
-                                            className="hover:text-duck-yellow"
-                                            onClick={() =>
-                                                handleEdit(
-                                                    step?.id,
-                                                    step?.title,
-                                                    step?.description
-                                                )
-                                            }
-                                        >
-                                            {editing
-                                                ? editStepId === step?.id
-                                                    ? "Save"
-                                                    : ""
-                                                : "Edit"}
-                                        </span>
-                                        <span
-                                            className="cursor-pointer text-red-500 hover:text-red-300"
+                                        <>
+                                            <EditLogo
+                                                className={`w-8 h-8 cursor-pointer hover:text-green-500 ${
+                                                    editing &&
+                                                    editStepId === step?.id
+                                                        ? "hidden"
+                                                        : "block"
+                                                }`}
+                                                onClick={() =>
+                                                    handleEdit(
+                                                        step?.id,
+                                                        step?.title,
+                                                        step?.description
+                                                    )
+                                                }
+                                            />
+                                            <SaveFloppy
+                                                className={`w-8 h-8 cursor-pointer hover:text-green-500 ${
+                                                    editing &&
+                                                    editStepId === step?.id
+                                                        ? "block"
+                                                        : "hidden"
+                                                }`}
+                                                onClick={() =>
+                                                    handleEdit(
+                                                        step?.id,
+                                                        step?.title,
+                                                        step?.description
+                                                    )
+                                                }
+                                            />
+                                        </>
+                                        <TrashLogo
+                                            className="w-10 h-10 cursor-pointer hover:text-red-500"
                                             onClick={() =>
                                                 handleDelete(step.id)
                                             }
-                                        >
-                                            Delete
-                                        </span>
+                                        />
                                     </>
                                 )}
                             </div>
+                            <div className="flex justify-end text-sm text-darker-text">
+                                {step.order}
+                            </div>
                         </div>
-                        <br />
-                    </>
+                    </div>
                 ))
             ) : (
                 <div>gg</div>

@@ -68,6 +68,7 @@ const USER_PROFILE_FAVOURITE_URL = (recipeId: string) =>
     `${USER_PROFILE_URL}favourite/${recipeId}/`;
 const USER_PROFILE_INGREDIENT_URL = `${USER_PROFILE_URL}ingredient/`;
 const USER_PROFILE_MOVE_URL = `${USER_PROFILE_INGREDIENT_URL}move/`;
+const USER_PROFILE_FAVOURITE_RECIPE_URL = `${USER_PROFILE_URL}favourite/`;
 
 // Recipe Ingredient
 
@@ -186,7 +187,9 @@ export const readRecipes = async (
     needUser: boolean,
     privacy?: string,
     filterInput?: string,
-    cuisine?: string
+    cuisine?: string,
+    recent?: string,
+    returnQuantity?: number
 ) => {
     try {
         const response = await axios.get(RECIPES_READ_URL, {
@@ -196,6 +199,8 @@ export const readRecipes = async (
                 ...(privacy && { privacy }),
                 ...(filterInput && { filterInput }),
                 ...(cuisine && { cuisine }),
+                ...(recent && { recent }),
+                ...(returnQuantity && { returnQuantity }),
             },
             withCredentials: true,
         });
@@ -209,6 +214,8 @@ export const readRecipes = async (
                     ...(privacy && { privacy }),
                     ...(filterInput && { filterInput }),
                     ...(cuisine && { cuisine }),
+                    ...(recent && { recent }),
+                    ...(returnQuantity && { returnQuantity }),
                 },
                 withCredentials: true,
             })
@@ -462,6 +469,7 @@ export const createReview = async (
             },
             { withCredentials: true }
         );
+        console.log(response);
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
@@ -609,6 +617,22 @@ export const createIngredient = async (name: string) => {
 };
 
 // User Profile
+
+export const readUserProfileFavouriteRecipes = async (page: number) => {
+    try {
+        const response = await axios.get(USER_PROFILE_FAVOURITE_RECIPE_URL, {
+            withCredentials: true,
+            params: { page },
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.get(USER_PROFILE_FAVOURITE_RECIPE_URL, {
+                withCredentials: true,
+            })
+        );
+    }
+};
 
 export const readUserProfile = async () => {
     try {

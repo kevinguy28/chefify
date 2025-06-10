@@ -104,16 +104,28 @@ class RecipeSteps(models.Model):
         # Call the superclass delete method to delete the instance
         super(RecipeSteps, self).delete(*args, **kwargs)
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    friendsList = models.ManyToManyField(User, related_name="friends_with", blank=True)
+    ownedIngredients = models.ManyToManyField(Ingredient, related_name="owned_by", blank=True)
+    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
+    favouriteRecipes = models.ManyToManyField(Recipe, related_name="favourite_to", blank=True)
+    profilePicture = models.ImageField(upload_to='images/profilePicture/', blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
 class Review(models.Model):
     RATING_CHOICES = [(i/2, str(i/2)) for i in range(1, 11)]
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     rating = models.DecimalField(max_digits=2, decimal_places=1,choices=RATING_CHOICES,validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     likedBy = models.ManyToManyField(User, related_name="liked_by_reviews", blank=True)
     dislikedBy = models.ManyToManyField(User, related_name="disliked_by_reviews", blank=True)
-    likes = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-    dislikes = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    likes = models.IntegerField(default=0, validators=[MinValueValidator(0)], blank=True)
+    dislikes = models.IntegerField(default=0, validators=[MinValueValidator(0)], blank=True)
     review_text = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    userProfile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, null=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -141,16 +153,6 @@ class Review(models.Model):
     def __str__(self):
         return f"Review: {self.rating}"
 
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    friendsList = models.ManyToManyField(User, related_name="friends_with", blank=True)
-    ownedIngredients = models.ManyToManyField(Ingredient, related_name="owned_by", blank=True)
-    buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
-    favouriteRecipes = models.ManyToManyField(Recipe, related_name="favourite_to", blank=True)
-    profilePicture = models.ImageField(upload_to='images/profilePicture/', blank=True, null=True)
-
-    def __str__(self):
-        return self.user.username
     
 class RecipeComponent(models.Model):
     name = models.CharField(max_length=255)

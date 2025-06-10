@@ -6,6 +6,9 @@ import {
     deleteRecipeIngredient,
 } from "@/endpoints/api";
 
+import TrashLogo from "@/assets/trash.svg?react";
+import XLogo from "@/assets/x.svg?react";
+
 const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     component,
     updateRecipeComponents,
@@ -54,35 +57,41 @@ const RecipeComponentCard: React.FC<RecipeComponentCardProp> = ({
     }, [fetchIngredients]);
 
     return (
-        <div className="bg-dark-light p-2 rounded-xl mb-4">
-            <h1 className="font-bold text-xl flex gap-4">{component.name}</h1>
-            <p>{component.description}</p>
-            <hr />
-            <div className="py-4">
-                {recipeIngredients &&
-                    recipeIngredients.map((ingredient) => (
-                        <>
-                            <div className="flex justify-between">
-                                <div>
-                                    {ingredient.quantity} {ingredient.unit} -{" "}
-                                    {ingredient.ingredient.name}
-                                </div>
-                                <div
-                                    onClick={() =>
-                                        handleDeleteIngredient(ingredient.id)
-                                    }
-                                >
-                                    Delete
-                                </div>
-                            </div>
-                        </>
-                    ))}
+        <div className="flex flex-col gap-2 p-4 mx-auto bg-dark-light sm:w-110">
+            <div>
+                <h1 className="text-lg font-bold ">{component.name}</h1>
+                <p className="font-light text-md">{component.description}</p>
+                <hr />
             </div>
 
-            <hr />
-            <div className="flex gap-4 justify-end">
-                <div>Edit</div>
-                <div onClick={handleDeleteCard}>Delete</div>
+            <div className="flex flex-col">
+                {recipeIngredients && recipeIngredients.length > 0 ? (
+                    recipeIngredients.map((ingredient) => (
+                        <div
+                            key={ingredient.id}
+                            className="flex items-center justify-between p-2 hover:bg-dark-light"
+                        >
+                            <div>
+                                {ingredient.quantity} {ingredient.unit} |{" "}
+                                {ingredient.ingredient.name}
+                            </div>
+                            <XLogo
+                                className="w-6 h-6 hover:text-red-400"
+                                onClick={() =>
+                                    handleDeleteIngredient(ingredient.id)
+                                }
+                            />
+                        </div>
+                    ))
+                ) : (
+                    <div>No ingredients have been listed yet!</div>
+                )}
+            </div>
+            <div className="flex justify-end w-full ">
+                <TrashLogo
+                    className="w-10 h-10 hover:text-red-600"
+                    onClick={handleDeleteCard}
+                />
             </div>
         </div>
     );

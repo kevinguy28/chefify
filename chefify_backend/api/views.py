@@ -144,12 +144,17 @@ def readCuisines(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def readRecipes(request):
-    print('ass')
     pageNumber = request.GET.get("page", 1)
     needUser = request.GET.get("needUser")
     privacy = request.GET.get("privacy")
     filterInput = request.GET.get("filterInput") 
-    cuisine = Cuisine.objects.get(name=request.GET.get("cuisine")) if request.GET.get("cuisine") else None
+    recent = request.GET.get("recent")
+    print(request.GET.get("cuisine"))
+    cuisine = (
+        Cuisine.objects.filter(name=request.GET.get("cuisine")).first()
+        if request.GET.get("cuisine")
+        else None
+)
     
     filters = Q()
 
@@ -163,11 +168,19 @@ def readRecipes(request):
     if cuisine:
         filters &= Q(cuisine=cuisine)
 
-    recipes = Recipe.objects.filter(filters)
-    paginator = Paginator(recipes, 6)
+    if recent == "true":
+        recipes = Recipe.objects.filter(filters).order_by('-created')
+    else:
+        recipes = Recipe.objects.filter(filters).order_by('created')
+
+    returnQuantity = request.GET.get("returnQuantity")
+
+
+
+    paginator = Paginator(recipes, returnQuantity) if returnQuantity else Paginator(recipes, 10)
+
     page_obj = paginator.get_page(pageNumber)
     serializer = RecipeSerializer(page_obj, many=True)
-
     return Response({
         "recipes": serializer.data,
         "page": page_obj.number,  # Current page
@@ -383,14 +396,16 @@ class ReviewView(APIView):
     def post(self, request, recipeId):
         try:
             recipe = Recipe.objects.get(id=recipeId)
+            userProfile = UserProfile.objects.get(user=request.user)
             data = request.data
             if(data['rating'] and data['rating'] != 0):
                 rating = data['rating']
                 try: 
                     review_text = data['review_text']
-                    review = Review.objects.create(recipe=recipe, rating=rating, review_text=review_text, user=request.user)
+                    review = Review.objects.create(recipe=recipe, rating=rating, review_text=review_text, user=request.user, userProfile=userProfile)
                 except:
-                    review = Review.objects.create(recipe=recipe, rating=rating, review_text=None, user=request.user)
+                    review = Review.objects.create(recipe=recipe, rating=rating, review_text=None, user=request.user, userProfile=userProfile)
+                    
                 serializer = ReviewSerializer(review)
                 return Response(serializer.data, status=201)
             return Response({"success": True})
@@ -423,7 +438,6 @@ class ReviewView(APIView):
 
                 # Check if "relevant" is true and add it to the order parameters
                 if request.GET.get("relevant") == "true":  # Fixed the condition here
-                    print("rel")
                     reviews = reviews.annotate(
                         liked_count=Count('likedBy'),
                         disliked_count=Count('dislikedBy'),
@@ -434,22 +448,18 @@ class ReviewView(APIView):
                     order_params.append("-liked_count")
 
                 if request.GET.get("newest") == "true":
-                    print("new")
                     order_params.append("-updated")
 
                 # Check if "oldest" is true and add it to the order parameters
                 if request.GET.get("oldest") == "true":
-                    print("oldest")
                     order_params.append("updated")
 
                 # Check if "highest" is true and add it to the order parameters
                 if request.GET.get("highest") == "true":
-                    print("highest")
                     order_params.append("-rating")
 
                 # Check if "lowest" is true and add it to the order parameters
                 if request.GET.get("lowest") == "true":
-                    print("lowest")
                     order_params.append("rating")
 
                 # Apply the ordering to the queryset if there are any order parameters
@@ -463,7 +473,6 @@ class ReviewView(APIView):
                 return Response(None, status=status.HTTP_200_OK)
 
             serializer = ReviewSerializer(page_obj, many=True)
-            print(serializer.data)
             return Response({
                 "reviews": serializer.data,
                 "page": page_obj.number,
@@ -539,6 +548,29 @@ def createIngredient(request):
 
 # User Profile
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getUserProfileFavouriteRecipe(request):
+    print("gayt")
+    page = request.GET.get("page", 1)
+    print(page)
+    userProfile = UserProfile.objects.get(user=request.user).favouriteRecipes.all()
+    print(userProfile)
+    paginator = Paginator(userProfile, 12)
+    page_obj = paginator.get_page(int(page))
+    serializer = RecipeSerializer(page_obj, many=True)
+    return Response({
+        "recipes": serializer.data,
+        "page": page_obj.number,
+        "totalPages": paginator.num_pages,  
+        "hasNext": page_obj.has_next(),
+        "hasPrevious": page_obj.has_previous() 
+
+    })
+
+    
+
+
 class UserProfileFriendView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -578,14 +610,12 @@ def getFriendsUserProfile(request):
 @permission_classes([IsAuthenticated])
 def getQueryUserProfile(request):
     userFriendList = UserProfile.objects.get(user=request.user).friendsList.all()
-    print(userFriendList)
     usernameQuery = request.GET.get('usernameQuery')
     user_profiles = UserProfile.objects.filter(user__username__icontains=usernameQuery)
 
     friend_user_ids = [user.id for user in userFriendList]
 
     user_profiles = user_profiles.exclude(user__id__in=friend_user_ids).exclude(user_id=request.user.id)
-    print(user_profiles) 
     
     serializer = UserProfileSerializer(user_profiles, many=True)
     # print(serializer.data)

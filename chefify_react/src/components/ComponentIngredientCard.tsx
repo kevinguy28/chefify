@@ -53,15 +53,14 @@ const ComponentIngredientCard: React.FC<ComponentIngredientProp> = ({
     }, [recipeId, component]);
 
     return (
-        <div className="p-4 mb-4 bg-dark rounded-xl max-w-full ">
-            <h1 className="text-xl font-bold">{component.name}</h1>
-            <hr />
+        <div className="p-4 bg-dark sm:w-58 lg:w-71 ">
+            <h1 className="font-bold text-md">{component.name}</h1>
             {recipeIngredients.length > 0 ? (
                 recipeIngredients.map((ingredient) => (
-                    <div className="w-full flex flex-row justify-between items-center my-1">
-                        <div className="flex flex-wrap grow min-w-0 ">
+                    <div className="flex flex-row items-center justify-between w-full my-1">
+                        <div className="flex flex-wrap min-w-0 grow ">
                             <p
-                                className={`break-words overflow-hidden ${`${
+                                className={`text-sm break-words overflow-hidden ${`${
                                     userIngredientsId.includes(ingredient.id)
                                         ? "text-green-400"
                                         : "text-red-400"
@@ -71,7 +70,7 @@ const ComponentIngredientCard: React.FC<ComponentIngredientProp> = ({
                                 {ingredient.quantity} {ingredient.unit}
                             </p>
                         </div>
-                        <div className="w-8 h-8  flex-shrink-0">
+                        <div className="flex-shrink-0 w-8 h-8">
                             {" "}
                             {convertIngredientType(
                                 ingredient.ingredient.ingredientType

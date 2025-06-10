@@ -6,6 +6,7 @@ import RecipeForm from "@/forms/recipe/RecipeForm";
 import RecipeCatalog from "@/components/RecipeCatalog";
 import { readCuisines } from "../endpoints/api";
 import ShoppingListForm from "@/forms/ShoppingListForm";
+import RecipeQuery from "@/forms/recipe/RecipeQuery";
 
 const Home = () => {
     const [cuisine, setCuisine] = useState("");
@@ -17,9 +18,18 @@ const Home = () => {
     const [hasPrevious, setHasPrevious] = useState<boolean>(false);
     const [totalPages] = useState<number | null>(null);
     const [filterInput, setFilterInput] = useState<string>("");
+    const [recent, setRecent] = useState<boolean>(true);
 
     const fetchRecipes = async (page: number) => {
-        const response = await readRecipes(page, false, "public");
+        const response = await readRecipes(
+            page,
+            false,
+            "public",
+            undefined,
+            undefined,
+            "true",
+            undefined
+        );
         if (response) {
             setCurrentPage(response.page);
             setHasNext(response.hasNext);
@@ -37,13 +47,14 @@ const Home = () => {
 
     const submitSearch = async (e: React.FormEvent<HTMLDivElement>) => {
         e.preventDefault();
-        if (!(cuisine.length == 0 && filterInput.length == 0)) {
+        {
             const response = await readRecipes(
                 1,
                 false,
                 "public",
                 filterInput,
-                cuisine
+                cuisine,
+                recent.toString()
             );
             if (response) {
                 setCurrentPage(response.page);
@@ -63,19 +74,31 @@ const Home = () => {
     }, [loaded]);
 
     return (
-        <div>
-            <div className="grid grid-cols-[2fr_5fr_2fr] mt-8 max-w-screen-2xl mx-auto">
-                <div>
-                    <RecipeCatalog
-                        recipes={recipes}
-                        currentPage={currentPage}
-                        hasNext={hasNext}
-                        hasPrevious={hasPrevious}
-                        traverseMode={true}
-                        editMode={false}
-                        fetchRecipes={fetchRecipes}
-                    />
-                </div>
+        <div className="mt-8 max-w-screen-xl mx-auto  xl:grid grid-cols-[1fr_1fr] xl:grid-cols-[1fr_2fr] ">
+            <div className="flex flex-col md:flex-row xl:flex-col xl:justify-start justify-center items-center md:items-start   gap-8 p-8">
+                <RecipeForm />
+                <RecipeQuery
+                    filterInput={filterInput}
+                    setFilterInput={setFilterInput}
+                    setCuisine={setCuisine}
+                    cuisine={cuisine}
+                    recipeCuisine={recipeCuisine}
+                    submitSearch={submitSearch}
+                    fetchRecipes={fetchRecipes}
+                    recent={recent}
+                    setRecent={setRecent}
+                />
+            </div>
+            <div className="xl:py-8 ">
+                <RecipeCatalog
+                    recipes={recipes}
+                    currentPage={currentPage}
+                    hasNext={hasNext}
+                    hasPrevious={hasPrevious}
+                    traverseMode={true}
+                    editMode={false}
+                    fetchRecipes={fetchRecipes}
+                />
             </div>
         </div>
     );

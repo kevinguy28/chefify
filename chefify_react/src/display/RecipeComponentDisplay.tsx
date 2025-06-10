@@ -8,7 +8,7 @@ const RecipeComponentDisplay: React.FC<RecipeComponentDisplayProp> = ({
     setFetchIngredients,
 }) => {
     return (
-        <div className="px-4 sm:w-4/5 lg:w-full mx-auto ">
+        <div className="flex flex-col w-full gap-4 p-4 mx-auto sm:w-120">
             {recipeComponents &&
                 recipeComponents.map((component) => (
                     <RecipeComponentCard

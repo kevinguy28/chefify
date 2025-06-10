@@ -81,41 +81,52 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
     }, [recipeComponents]);
 
     return (
-        <>
-            <form className="space-y-4" onSubmit={handleSubmitRecipeComponent}>
+        <div className="flex flex-col justify-center gap-4 p-4 mx-auto sm:w-120">
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmitRecipeComponent}
+            >
                 {" "}
+                <label className="font-bold">Title: </label>
                 <input
-                    className="w-4/5 p-4 bg-duck-yellow rounded-xl mx-auto text-alt-text"
-                    placeholder="Select Quantity"
+                    className="w-full p-4 mx-auto rounded-md bg-dark "
+                    placeholder="Type title"
                     type="text"
                     value={recipeComponentName}
                     onChange={(e) => setRecipeComponentName(e.target.value)}
                 />
+                <label className="font-bold">Description: </label>
                 <textarea
-                    className="w-full p-2 border rounded-md resize-none overflow-hidden"
+                    className="w-full p-4 overflow-hidden border rounded-md resize-none bg-dark"
+                    placeholder="Type description "
                     value={recipeComponentDescription}
                     onChange={(e) =>
                         setRecipeComponentDescription(e.target.value)
                     }
                 ></textarea>
                 <input
-                    className="sm:w-4/5 lg:w-full py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg mx-auto"
+                    className="py-2 mx-auto bg-green-600 rounded-lg w-80 h-14 hover:bg-green-700"
                     type="submit"
                     value="Submit Recipe Component"
                 />
             </form>
 
-            <form className="space-y-4" onSubmit={handleSubmitRecipeIngredient}>
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmitRecipeIngredient}
+            >
+                <label className="font-bold">Quantity: </label>
                 <input
-                    className="w-4/5 p-4 bg-duck-yellow rounded-xl mx-auto text-alt-text"
+                    className="w-full p-4 mx-auto rounded-md bg-dark"
                     placeholder="Select Quantity"
                     type="number"
                     step="0.01"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
                 />
+                <label className="font-bold">Measurement: </label>
                 <select
-                    className="w-4/5 p-4 bg-duck-yellow text-alt-text rounded-xl"
+                    className="w-full p-4 rounded-md bg-dark"
                     onChange={(e) =>
                         setUnit(e.target.value as keyof typeof UNIT_CHOICES)
                     }
@@ -127,14 +138,17 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                         </option>
                     ))}
                 </select>
+                <label className="font-bold">Ingredient Name: </label>
                 <input
-                    className="w-4/5 p-4 bg-duck-yellow text-alt-text rounded-xl"
+                    className="w-full p-4 rounded-md bg-dark"
+                    placeholder="Type name"
                     type="text"
                     onChange={(e) => setIngredient(e.target.value)}
                     value={ingredient}
                 />
+                <label className="font-bold">Category: </label>
                 <select
-                    className="w-4/5 p-4 bg-dark-light rounded-xl"
+                    className="w-full p-4 rounded-md bg-dark"
                     name="selectIngredientType"
                     onChange={(e) => setIngredientType(e.target.value)}
                     value={ingredientType}
@@ -148,8 +162,11 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                     <option value="herbsSpices">Herbs & Spices</option>
                     <option value="protein">Protein</option>
                 </select>
+                <label className="font-bold">
+                    Associated with Recipe Component:{" "}
+                </label>
                 <select
-                    className="w-4/5 p-4 bg-dark-light rounded-xl"
+                    className="w-full p-4 rounded-md bg-dark"
                     name="selectRecipeComponents"
                     onChange={(e) => setComponentId(e.target.value)}
                     value={componentId}
@@ -162,12 +179,12 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
                         ))}
                 </select>
                 <input
-                    className="sm:w-4/5 lg:w-full py-4 bg-duck-pale-yellow hover:bg-white  text-alt-text rounded-lg mx-auto"
+                    className="py-2 mx-auto bg-green-600 rounded-lg w-80 h-14 hover:bg-green-700"
                     type="submit"
                     value="Submit Changes"
                 />
             </form>
-        </>
+        </div>
     );
 };
 

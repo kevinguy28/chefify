@@ -46,6 +46,7 @@ class ReviewSerializer(ModelSerializer):
     recipe = RecipeSerializer()
     likedBy = UserSerializer(many=True)
     dislikedBy = UserSerializer(many=True)
+    userProfile = UserProfile()
     class Meta:
         model = Review
         fields = '__all__'
