@@ -208,7 +208,7 @@ const RecipeStepsDisplay = ({ edit }: { edit: boolean }) => {
                     </div>
                 ))
             ) : (
-                <div>gg</div>
+                <div>The author has not written any steps!</div>
             )}
         </div>
     );

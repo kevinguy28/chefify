@@ -9,7 +9,6 @@ import {
 
 import ComponentIngredientCard from "@/components/ComponentIngredientCard";
 import RecipeStepsDisplay from "@/display/RecipeStepsDisplay";
-import RecipeCard from "@/components/RecipeCard";
 import ReviewCard from "@/components/ReviewCard";
 import ReviewForm from "@/forms/review/ReviewForm";
 import RecipeReviewDisplay from "@/display/RecipeReviewDisplay";
