@@ -55,6 +55,7 @@ const RecipeContainer: React.FC<RecipeContainerProp> = ({ recipe, edit }) => {
                         : `http://localhost:8000/media/images/recipes/default-recipe.png`
                 }
             />
+
             <div className="h-30 px-2 flex flex-col overflow-hidden grow">
                 <div className="flex justify-between items-center ">
                     <h3 className="text-darker-text ">{formattedDate}</h3>
