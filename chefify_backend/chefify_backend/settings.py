@@ -157,12 +157,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
-    "https://chefify-production.up.railway.app/",
-] 
+    "https://chefify-production.up.railway.app",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://chefify-production.up.railway.app/']
+CSRF_TRUSTED_ORIGINS = [
+    "https://chefify-production.up.railway.app"   
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
