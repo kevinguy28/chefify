@@ -1,5 +1,4 @@
 import React from "react";
-import RecipeCard from "./RecipeCard";
 import { RecipeCatalogProps } from "@/interfaces/interfaces";
 import RecipeContainer from "./RecipeContainer";
 
@@ -8,8 +7,6 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
     currentPage,
     hasNext,
     hasPrevious,
-    traverseMode,
-    editMode,
     fetchRecipes,
 }) => {
     return (

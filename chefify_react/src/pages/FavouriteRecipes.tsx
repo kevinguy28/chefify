@@ -1,14 +1,11 @@
-import RecipeCard from "@/components/RecipeCard";
 import { useAuth } from "@/contexts/useAuth";
 import { Recipe } from "@/interfaces/interfaces";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import RecipeContainer from "@/components/RecipeContainer";
 import FavouriteLogo from "@/assets/favourite-icon.svg?react";
 import { readUserProfileFavouriteRecipes } from "@/endpoints/api";
 
 const FavouriteRecipes = () => {
-    const { userProfile } = useAuth();
-
     const [favouriteRecipes, setFavouriteRecipes] = useState<Array<Recipe>>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasNext, setHasNext] = useState<boolean>(false);

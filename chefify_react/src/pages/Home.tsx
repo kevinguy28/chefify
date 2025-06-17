@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import { readRecipes, logout } from "../endpoints/api";
-import { useNavigate } from "react-router-dom";
+import { readRecipes } from "../endpoints/api";
 import "../index.css";
 import RecipeForm from "@/forms/recipe/RecipeForm";
 import RecipeCatalog from "@/components/RecipeCatalog";
 import { readCuisines } from "../endpoints/api";
-import ShoppingListForm from "@/forms/ShoppingListForm";
 import RecipeQuery from "@/forms/recipe/RecipeQuery";
 
 const Home = () => {
@@ -16,7 +14,6 @@ const Home = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasNext, setHasNext] = useState<boolean>(false);
     const [hasPrevious, setHasPrevious] = useState<boolean>(false);
-    const [totalPages] = useState<number | null>(null);
     const [filterInput, setFilterInput] = useState<string>("");
     const [recent, setRecent] = useState<boolean>(true);
 

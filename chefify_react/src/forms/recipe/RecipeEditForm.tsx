@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { readCuisines, readRecipe } from "@/endpoints/api";
+import { readCuisines } from "@/endpoints/api";
 import { useParams } from "react-router-dom";
-import { Cuisine, Recipe, RecipeEditFormProps } from "@/interfaces/interfaces";
+import { Cuisine, RecipeEditFormProps } from "@/interfaces/interfaces";
 import { updateRecipe } from "@/endpoints/api";
 import CuisineLogo from "@/assets/cuisine.svg?react";
 import PrivacyLogo from "@/assets/lock.svg?react";
 import UploadLogo from "@/assets/upload.svg?react";
-
-import photo_png from "@/assets/add_photo_alternate_outlined.png";
 
 const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
     recipe,
@@ -15,7 +13,6 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
 }) => {
     const { recipeId } = useParams();
     const [allCuisines, setAllCuisines] = useState<Array<Cuisine>>([]);
-    const [receivedRecipe, setReceivedRecipe] = useState<Boolean>(false);
 
     const [recipeName, setRecipeName] = useState<string>("");
     const [recipeCuisine, setRecipeCuisine] = useState<string>("");
@@ -53,7 +50,6 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
         );
         if (submitData) {
             setLoaded(false);
-            setReceivedRecipe(false);
         }
         return;
     };
@@ -69,7 +65,6 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 setOriginalImageUrl(recipe.image);
             }
             setRecipeImageUrl("");
-            setReceivedRecipe(true);
         }
     }, [recipe]);
 

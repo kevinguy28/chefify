@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { RecipeComponentDisplayProp } from "@/interfaces/interfaces";
 import RecipeComponentCard from "@/components/RecipeComponentCard";
 const RecipeComponentDisplay: React.FC<RecipeComponentDisplayProp> = ({

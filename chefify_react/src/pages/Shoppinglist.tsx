@@ -1,5 +1,5 @@
 import UserProfileIngredientListCard from "@/components/UserProfileIngredientListCard";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 
 const Shoppinglist = () => {
     const [refresh, setRefresh] = useState<boolean>(false);

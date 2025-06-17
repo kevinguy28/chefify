@@ -1,11 +1,8 @@
-import RecipeEditCatalog from "@/components/RecipeEditCatalog";
 import axios from "axios";
-import { Component } from "react";
-const BASE_URL = "http://127.0.0.1:8000/api/";
+const BASE_URL = import.meta.env.VITE_API_URL;
 const CREATE_URL = "create/";
 const READ_URL = "read/";
 const UPDATE_URL = "update/";
-const DELETE_URL = "delete/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
 
@@ -52,9 +49,6 @@ const REVIEW_LIKE_URL = (reviewId: string) => `${BASE_URL}review/${reviewId}/`;
 // Ingredient
 
 const INGREDIENT_URL = `${BASE_URL}ingredient/`;
-const INGREDIENT_READ_URL = (ingredientId: string) =>
-    `${INGREDIENT_URL}/${ingredientId}/`;
-
 const LOGOUT_URL = `${BASE_URL}logout/`;
 const AUTHENTICATED_URL = `${BASE_URL}authenticated/`;
 const REGISTER_URL = `${BASE_URL}register/`;

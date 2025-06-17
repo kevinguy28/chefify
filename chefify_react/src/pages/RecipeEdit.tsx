@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import RecipeEditForm from "@/forms/recipe/RecipeEditForm";
 import RecipeStepsForm from "@/forms/recipe/RecipeStepsForm";
 import RecipeStepsDisplay from "@/display/RecipeStepsDisplay";
-import RecipeCard from "@/components/RecipeCard";
 import { Recipe, RecipeComponent } from "@/interfaces/interfaces";
 import { readRecipe, readRecipeComponent } from "@/endpoints/api";
 import { useParams } from "react-router-dom";

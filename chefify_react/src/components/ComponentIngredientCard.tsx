@@ -6,7 +6,6 @@ import React, { useState, useEffect } from "react";
 import {
     RecipeIngredient,
     ComponentIngredientProp,
-    Ingredient,
 } from "@/interfaces/interfaces";
 
 import { convertIngredientType } from "@/functions";

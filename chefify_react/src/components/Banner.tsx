@@ -1,6 +1,4 @@
-import React from "react";
 import "../index.css";
-import chefifyDuck from "../assets/chefify-duck.gif";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logout } from "@/endpoints/api";

@@ -1,12 +1,9 @@
 import { useAuth } from "@/contexts/useAuth";
 import FriendsListDisplay from "@/display/FriendsListDisplay";
-import RecipeCard from "@/components/RecipeCard";
 import RecipeCatalog from "@/components/RecipeCatalog";
 import {
-    readRecipes,
     readFriendsUserProfile,
     readQueryUserProfile,
-    readUserProfile,
     updateAddFriendUserProfile,
     updateRemoveFriendUserProfile,
     readTimeline,
@@ -25,7 +22,6 @@ const Friends = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasNext, setHasNext] = useState<boolean>(false);
     const [hasPrevious, setHasPrevious] = useState<boolean>(false);
-    const [totalPages] = useState<number | null>(null);
 
     const fetchFriendsProfiles = async () => {
         const response = await readFriendsUserProfile();

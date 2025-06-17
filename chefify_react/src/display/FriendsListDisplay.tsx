@@ -1,7 +1,3 @@
-import {
-    updateAddFriendUserProfile,
-    updateRemoveFriendUserProfile,
-} from "@/endpoints/api";
 import { FriendsListDisplayProp } from "@/interfaces/interfaces";
 import React from "react";
 import RemoveLogo from "@/assets/x.svg?react";

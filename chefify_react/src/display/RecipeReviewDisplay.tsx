@@ -16,7 +16,6 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasNext, setHasNext] = useState<boolean>(false);
     const [hasPrevious, setHasPrevious] = useState<boolean>(false);
-    const [totalPages, setTotalPages] = useState<number | null>(null);
 
     const fetchRecipeReviews = async (page: number) => {
         const response = await readRecipeReviews(
@@ -34,7 +33,6 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
             setCurrentPage(response.page);
             setHasNext(response.hasNext);
             setHasPrevious(response.hasPrevious);
-            setTotalPages(response.totalPages);
         }
     };
 
