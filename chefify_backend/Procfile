@@ -1,2 +1,1 @@
-release: cd chefify_backend && python manage.py migrate && python manage.py collectstatic --noinput
-web: cd chefify_backend && gunicorn chefify_backend.wsgi --bind 0.0.0.0:$PORT --log-file -
+web: python manage.py migrate && python manage.py collectstatic --no-input && gunicorn chefify_backend.wsgi
