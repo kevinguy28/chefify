@@ -1,4 +1,3 @@
-import { useAuth } from "@/contexts/useAuth";
 import { Recipe } from "@/interfaces/interfaces";
 import { useState, useEffect } from "react";
 import RecipeContainer from "@/components/RecipeContainer";
