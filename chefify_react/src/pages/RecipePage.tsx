@@ -52,7 +52,7 @@ const RecipePage = () => {
                         className="w-full sm:h-60 lg:h-90"
                         alt={recipe?.name ?? "Recipe Image"}
                         src={
-                            recipe?.image
+                            recipe?.image && recipe.image.trim() !== ""
                                 ? `http://localhost:8000${recipe.image}`
                                 : `http://localhost:8000/media/images/recipes/default-recipe.png`
                         }
