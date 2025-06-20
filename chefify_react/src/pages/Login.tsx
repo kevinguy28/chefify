@@ -19,40 +19,39 @@ const Login = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col justify-center items-center text-alt-text">
+        <div className="flex flex-col items-center justify-center h-screen text-alt-text">
             <form
                 onSubmit={handleLogin}
-                className="flex flex-col justify-between  gap-4 items-center sm:min-w-100 bg-duck-dark-orange rounded-4xl p-8"
+                className="flex flex-col items-center justify-between gap-4 p-8 sm:min-w-100 bg-duck-dark-orange rounded-4xl"
             >
                 <div className="flex items-center gap-4">
                     <h1 className="text-6xl font-bold">Chefify</h1>
                     <div className="w-16 h-16 bg-[url('/src/assets/chefify-duck.png')] bg-cover bg-center rounded-full border-4 border-duck-yellow"></div>
                 </div>
 
-                <h1 className="font-bold text-2xl w-70 text-center">
+                <h1 className="text-2xl font-bold text-center w-70">
                     Log in to view recipes!
                 </h1>
-                <label className="w-70 py-4 font-bold">Username</label>
+                <label className="py-4 font-bold w-70">Username</label>
                 <input
-                    className="w-70  p-4 bg-duck-yellow rounded-xl"
+                    className="p-4 w-70 bg-duck-yellow rounded-xl"
                     placeholder="ducky@chefify.com"
                     onChange={(e) => setUsername(e.target.value)}
                     value={username}
                     type="text"
                 />
-                <label className="w-70 py-4 font-bold">Password</label>
+                <label className="py-4 font-bold w-70">Password</label>
                 <input
-                    className="w-70 p-4 bg-duck-yellow rounded-xl"
+                    className="p-4 w-70 bg-duck-yellow rounded-xl"
                     placeholder="Duck123*"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
                     type="password"
                 />
                 <input
-                    className="w-70 py-4 m-4 bg-duck-pale-yellow hover:bg-white rounded-lg font-bol"
+                    className="py-4 m-4 rounded-lg w-70 bg-duck-pale-yellow hover:bg-white font-bol"
                     type="submit"
                     value="Submit"
-                    onClick={handleLogin}
                 />
                 <div onClick={handleNav} className="p-4">
                     Not a Chefify member yet? <u>Join here!</u>
