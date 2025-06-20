@@ -45,12 +45,15 @@ const Login = () => {
                     value={password}
                     type="password"
                 />
-                <input
-                    className="py-4 m-4 rounded-lg w-70 bg-duck-pale-yellow hover:bg-white font-bol"
+
+                <button
                     type="submit"
-                    value="Submit"
+                    className="py-4 m-4 rounded-lg w-70 bg-duck-pale-yellow hover:bg-white font-bol"
                     onClick={handleLogin}
-                />
+                >
+                    Submit
+                </button>
+
                 <div onClick={handleNav} className="p-4">
                     Not a Chefify member yet? <u>Join here!</u>
                 </div>
