@@ -11,12 +11,10 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
 }) => {
     return (
         <div>
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-6">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-6 ">
                 {" "}
                 {recipes.map((recipe) => (
-                    <div>
-                        <RecipeContainer recipe={recipe} edit={false} />
-                    </div>
+                    <RecipeContainer recipe={recipe} edit={false} />
                 ))}
             </div>
 

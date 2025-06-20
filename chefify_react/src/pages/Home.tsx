@@ -72,7 +72,7 @@ const Home = () => {
 
     return (
         <div className="mt-8 max-w-screen-xl mx-auto  xl:grid grid-cols-[1fr_1fr] xl:grid-cols-[1fr_2fr] ">
-            <div className="flex flex-col md:flex-row xl:flex-col xl:justify-start justify-center items-center md:items-start   gap-8 p-8">
+            <div className="flex flex-col md:flex-row xl:flex-col xl:justify-start justify-center items-center md:items-start gap-8 p-8">
                 <RecipeForm />
                 <RecipeQuery
                     filterInput={filterInput}

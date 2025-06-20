@@ -45,13 +45,12 @@ const RecipeContainer: React.FC<RecipeContainerProp> = ({ recipe, edit }) => {
     }, [recipe]);
 
     return (
-        <div className="max-w-100 w-100 h-35 p-2 flex items-center bg-dark-light transition-transform duration-300 ease-in-out transform hover:scale-105 ">
+        <div className="max-w-100 w-80 mx-auto sm:w-100 h-35 p-2 flex items-center bg-dark-light transition-transform duration-300 ease-in-out transform hover:scale-105 ">
             <img
-                className=" w-30 h-30 object-cover"
-                alt={recipe?.name ?? "Recipe Image"}
+                className="w-30 h-30 object-cover"
                 src={
                     recipe?.image
-                        ? `http://localhost:8000${recipe.image}`
+                        ? `http://localhost:8000/media/images/recipes/default-recipe.png`
                         : `http://localhost:8000/media/images/recipes/default-recipe.png`
                 }
             />

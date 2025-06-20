@@ -120,3 +120,32 @@
   .rate .label:hover ~ input:checked ~ .label /* highlight previous selected stars */ {
     color: var(--color-duck-pale-yellow);
 }
+
+.hamburger {
+    float: none;
+    display: block;
+}
+
+.logoutItem {
+    display: none;
+}
+
+.logoutItem.activated {
+    display: block;
+}
+
+@media (min-width: theme("screens.sm")) {
+    .default {
+        display: block;
+        float: left;
+    }
+
+    .hamburger {
+        float: left;
+    }
+
+    .logoutItem {
+        float: right;
+        display: block;
+    }
+}
