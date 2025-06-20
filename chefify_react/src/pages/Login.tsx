@@ -20,7 +20,10 @@ const Login = () => {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen text-alt-text">
-            <form className="flex flex-col items-center justify-between gap-4 p-8 sm:min-w-100 bg-duck-dark-orange rounded-4xl">
+            <form
+                className="flex flex-col items-center justify-between gap-4 p-8 sm:min-w-100 bg-duck-dark-orange rounded-4xl"
+                onSubmit={handleLogin}
+            >
                 <div className="flex items-center gap-4">
                     <h1 className="text-6xl font-bold">Chefify</h1>
                     <div className="w-16 h-16 bg-[url('/src/assets/chefify-duck.png')] bg-cover bg-center rounded-full border-4 border-duck-yellow"></div>
@@ -49,7 +52,6 @@ const Login = () => {
                 <button
                     type="submit"
                     className="py-4 m-4 rounded-lg w-70 bg-duck-pale-yellow hover:bg-white font-bol"
-                    onClick={handleLogin}
                 >
                     Submit
                 </button>
