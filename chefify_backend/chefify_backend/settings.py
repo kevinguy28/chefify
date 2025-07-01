@@ -170,6 +170,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "https://chefifyfrontend-production.up.railway.app",
     "http://localhost:5173", 
+    "https://chefify-production.up.railway.app",
 ]
 
 MEDIA_URL = '/media/'
