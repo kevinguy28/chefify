@@ -104,12 +104,27 @@ WSGI_APPLICATION = 'chefify_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Prod Ver
+
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default="sqlite:///db.sqlite3",
+#         conn_max_age=600,
+#         conn_health_checks=True
+#     )
+# }
+
+# Dep. Ver.
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
-        conn_max_age=600,
-        conn_health_checks=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'dYfdQvhVwLiVdQMHCGwlDQJENWQTBzTx',
+        'HOST': 'switchyard.proxy.rlwy.net',  
+        'PORT': '16773',                    
+    }
 }
 
 # Password validation
@@ -176,7 +191,9 @@ CSRF_TRUSTED_ORIGINS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-firebase_key_json = os.environ.get("FIREBASE_KEY_JSON")
+# Dep. Ver.
+
+firebase_key_json = os.environ.get("FIREBASE_KEY_JSON") #If Error this is it! Change for prod!
 
 if firebase_key_json:
     cred_dict = json.loads(firebase_key_json)
@@ -185,3 +202,13 @@ if firebase_key_json:
     firebase_admin.initialize_app(cred)
 else:
     raise Exception("FIREBASE_KEY_JSON environment variable not found")
+
+# $env:FIREBASE_KEY_JSON = Get-Content -Raw "C:\Users\YourName\Documents\firebase-key.json" command to run to connect to railway and migrate database
+
+# Prod Ver.
+
+# FIREBASE_KEY_PATH = os.path.join(BASE_DIR, "firebase_key.json")
+
+# if not firebase_admin._apps:
+#     cred = credentials.Certificate(FIREBASE_KEY_PATH)
+#     firebase_admin.initialize_app(cred)
