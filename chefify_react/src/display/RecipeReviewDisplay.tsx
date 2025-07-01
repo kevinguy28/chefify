@@ -240,13 +240,13 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                                 <img
                                     className="w-10 h-10 bg-blue-500 rounded-md"
                                     alt={
-                                        review?.user.username ?? "Recipe Image"
+                                        review?.user?.username ?? "Recipe Image"
                                     }
                                     src={
-                                        review.userProfile.profilePictureUrl
+                                        review?.userProfile?.profilePictureUrl
                                             ? review.userProfile
                                                   .profilePictureUrl
-                                            : `https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9`
+                                            : "https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9"
                                     }
                                 />
                                 <div className="flex flex-col">
