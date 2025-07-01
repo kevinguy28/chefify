@@ -100,7 +100,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setIsAuthenticated(true);
             nav("/");
         } else {
-            alert("Login failed. Check your credentials.");
+            alert(
+                "Login failed. Check your credentials. If this issue continues to persist please clear cookies."
+            );
         }
     };
 

@@ -35,7 +35,7 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
                             Previous
                         </span>
                     )}
-                    {currentPage}
+                    {!(currentPage == 1 && hasNext == false) && currentPage}
                     {hasNext && (
                         <span
                             className="absolute cursor-pointer left-20"
