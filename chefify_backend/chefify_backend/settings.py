@@ -179,6 +179,7 @@ firebase_key_json = os.environ.get("FIREBASE_KEY_JSON")
 
 if firebase_key_json:
     cred_dict = json.loads(firebase_key_json)
+    cred_dict['private_key'] = cred_dict['private_key'].replace('\\n', '\n')
     cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
 else:
