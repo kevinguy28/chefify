@@ -11,6 +11,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from firebase_admin import auth as firebase_auth
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
+User = get_user_model()
+
+
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -22,7 +31,6 @@ from .models import Recipe, Cuisine
 from .functions import capitalize
 
 import nltk
-# nltk.download('wordnet')
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 
@@ -84,14 +92,77 @@ class CustomRefreshTokenView(TokenRefreshView):
         except:
             return Response({"refreshed": False})
 
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def googleLogin(request):
+    token = request.data.get("idToken")
+    if not token:
+        return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        # 1. Verify the Firebase token
+        decoded_token = firebase_auth.verify_id_token(token)
+        uid = decoded_token["uid"]
+        email = decoded_token.get("email")
+        name = decoded_token.get("name", "")
+        first_name, last_name = "", ""
+        photo_url = decoded_token.get("picture", "")
+        if name:
+            parts = name.strip().split()
+            first_name = parts[0]
+            last_name = " ".join(parts[1:]) if len(parts) > 1 else ""
+
+        # 2. Get or create user
+        User = get_user_model()
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={"username": email.split("@")[0], "first_name": first_name, "last_name": last_name}
+        )
+
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        profile.profilePictureUrl = photo_url
+        profile.save()
+
+        
+        # 3. Generate access/refresh tokens like your existing JWT login
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        res = Response({"success": True})
+
+        # 4. Set them as cookies (match your existing logic)
+        res.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=True,
+            samesite="None",
+            path="/",
+        )
+
+        res.set_cookie(
+            key="refresh_token",
+            value=str(refresh),
+            httponly=True,
+            secure=True,
+            samesite="None",
+            path="/",
+        )
+
+        print("✅ Google login success", user)
+
+        return res
+
+    except Exception as e:
+        print("Google Auth Error:", e)
+        return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(["POST"])
 def logout(request):
     try:
         res = Response()
         res.data = {"success": True}
-        res.delete_cookie("access_token", path="/", samesite="None")
-        res.delete_cookie("refresh_token", path="/", samesite="None")
+        res.delete_cookie("access_token", path="/", samesite="None", secure=True)
+        res.delete_cookie("refresh_token", path="/", samesite="None", secure=True)
         return res
     except:
         return Response({"success": False})
@@ -110,15 +181,75 @@ def register(request):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def is_authenticated(request):
-    user = request.user
+    print("✅ User is authenticated")
+    user = request.user  # This is already a User instance
+    print("User:", user)
+
+    serializer = UserSerializer(user)  # pass the instance, not data=
+    print("Serialized:", serializer.data)
+
     return Response({
         "authenticated": True,
-        "user": {
+        "user": serializer.data
+    }, status=200)
+
+
+@api_view(["POST"])
+def google_auth(request):
+    token = request.data.get("token")
+    if not token:
+        return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Step 1: Verify Firebase ID token
+        decoded_token = firebase_auth.verify_id_token(token)
+        uid = decoded_token["uid"]
+        email = decoded_token.get("email")
+
+        # Step 2: Get or create user
+        User = get_user_model()
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={"username": email.split("@")[0]}
+        )
+
+        # Step 3: Create JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        # Step 4: Set tokens in cookies (same as your login view)
+        res = Response({
             "id": user.id,
             "username": user.username,
-        }
-    })
+            "email": user.email,
+            "success": True
+        })
 
+        res.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=True,
+            samesite="None",
+            path="/",
+        )
+
+        res.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=True,
+            samesite="None",
+            path="/",
+        )
+
+        return res
+
+    except Exception as e:
+        print("Google auth error:", e)
+        return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+    
 # ----- User -----
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -126,6 +257,30 @@ def readUser(request):
     user = User.objects.get(user=request.user)
     serializer = UserSerializer(user)
     return Response(serializer.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def postUserName(request):
+    print("🔧 Starting user update...")
+
+    user = request.user  # ✅ Already the logged-in user
+
+    # ✅ Use request.data, not request.GET
+    first_name = request.data.get("firstName")
+    last_name = request.data.get("lastName")
+    username = request.data.get("username")
+
+    # Optional: Validate
+    if not all([first_name, last_name, username]):
+        return Response({"error": "Missing fields."}, status=400)
+
+    user.first_name = first_name
+    user.last_name = last_name
+    user.username = username
+    user.save()
+
+    print("✅ User updated!")
+    return Response({"success": True}, status=200)
 
 # ----- Cuisines -----
 
@@ -267,15 +422,18 @@ def updateRecipe(request, recipeId):
         name = request.data.get("recipeName", recipe.name)
         privacy = request.data.get("recipePrivacy", recipe.privacy)
         description = request.data.get("recipeDescription", recipe.description)
-        image = request.FILES.get("recipeImage")  
-
+        # image = request.FILES.get("recipeImage")  
+        recipeImageUrl = request.data.get("recipeImageUrl", recipe.recipeImageUrl)
+        print(recipeImageUrl)
+        print("xxx")
         recipe.name = name
         recipe.cuisine = cuisine
         recipe.privacy = privacy
         recipe.description = description
+        recipe.recipeImageUrl = recipeImageUrl
 
-        if image:
-            recipe.image = image
+        # if image:
+        #     recipe.image = image
 
         recipe.save()
         

@@ -248,9 +248,16 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                                             : `http://localhost:8000/media/images/recipes/default-recipe.png`
                                     }
                                 />
-                                <h1 className="truncate min-w-0 overflow-hidden max-w-[10rem] ">
-                                    {review.user.username}
-                                </h1>
+                                <div className="flex flex-col">
+                                    {" "}
+                                    <h1 className="truncate min-w-0 overflow-hidden max-w-[10rem] ">
+                                        {review.user.username}
+                                    </h1>
+                                    <div className="truncate min-w-0 overflow-hidden max-w-[10rem] flex gap-1 text-sm ">
+                                        <div>{review.user.first_name}</div>
+                                        <div>{review.user.last_name}</div>
+                                    </div>
+                                </div>
                             </div>
 
                             {imgStarReview(review.rating)}

@@ -32,9 +32,13 @@ const FavouriteRecipes = () => {
                 <div className="text-3xl font-bold">Favourite Recipes </div>
             </div>
             <div className="flex flex-wrap justify-center gap-6 max-w-">
-                {favouriteRecipes.map((recipe) => (
-                    <RecipeContainer recipe={recipe} edit={false} />
-                ))}
+                {favouriteRecipes.length > 0 ? (
+                    favouriteRecipes.map((recipe) => (
+                        <RecipeContainer recipe={recipe} edit={false} />
+                    ))
+                ) : (
+                    <div>You have no recipes favourited!</div>
+                )}
             </div>
             <div className="relative flex justify-center my-10 ">
                 <span className="relative font-bold">
@@ -48,7 +52,7 @@ const FavouriteRecipes = () => {
                             Previous
                         </span>
                     )}
-                    {currentPage}
+                    {!(currentPage == 1 && hasNext == false) && currentPage}
                     {hasNext && (
                         <span
                             className="absolute cursor-pointer left-20"

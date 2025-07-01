@@ -101,14 +101,18 @@ const Friends = () => {
         <div className="lg:grid lg:grid-cols-[1fr_2fr_2fr] gap-4 max-w-screen-2xl mx-auto mt-4 ">
             <div className="flex items-baseline gap-4 p-4  sm:flex-wrap lg:flex-col">
                 <h1 className="font-bold text-lg">Your Friends</h1>
-                {friendsList.map((friends) => (
-                    <FriendsListDisplay
-                        friend={friends}
-                        handleRemoveFriend={handleRemoveFriend}
-                        handleAddFriend={handleAddFriend}
-                        addMode={false}
-                    />
-                ))}
+                {friendsList.length > 0 ? (
+                    friendsList.map((friends) => (
+                        <FriendsListDisplay
+                            friend={friends}
+                            handleRemoveFriend={handleRemoveFriend}
+                            handleAddFriend={handleAddFriend}
+                            addMode={false}
+                        />
+                    ))
+                ) : (
+                    <div>You currently have nobody on your friends list!</div>
+                )}
             </div>
             <div className="max-w-full overflow-hidden  p-4">
                 {" "}
@@ -140,20 +144,20 @@ const Friends = () => {
                     </div>
                 </div>
             </div>
-            <div className="max-w-full overflow-hidden ">
-                {recipes && (
-                    <div className="p-4 ">
-                        <div className="font-bold mb-4">Friend Recipes</div>
-                        <RecipeCatalog
-                            recipes={recipes}
-                            currentPage={currentPage}
-                            hasNext={hasNext}
-                            hasPrevious={hasPrevious}
-                            traverseMode={false}
-                            editMode={false}
-                            fetchRecipes={fetchTimeline}
-                        />
-                    </div>
+            <div className="max-w-full overflow-hidden p-4 ">
+                <div className="font-bold mb-4">Friend Recipes</div>
+                {recipes.length > 0 ? (
+                    <RecipeCatalog
+                        recipes={recipes}
+                        currentPage={currentPage}
+                        hasNext={hasNext}
+                        hasPrevious={hasPrevious}
+                        traverseMode={false}
+                        editMode={false}
+                        fetchRecipes={fetchTimeline}
+                    />
+                ) : (
+                    <div>There are currently no recipes to show!</div>
                 )}
             </div>
         </div>

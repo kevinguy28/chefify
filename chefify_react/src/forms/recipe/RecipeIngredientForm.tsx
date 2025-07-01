@@ -69,7 +69,7 @@ const RecipeIngredientForm: React.FC<RecipeIngredientFormProp> = ({
             }
         } else {
             alert(
-                "Please ensure your Quantity value is greater than 0 and that Ingredient name is not left blank!"
+                "Please ensure your Quantity value is greater than 0, that Ingredient name is not left blank, and that the ingredient is associated with a Recipe Component. If no Recipe Components exist, please create a new one and try again!"
             );
         }
     };

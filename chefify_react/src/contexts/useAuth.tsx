@@ -10,12 +10,12 @@ import {
     login,
     readUserProfile,
     register,
+    login_google,
 } from "@/endpoints/api";
-import { useLocation } from "react-router-dom"; // If using React Router
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { User, UserProfile } from "@/interfaces/interfaces";
 
-// Define the type for the AuthContext
 interface AuthContextType {
     isAuthenticated: boolean;
     user: User | null;
@@ -28,14 +28,13 @@ interface AuthContextType {
         password: string,
         cPassword: string
     ) => Promise<void>;
+    google_login_user: (idToken: string) => Promise<void>;
 }
 
-// Create the context with proper typing
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Define a type for AuthProvider props
 interface AuthProviderProps {
-    children: ReactNode; // Explicitly typing `children`
+    children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -52,7 +51,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         try {
             const response = await is_authenticated();
             if (response) {
-                setIsAuthenticated(response.authenticated);
+                setIsAuthenticated(true);
+                console.log(response);
                 setUser(response.user);
                 const responseUserProfile = await readUserProfile();
                 if (responseUserProfile) {
@@ -94,6 +94,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     };
 
+    const google_login_user = async (idToken: string) => {
+        const response = await login_google(idToken);
+        if (response.success) {
+            setIsAuthenticated(true);
+            nav("/");
+        } else {
+            alert("Login failed. Check your credentials.");
+        }
+    };
+
     useEffect(() => {
         get_authenticated();
     }, [location.pathname]);
@@ -107,6 +117,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 userProfile,
                 login_user,
                 register_user,
+                google_login_user, // ✅ here too
             }}
         >
             {children} {/* 'children' is properly used */}

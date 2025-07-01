@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 import dj_database_url
 from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import credentials
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env_path = os.path.join(BASE_DIR, '.env')  # build the full path to .env
@@ -163,8 +167,16 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://chefifyfrontend-production.up.railway.app"   
+    "https://chefifyfrontend-production.up.railway.app",
+    "http://localhost:5173", 
 ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+FIREBASE_KEY_PATH = os.path.join(BASE_DIR, "firebase_key.json")
+
+# Initialize Firebase Admin
+if not firebase_admin._apps:
+    cred = credentials.Certificate(FIREBASE_KEY_PATH)
+    firebase_admin.initialize_app(cred)

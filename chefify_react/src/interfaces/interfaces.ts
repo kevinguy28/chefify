@@ -10,6 +10,7 @@ export interface User {
     email: string;
     first_name: string;
     last_name: string;
+    uid: string;
 }
 
 export interface UserProfile {
@@ -20,6 +21,7 @@ export interface UserProfile {
     favouriteRecipes: Array<Recipe>;
     friendsList: Array<User>;
     profilePicture?: string;
+    profilePictureUrl: string;
 }
 
 export interface Cuisine {
@@ -37,6 +39,7 @@ export interface Recipe {
     privacy: string;
     image?: string;
     created: string;
+    recipeImageUrl: string;
 }
 
 export interface RecipeComponent {

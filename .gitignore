@@ -33,6 +33,7 @@ local_settings.py
 db.sqlite3
 media/
 staticfiles/
+firebase_key.json
 
 # Environment files
 .env

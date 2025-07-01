@@ -1,16 +1,18 @@
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_API_URL;
-// const BASE_URL = "http://127.0.0.1:8000/api/";
+// const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
 const READ_URL = "read/";
 const UPDATE_URL = "update/";
 const LOGIN_URL = `${BASE_URL}token/`;
+const LOGIN_GOOGLE_URL = `${BASE_URL}google/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
 
 // User
 
 const USER_URL = `${BASE_URL}user/`;
 const USER_READ_URL = `${USER_URL}${READ_URL}`;
+const USER_PUT_NAME_URL = `${USER_URL}name/`;
 
 // Cuisine
 
@@ -109,6 +111,20 @@ export const login = async (username: string, password: string) => {
     }
 };
 
+export const login_google = async (idToken: string) => {
+    try {
+        const response = await axios.post(
+            LOGIN_GOOGLE_URL,
+            { idToken },
+            { withCredentials: true }
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Login error:", error);
+        return false; // Handle failure gracefully
+    }
+};
+
 export const logout = async () => {
     try {
         await axios.post(LOGOUT_URL, {}, { withCredentials: true });
@@ -171,6 +187,41 @@ export const readUser = async () => {
     } catch (error) {
         return await call_refresh(error, () =>
             axios.get(USER_READ_URL, { withCredentials: true })
+        );
+    }
+};
+
+export const putUserName = async (
+    firstName: string,
+    lastName: string,
+    username: string
+) => {
+    try {
+        const response = await axios.put(
+            USER_PUT_NAME_URL,
+            {
+                firstName,
+                lastName,
+                username,
+            },
+            {
+                withCredentials: true,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.put(
+                USER_PUT_NAME_URL,
+                {
+                    firstName,
+                    lastName,
+                    username,
+                },
+                {
+                    withCredentials: true,
+                }
+            )
         );
     }
 };
@@ -292,13 +343,49 @@ export const createRecipe = async (recipeName: string, cuisine: string) => {
     }
 };
 
+// export const updateRecipe = async (
+//     recipeId: number,
+//     recipeName: string,
+//     recipeCuisine: string,
+//     recipePrivacy: string,
+//     recipeDescription: string,
+//     recipeImage: File | null
+// ) => {
+//     const url = `${RECIPE_UPDATE_URL}${recipeId}/`;
+//     const formData = new FormData();
+
+//     formData.append("recipeName", recipeName);
+//     formData.append("recipeCuisine", recipeCuisine); // Convert to string
+//     formData.append("recipePrivacy", recipePrivacy);
+//     formData.append("recipeDescription", recipeDescription);
+
+//     if (recipeImage) {
+//         formData.append("recipeImage", recipeImage);
+//     }
+
+//     try {
+//         const response = await axios.put(url, formData, {
+//             withCredentials: true,
+//             headers: { "Content-Type": "multipart/form-data" },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         return await call_refresh(error, () =>
+//             axios.put(url, formData, {
+//                 withCredentials: true,
+//                 headers: { "Content-Type": "multipart/form-data" },
+//             })
+//         );
+//     }
+// };
+
 export const updateRecipe = async (
     recipeId: number,
     recipeName: string,
     recipeCuisine: string,
     recipePrivacy: string,
     recipeDescription: string,
-    recipeImage: File | null
+    recipeImageUrl: string
 ) => {
     const url = `${RECIPE_UPDATE_URL}${recipeId}/`;
     const formData = new FormData();
@@ -307,10 +394,7 @@ export const updateRecipe = async (
     formData.append("recipeCuisine", recipeCuisine); // Convert to string
     formData.append("recipePrivacy", recipePrivacy);
     formData.append("recipeDescription", recipeDescription);
-
-    if (recipeImage) {
-        formData.append("recipeImage", recipeImage);
-    }
+    formData.append("recipeImageUrl", recipeImageUrl);
 
     try {
         const response = await axios.put(url, formData, {
