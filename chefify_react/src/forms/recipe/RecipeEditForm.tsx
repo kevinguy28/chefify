@@ -6,11 +6,14 @@ import { updateRecipe } from "@/endpoints/api";
 import CuisineLogo from "@/assets/cuisine.svg?react";
 import PrivacyLogo from "@/assets/lock.svg?react";
 import UploadLogo from "@/assets/upload.svg?react";
+import { uploadUserImage } from "@/utils/util";
+import { getAuth } from "firebase/auth";
 
 const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
     recipe,
     setLoaded,
 }) => {
+    const user = getAuth().currentUser;
     const { recipeId } = useParams();
     const [allCuisines, setAllCuisines] = useState<Array<Cuisine>>([]);
 
@@ -21,6 +24,8 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
     const [originalImageUrl, setOriginalImageUrl] = useState<string>("");
     const [recipeImageUrl, setRecipeImageUrl] = useState<string>("");
     const [recipeImage, setRecipeImage] = useState<File | null>(null);
+    const [recipeImagePreviewUrl, setRecipeImagePreviewUrl] =
+        useState<string>("");
 
     const fetchCuisines = async () => {
         const retrievedCuisines = await readCuisines();
@@ -29,29 +34,66 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
         }
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         const url = URL.createObjectURL(file);
+    //         setRecipeImage(file);
+    //         setRecipeImageUrl(url);
+    //     }
+    // };
+
+    const handleImageUpload = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         const file = e.target.files?.[0];
         if (file) {
-            const url = URL.createObjectURL(file);
             setRecipeImage(file);
-            setRecipeImageUrl(url);
+            setRecipeImagePreviewUrl(URL.createObjectURL(file));
         }
     };
 
+    // const submitData = await updateRecipe(
+    //     Number(recipeId),
+    //     recipeName,
+    //     recipeCuisine,
+    //     recipePrivacy,
+    //     recipeDescription,
+    //     recipeImage
+    // );
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user) return alert("You must be signed in to upload.");
+
+        let uploadedUrl = recipeImageUrl;
+
+        try {
+            if (recipeImage !== null && recipe && recipe.id) {
+                uploadedUrl = await uploadUserImage(
+                    recipeImage,
+                    user.uid,
+                    recipe.id.toString()
+                );
+                setRecipeImageUrl(uploadedUrl);
+            }
+        } catch (error) {
+            console.error("Upload failed: ", error);
+            alert("Upload failed. Check console for details.");
+        }
+
         const submitData = await updateRecipe(
             Number(recipeId),
             recipeName,
             recipeCuisine,
             recipePrivacy,
             recipeDescription,
-            recipeImage
+            uploadedUrl
         );
+
         if (submitData) {
             setLoaded(false);
         }
-        return;
     };
 
     useEffect(() => {
@@ -64,9 +106,21 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
             if (recipe.image) {
                 setOriginalImageUrl(recipe.image);
             }
-            setRecipeImageUrl("");
+            const defaultFirebaseImage =
+                "https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9";
+            const finalImageUrl = recipe.recipeImageUrl || defaultFirebaseImage;
+            ``;
+            console.log(finalImageUrl);
+            setRecipeImageUrl(finalImageUrl);
         }
     }, [recipe]);
+
+    useEffect(() => {
+        return () => {
+            if (recipeImagePreviewUrl)
+                URL.revokeObjectURL(recipeImagePreviewUrl);
+        };
+    }, [recipeImagePreviewUrl]);
 
     return (
         <form className="flex flex-col justify-center gap-4 p-4 mx-auto sm:w-120">
@@ -124,8 +178,8 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 <div className="flex flex-col gap-4">
                     <label className="font-bold">Current Image:</label>
                     <img
-                        src={`http://localhost:8000${originalImageUrl}`}
-                        alt="Uploaded Recipe"
+                        src={recipeImageUrl}
+                        alt="Current Image"
                         className="mx-auto rounded-lg sm:w-90 h-50" // Add your desired styles
                     />
                 </div>
@@ -142,13 +196,14 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 />
             </label>
 
-            {recipeImage && (
+            {recipeImagePreviewUrl && (
                 <img
-                    src={`${recipeImageUrl}`}
-                    alt="Uploaded Recipe"
+                    src={recipeImagePreviewUrl}
+                    alt="Image Preview"
                     className="mx-auto rounded-lg sm:w-90 h-50"
                 />
             )}
+
             <input
                 className="py-2 mx-auto bg-green-600 rounded-lg w-80 h-14 hover:bg-green-700"
                 type="submit"

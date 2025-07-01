@@ -3,6 +3,7 @@ from django.db.models import F
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import URLValidator
 
 class Ingredient(models.Model):
     TYPE ={
@@ -45,6 +46,7 @@ class Recipe(models.Model):
     privacy = models.CharField(max_length=15, choices=STATUS_CHOICES, default='private')
     description = models.TextField(max_length=400, blank=True)
     image = models.ImageField(upload_to='images/recipes/', blank=True, null=True)
+    recipeImageUrl = models.URLField(max_length=500, blank=True, null=True, validators=[URLValidator()])
     ingredients = models.ManyToManyField("Ingredient", through="RecipeIngredient", blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -111,6 +113,7 @@ class UserProfile(models.Model):
     buyIngredients = models.ManyToManyField(Ingredient, related_name="to_buy_by", blank=True)
     favouriteRecipes = models.ManyToManyField(Recipe, related_name="favourite_to", blank=True)
     profilePicture = models.ImageField(upload_to='images/profilePicture/', blank=True, null=True)
+    profilePictureUrl = models.URLField(max_length=500, blank=True, null=True, validators=[URLValidator()])
 
     def __str__(self):
         return self.user.username

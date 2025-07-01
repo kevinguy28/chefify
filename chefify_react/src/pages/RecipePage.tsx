@@ -53,8 +53,8 @@ const RecipePage = () => {
                         alt={recipe?.name ?? "Recipe Image"}
                         src={
                             recipe?.image && recipe.image.trim() !== ""
-                                ? `http://localhost:8000${recipe.image}`
-                                : `http://localhost:8000/media/images/recipes/default-recipe.png`
+                                ? recipe?.recipeImageUrl
+                                : `https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9`
                         }
                     />
 

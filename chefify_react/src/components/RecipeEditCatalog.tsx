@@ -44,11 +44,18 @@ const RecipeEditCatalog = () => {
             </div>
 
             <div className="flex flex-wrap justify-center gap-6 ">
-                {recipes.map((recipe) => (
-                    <Link to={`/recipe/update/${recipe?.id}`} className="p-2">
-                        <RecipeContainer recipe={recipe} edit={true} />
-                    </Link>
-                ))}
+                {recipes.length > 0 ? (
+                    recipes.map((recipe) => (
+                        <Link
+                            to={`/recipe/update/${recipe?.id}`}
+                            className="p-2"
+                        >
+                            <RecipeContainer recipe={recipe} edit={true} />
+                        </Link>
+                    ))
+                ) : (
+                    <div>You currently have no recipes created!</div>
+                )}
             </div>
             <div className="relative flex justify-center my-10 ">
                 <span className="relative font-bold">
@@ -60,7 +67,7 @@ const RecipeEditCatalog = () => {
                             Previous
                         </span>
                     )}
-                    {currentPage}
+                    {!(currentPage == 1 && hasNext == false) && currentPage}
                     {hasNext && (
                         <span
                             className="absolute cursor-pointer left-20"

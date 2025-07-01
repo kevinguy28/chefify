@@ -85,6 +85,12 @@ const Banner = () => {
                 >
                     Friends
                 </Link>
+                <Link
+                    className="hidden px-2 py-4 default navBarItem hover:bg-duck-pale-yellow"
+                    to={"/profile/"}
+                >
+                    Profile
+                </Link>
                 <div
                     className={`px-2 py-4 ${
                         activated ? "sm:hidden block" : "hidden"
