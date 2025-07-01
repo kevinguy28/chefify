@@ -14,7 +14,7 @@ const RecipeForm = () => {
         if (recipeName.trim()) {
             const createdRecipe = await createRecipe(recipeName, cuisine);
             if (createdRecipe && createdRecipe?.id) {
-                nav(`/recipe/${createdRecipe.id}`);
+                nav(`/recipe/update/${createdRecipe.id}`);
             }
         } else {
             alert("Name of the recipe cannot be empty!");

@@ -203,7 +203,7 @@ if firebase_key_json:
 else:
     raise Exception("FIREBASE_KEY_JSON environment variable not found")
 
-# $env:FIREBASE_KEY_JSON = Get-Content -Raw "C:\Users\YourName\Documents\firebase-key.json" command to run to connect to railway and migrate database
+# $env:FIREBASE_KEY_JSON = Get-Content -Raw "C:\Users\mudKI\Documents\GitHub\Chefify\chefify_backend\firebase_key.json" command to run to connect to railway and migrate database
 
 # Prod Ver.
 

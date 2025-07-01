@@ -13,9 +13,16 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
         <div>
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-6 ">
                 {" "}
-                {recipes.map((recipe) => (
-                    <RecipeContainer recipe={recipe} edit={false} />
-                ))}
+                {recipes.length > 0 ? (
+                    recipes.map((recipe) => (
+                        <RecipeContainer recipe={recipe} edit={false} />
+                    ))
+                ) : (
+                    <div>
+                        There are currently no recipes created! Create one and
+                        be the first!
+                    </div>
+                )}
             </div>
 
             <div className="relative flex justify-center my-10 ">

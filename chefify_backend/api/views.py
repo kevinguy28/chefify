@@ -304,7 +304,6 @@ def readRecipes(request):
     privacy = request.GET.get("privacy")
     filterInput = request.GET.get("filterInput") 
     recent = request.GET.get("recent")
-    print(request.GET.get("cuisine"))
     cuisine = (
         Cuisine.objects.filter(name=request.GET.get("cuisine")).first()
         if request.GET.get("cuisine")
@@ -318,8 +317,7 @@ def readRecipes(request):
     if filterInput:
         filters &= Q(name__icontains=filterInput)
     if privacy:
-        if(privacy == "friends"):
-            filters &= Q(privacy__icontains=privacy)
+        filters &= Q(privacy=privacy)
     if cuisine:
         filters &= Q(cuisine=cuisine)
 
