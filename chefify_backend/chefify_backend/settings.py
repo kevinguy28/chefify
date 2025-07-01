@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+import json
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials
@@ -174,9 +175,11 @@ CSRF_TRUSTED_ORIGINS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-FIREBASE_KEY_PATH = os.path.join(BASE_DIR, "firebase_key.json")
+firebase_key_json = os.environ.get("FIREBASE_KEY_JSON")
 
-# Initialize Firebase Admin
-if not firebase_admin._apps:
-    cred = credentials.Certificate(FIREBASE_KEY_PATH)
+if firebase_key_json:
+    cred_dict = json.loads(firebase_key_json)
+    cred = credentials.Certificate(cred_dict)
     firebase_admin.initialize_app(cred)
+else:
+    raise Exception("FIREBASE_KEY_JSON environment variable not found")
