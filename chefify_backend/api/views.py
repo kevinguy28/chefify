@@ -34,6 +34,9 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 lemmatizer = WordNetLemmatizer()
 
+def parse_bool(value: str) -> bool:
+    return value and value.lower() == "true"
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
@@ -571,72 +574,64 @@ class ReviewView(APIView):
             )
 
     def get(self, request, recipeId):
-        if(request.GET.get("reviewAll") == "false"):
-            try:
-                recipe = Recipe.objects.get(id=recipeId)
-                try:
-                    review = Review.objects.filter(recipe=recipe).get(user=request.user)
-                except Exception as e:
-                    return Response(None, status=status.HTTP_200_OK)
-                serializer = ReviewSerializer(review)
-                return Response(serializer.data, status = 200)
-            except Exception as e:
-                return Response(
-                    {"error": f"An error occurred: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST
-                )
-        elif(request.GET.get("reviewAll") == "true"):
+        try:
             recipe = Recipe.objects.get(id=recipeId)
+        except Recipe.DoesNotExist:
+            return Response({"error": "Recipe not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        review_all = parse_bool(request.GET.get("reviewAll"))
+
+        if not review_all:
             try:
-                reviews = Review.objects.filter(recipe=recipe)
-
-                # Apply ordering based on query parameters
-                order_params = []
-
-                # Check if "relevant" is true and add it to the order parameters
-                if request.GET.get("relevant") == "true":  # Fixed the condition here
-                    reviews = reviews.annotate(
-                        liked_count=Count('likedBy'),
-                        disliked_count=Count('dislikedBy'),
-                        like_dislike_diff=F('liked_count') - F('disliked_count')
-                    )
-                    # Order by the biggest difference between likes and dislikes (descending)
-                    order_params.append("-like_dislike_diff")
-                    order_params.append("-liked_count")
-
-                if request.GET.get("newest") == "true":
-                    order_params.append("-updated")
-
-                # Check if "oldest" is true and add it to the order parameters
-                if request.GET.get("oldest") == "true":
-                    order_params.append("updated")
-
-                # Check if "highest" is true and add it to the order parameters
-                if request.GET.get("highest") == "true":
-                    order_params.append("-rating")
-
-                # Check if "lowest" is true and add it to the order parameters
-                if request.GET.get("lowest") == "true":
-                    order_params.append("rating")
-
-                # Apply the ordering to the queryset if there are any order parameters
-                if order_params:
-                    reviews = reviews.order_by(*order_params)
-
-                pageNumber = request.GET.get("page", 1)
-                paginator = Paginator(reviews, 2)
-                page_obj = paginator.get_page(pageNumber)
+                review = Review.objects.get(recipe=recipe, user=request.user)
+                serializer = ReviewSerializer(review)
+                return Response(serializer.data, status=200)
+            except Review.DoesNotExist:
+                return Response(None, status=200)
             except Exception as e:
-                return Response(None, status=status.HTTP_200_OK)
+                return Response({"error": str(e)}, status=400)
+
+        # Get all reviews
+        try:
+            reviews = Review.objects.filter(recipe=recipe)
+
+            if parse_bool(request.GET.get("relevant")):
+                reviews = reviews.annotate(
+                    liked_count=Count('likedBy'),
+                    disliked_count=Count('dislikedBy'),
+                    like_dislike_diff=F('liked_count') - F('disliked_count')
+                ).order_by("-like_dislike_diff", "-liked_count")
+
+            order_params = []
+
+            if parse_bool(request.GET.get("newest")):
+                order_params.append("-updated")
+            if parse_bool(request.GET.get("oldest")):
+                order_params.append("updated")
+            if parse_bool(request.GET.get("highest")):
+                order_params.append("-rating")
+            if parse_bool(request.GET.get("lowest")):
+                order_params.append("rating")
+
+            if order_params:
+                reviews = reviews.order_by(*order_params)
+
+            paginator = Paginator(reviews, 2)
+            page_number = request.GET.get("page", 1)
+            page_obj = paginator.get_page(page_number)
 
             serializer = ReviewSerializer(page_obj, many=True)
+
             return Response({
                 "reviews": serializer.data,
                 "page": page_obj.number,
-                "totalPages": paginator.num_pages,  # Total number of pages
-                "hasNext": page_obj.has_next(),  # If there's a next page
-                "hasPrevious": page_obj.has_previous()  # If there's a previous page
+                "totalPages": paginator.num_pages,
+                "hasNext": page_obj.has_next(),
+                "hasPrevious": page_obj.has_previous()
+            }, status=200)
 
-            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
     def put(self, request, recipeId):
         data = request.data

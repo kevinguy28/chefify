@@ -36,6 +36,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
     };
 
     const handleSubmit = async () => {
+        console.log(userRating);
+        console.log(userReviewText);
         const response = await createReview(
             String(recipeId),
             userRating,

@@ -540,6 +540,7 @@ export const createReview = async (
     review_text: string
 ) => {
     try {
+        console.log("called");
         const response = await axios.post(
             REVIEW_URL(recipeId),
             {
