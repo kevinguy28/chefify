@@ -233,75 +233,81 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                 </span>
             </div>
             <div className="flex flex-wrap gap-4 ">
-                {recipeReviews.map((review) => (
-                    <div className="p-4 bg-dark sm:w-120 lg:w-73">
-                        <div className="flex flex-row items-center justify-between min-w-0">
-                            <div className="flex items-center min-w-0 gap-2">
-                                <img
-                                    className="w-10 h-10 bg-blue-500 rounded-md"
-                                    alt={
-                                        review?.user?.username ?? "Recipe Image"
-                                    }
-                                    src={
-                                        review?.userProfile?.profilePictureUrl
-                                            ? review.userProfile
-                                                  .profilePictureUrl
-                                            : "https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9"
-                                    }
-                                />
-                                <div className="flex flex-col">
-                                    {" "}
-                                    <h1 className="truncate min-w-0 overflow-hidden max-w-[10rem] ">
-                                        {review.user.username}
-                                    </h1>
-                                    <div className="truncate min-w-0 overflow-hidden max-w-[10rem] flex gap-1 text-sm ">
-                                        <div>{review.user.first_name}</div>
-                                        <div>{review.user.last_name}</div>
+                {recipeReviews.length > 0 ? (
+                    recipeReviews.map((review) => (
+                        <div className="p-4 bg-dark sm:w-120 lg:w-73">
+                            <div className="flex flex-row items-center justify-between min-w-0">
+                                <div className="flex items-center min-w-0 gap-2">
+                                    <img
+                                        className="w-10 h-10 bg-blue-500 rounded-md"
+                                        alt={
+                                            review?.user?.username ??
+                                            "Recipe Image"
+                                        }
+                                        src={
+                                            review?.userProfile
+                                                ?.profilePictureUrl
+                                                ? review.userProfile
+                                                      .profilePictureUrl
+                                                : "https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9"
+                                        }
+                                    />
+                                    <div className="flex flex-col">
+                                        {" "}
+                                        <h1 className="truncate min-w-0 overflow-hidden max-w-[10rem] ">
+                                            {review.user.username}
+                                        </h1>
+                                        <div className="truncate min-w-0 overflow-hidden max-w-[10rem] flex gap-1 text-sm ">
+                                            <div>{review.user.first_name}</div>
+                                            <div>{review.user.last_name}</div>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {imgStarReview(review.rating)}
                             </div>
 
-                            {imgStarReview(review.rating)}
-                        </div>
+                            {review.review_text && (
+                                <div className="my-4 text-sm">
+                                    {review.review_text}
+                                </div>
+                            )}
+                            <div className="flex flex-row items-center gap-4">
+                                <LikeBtn
+                                    className={`w-4 h-4 ${
+                                        user &&
+                                        review.likedBy
+                                            .flatMap((review) => review.id)
+                                            .includes(user.id)
+                                            ? "text-blue-500"
+                                            : ""
+                                    }`}
+                                    onClick={() =>
+                                        handleLike(review.id.toString(), true)
+                                    }
+                                />
 
-                        {review.review_text && (
-                            <div className="my-4 text-sm">
-                                {review.review_text}
+                                <span>{review.likes}</span>
+                                <DislikeBtn
+                                    className={`w-4 h-4 ${
+                                        user &&
+                                        review.dislikedBy
+                                            .flatMap((review) => review.id)
+                                            .includes(user.id)
+                                            ? "text-red-500"
+                                            : ""
+                                    }`}
+                                    onClick={() =>
+                                        handleLike(review.id.toString(), false)
+                                    }
+                                />
+                                <span>{review.dislikes}</span>
                             </div>
-                        )}
-                        <div className="flex flex-row items-center gap-4">
-                            <LikeBtn
-                                className={`w-4 h-4 ${
-                                    user &&
-                                    review.likedBy
-                                        .flatMap((review) => review.id)
-                                        .includes(user.id)
-                                        ? "text-blue-500"
-                                        : ""
-                                }`}
-                                onClick={() =>
-                                    handleLike(review.id.toString(), true)
-                                }
-                            />
-
-                            <span>{review.likes}</span>
-                            <DislikeBtn
-                                className={`w-4 h-4 ${
-                                    user &&
-                                    review.dislikedBy
-                                        .flatMap((review) => review.id)
-                                        .includes(user.id)
-                                        ? "text-red-500"
-                                        : ""
-                                }`}
-                                onClick={() =>
-                                    handleLike(review.id.toString(), false)
-                                }
-                            />
-                            <span>{review.dislikes}</span>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <div>There are currently no reviews!</div>
+                )}
             </div>
 
             <div className="relative flex justify-center my-10 ">
@@ -314,7 +320,7 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
                             Previous
                         </span>
                     )}
-                    {currentPage}
+                    {!(currentPage == 1 && hasNext == false) && currentPage}
                     {hasNext && (
                         <span
                             className="absolute cursor-pointer left-20"
