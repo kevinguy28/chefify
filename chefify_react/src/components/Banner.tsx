@@ -1,13 +1,13 @@
 import { useState } from "react";
 import "../index.css";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { logout } from "@/endpoints/api";
+// import { useNavigate } from "react-router-dom";
+// import { logout } from "@/endpoints/api";
 import BurgerMenu from "@/assets/burger_menu.svg?react";
 import { useAuth } from "@/contexts/useAuth";
 
 const Banner = () => {
-    const nav = useNavigate();
+    // const nav = useNavigate();
 
     const { logout_user } = useAuth();
 
