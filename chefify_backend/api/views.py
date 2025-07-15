@@ -157,15 +157,15 @@ def googleLogin(request):
         return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(["POST"])
+@permission_classes([AllowAny])  # Optional, if logout doesn't require auth
 def logout(request):
     try:
-        res = Response()
-        res.data = {"success": True}
-        res.delete_cookie("access_token", path="/", samesite="None", secure=True)
-        res.delete_cookie("refresh_token", path="/", samesite="None", secure=True)
-        return res
-    except:
-        return Response({"success": False})
+        response = Response({"detail": "Logout successful."}, status=status.HTTP_200_OK)
+        response.delete_cookie("access_token", path="/")
+        response.delete_cookie("refresh_token", path="/")
+        return response
+    except Exception as e:
+        return Response({"success": False, "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])

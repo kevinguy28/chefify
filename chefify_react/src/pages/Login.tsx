@@ -25,6 +25,7 @@ const Login = () => {
         try {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
+            console.log(idToken);
             await google_login_user(idToken);
         } catch (err) {
             console.error("Google login error:", err);
