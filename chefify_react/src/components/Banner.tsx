@@ -4,18 +4,22 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logout } from "@/endpoints/api";
 import BurgerMenu from "@/assets/burger_menu.svg?react";
+import { useAuth } from "@/contexts/useAuth";
 
 const Banner = () => {
     const nav = useNavigate();
 
+    const { logout_user } = useAuth();
+
     const [activated, setActivated] = useState<boolean>(false);
 
     const handleLogout = async () => {
-        const success = await logout();
+        // const success = await logout();
 
-        if (success) {
-            nav("/login");
-        }
+        // if (success) {
+        //     nav("/login");
+        // }
+        await logout_user();
     };
 
     const toggleMenu = () => {
