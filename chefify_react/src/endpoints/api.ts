@@ -122,6 +122,7 @@ export const login_google = async (idToken: string) => {
         const response = await axios.post(
             LOGIN_GOOGLE_URL,
             { idToken },
+            {withCredentials: true}
         );
         return response.data;
     } catch (error) {
