@@ -22,11 +22,9 @@ const Login = () => {
     // };
 
     const handleGoogleLogin = async () => {
-        console.log("what da hell");
         try {
             const result = await signInWithPopup(auth, provider);
             const idToken = await result.user.getIdToken();
-            console.log("ice guy");
             await google_login_user(idToken);
         } catch (err) {
             console.error("Google login error:", err);

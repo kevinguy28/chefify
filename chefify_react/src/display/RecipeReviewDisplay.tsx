@@ -83,7 +83,6 @@ const RecipeReviewDisplay: React.FC<RecipeReviewDisplayProp> = ({ recipe }) => {
 
     const handleToggle = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
         const elementId = (e.target as HTMLSpanElement).id;
-        console.log(elementId);
         const toggleState: {
             [key: string]: {
                 state: boolean;

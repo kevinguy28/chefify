@@ -51,7 +51,6 @@ const Friends = () => {
                     (friendRemove) => friendRemove.id !== userProfileId
                 )
             );
-            console.log(response);
         }
     };
 
@@ -66,7 +65,6 @@ const Friends = () => {
                     (friendAdd) => friendAdd.id !== userProfileId
                 )
             );
-            console.log(response);
         }
     };
 

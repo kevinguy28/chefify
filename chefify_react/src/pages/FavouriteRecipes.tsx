@@ -13,7 +13,6 @@ const FavouriteRecipes = () => {
     const fetchFavouriteRecipes = async (page: number) => {
         const response = await readUserProfileFavouriteRecipes(page);
         if (response) {
-            console.log(response);
             setCurrentPage(response.page);
             setHasNext(response.hasNext);
             setHasPrevious(response.hasPrevious);

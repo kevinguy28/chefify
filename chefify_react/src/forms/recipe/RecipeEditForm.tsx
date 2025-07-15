@@ -110,7 +110,6 @@ const RecipeEditForm: React.FC<RecipeEditFormProps> = ({
                 "https://firebasestorage.googleapis.com/v0/b/chefify-7cac2.firebasestorage.app/o/default%2Fchefify.png?alt=media&token=1644a56c-f8f6-459a-a6dc-69c260b78cf9";
             const finalImageUrl = recipe.recipeImageUrl || defaultFirebaseImage;
             ``;
-            console.log(finalImageUrl);
             setRecipeImageUrl(finalImageUrl);
         }
     }, [recipe]);

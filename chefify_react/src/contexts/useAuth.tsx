@@ -52,7 +52,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const response = await is_authenticated();
             if (response) {
                 setIsAuthenticated(true);
-                console.log(response);
                 setUser(response.user);
                 const responseUserProfile = await readUserProfile();
                 if (responseUserProfile) {

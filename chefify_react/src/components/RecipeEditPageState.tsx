@@ -2,16 +2,19 @@ import React from "react";
 
 import { RecipeEditPageStateProp } from "@/interfaces/interfaces";
 import { deleteRecipe } from "@/endpoints/api";
+import { useNavigate } from "react-router-dom";
 
 const RecipeEditPageState: React.FC<RecipeEditPageStateProp> = ({
     setPageState,
     pageState,
     recipeId,
 }) => {
+    const navigate = useNavigate();
+
     const handleDelete = async (recipeId: string) => {
         const response = await deleteRecipe(recipeId);
         if (response) {
-            console.log("success");
+            navigate("/recipe/edit-catalog/");
         }
     };
 
