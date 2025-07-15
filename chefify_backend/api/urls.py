@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, readCuisines, readRecipes, readRecipe, createRecipe, updateRecipe, createRecipeStep, updateRecipeStepOrder, StepView, readRecipeSteps, ReviewView, register, createIngredient, UserProfileIngredientView, UserProfileIngredientMove, RecipeIngredientView, getRecipeIngredient, RecipeComponentView, deleteRecipeComponent, deleteRecipeIngredient, updateReviewLikes, updateFavouriteUserProfile, UserProfileFriendView, getFriendsUserProfile, getQueryUserProfile, readRecipesTimeline, getUserProfileFavouriteRecipe, google_auth, googleLogin, postUserName
+from .views import CustomTokenObtainPairView, CustomRefreshTokenView, logout, is_authenticated, readCuisines, readRecipes, readRecipe, createRecipe, updateRecipe, createRecipeStep, updateRecipeStepOrder, StepView, readRecipeSteps, ReviewView, register, createIngredient, UserProfileIngredientView, UserProfileIngredientMove, RecipeIngredientView, getRecipeIngredient, RecipeComponentView, deleteRecipeComponent, deleteRecipeIngredient, updateReviewLikes, updateFavouriteUserProfile, UserProfileFriendView, getFriendsUserProfile, getQueryUserProfile, readRecipesTimeline, getUserProfileFavouriteRecipe, google_auth, googleLogin, postUserName, deleteRecipe
 
 from django.http import JsonResponse
 
@@ -23,6 +23,7 @@ urlpatterns = [
     path('recipe/read/<int:recipeId>/', readRecipe),
     path('recipe/create/', createRecipe),
     path('recipe/update/<int:recipeId>/', updateRecipe),
+    path('recipe/delete/<int:recipeId>/', deleteRecipe),
 
     # Recipe Step Endpoints
     path('recipe/step/order/<int:stepId>/', updateRecipeStepOrder),

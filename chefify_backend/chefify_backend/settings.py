@@ -199,9 +199,11 @@ if firebase_key_json:
     cred_dict = json.loads(firebase_key_json)
     cred_dict['private_key'] = cred_dict['private_key'].replace('\\n', '\n')
     cred = credentials.Certificate(cred_dict)
-    firebase_admin.initialize_app(cred)
+
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app(cred)
 else:
-    raise Exception("FIREBASE_KEY_JSON environment variable not found")
+    raise EnvironmentError("FIREBASE_KEY_JSON environment variable not found.")
 
 # $env:FIREBASE_KEY_JSON = Get-Content -Raw "C:\Users\mudKI\Documents\GitHub\Chefify\chefify_backend\firebase_key.json" command to run to connect to railway and migrate database
 

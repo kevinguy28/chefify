@@ -212,4 +212,5 @@ export interface RecipeEditPageStateProp {
     setPageState: React.Dispatch<
         React.SetStateAction<"editRecipe" | "addStep" | "addIngredient">
     >;
+    recipeId: string;
 }

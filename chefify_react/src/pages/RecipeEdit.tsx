@@ -68,6 +68,7 @@ const RecipeEdit = () => {
                 <RecipeEditPageState
                     setPageState={setPageState}
                     pageState={pageState}
+                    recipeId={recipeId!}
                 />
             </div>
             <div className=" sm:flex sm:flex-col lg:grid lg:grid-cols-[1fr_1fr] gap-0 lg:w-256 xl:w-280 mx-auto ">
@@ -124,6 +125,7 @@ const RecipeEdit = () => {
                     <RecipeEditPageState
                         setPageState={setPageState}
                         pageState={pageState}
+                        recipeId={recipeId!}
                     />
                 </div>
                 <div className="p-4 sm:mx-auto lg:mx-0 sm:w-160 lg:w-128 sm:flex sm:flex-col sm:gap-4 xl:w-140 ">

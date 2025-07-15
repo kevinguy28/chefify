@@ -4,6 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 const CREATE_URL = "create/";
 const READ_URL = "read/";
 const UPDATE_URL = "update/";
+const DELETE_URL = "delete/";
 const LOGIN_URL = `${BASE_URL}token/`;
 const LOGIN_GOOGLE_URL = `${BASE_URL}google/`;
 const REFRESH_URL = `${BASE_URL}token/refresh/`;
@@ -29,6 +30,8 @@ const RECIPE_URL = `${BASE_URL}recipe/`;
 const RECIPE_CREATE_URL = `${RECIPE_URL}${CREATE_URL}`;
 const RECIPE_READ_URL = `${RECIPE_URL}${READ_URL}`;
 const RECIPE_UPDATE_URL = `${RECIPE_URL}${UPDATE_URL}`;
+const RECIPE_DELETE_URL = (recipeId: string) =>
+    `${RECIPE_URL}${DELETE_URL}${recipeId}/`;
 
 // Step
 const RECIPE_STEP_URL = `${BASE_URL}recipe/step/`;
@@ -407,6 +410,21 @@ export const updateRecipe = async (
             axios.put(url, formData, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
+            })
+        );
+    }
+};
+
+export const deleteRecipe = async (recipeId: string) => {
+    try {
+        const response = await axios.delete(RECIPE_DELETE_URL(recipeId), {
+            withCredentials: true,
+        });
+        return response.data;
+    } catch (error) {
+        return await call_refresh(error, () =>
+            axios.delete(RECIPE_DELETE_URL(recipeId), {
+                withCredentials: true,
             })
         );
     }

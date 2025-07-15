@@ -1,23 +1,32 @@
 import React from "react";
 
 import { RecipeEditPageStateProp } from "@/interfaces/interfaces";
+import { deleteRecipe } from "@/endpoints/api";
 
 const RecipeEditPageState: React.FC<RecipeEditPageStateProp> = ({
     setPageState,
     pageState,
+    recipeId,
 }) => {
+    const handleDelete = async (recipeId: string) => {
+        const response = await deleteRecipe(recipeId);
+        if (response) {
+            console.log("success");
+        }
+    };
+
     return (
-        <div className="flex justify-center w-full gap-4 p-2 mx-auto rounded-md bg-pepper-green sm:w-120">
+        <div className="flex justify-center w-full gap-4 p-2 mx-auto rounded-md bg-pepper-green sm:w-160">
             <div
-                className={`p-2 rounded-md bg-dark ${
+                className={`p-2 text-center  rounded-md bg-dark ${
                     pageState === "editRecipe" && "border-2 border-red-protein"
                 }`}
                 onClick={() => setPageState("editRecipe")}
             >
-                Edit Recipe Info
+                Edit Recipe
             </div>
             <div
-                className={`p-2 rounded-md bg-dark ${
+                className={`p-2 text-center  rounded-md bg-dark ${
                     pageState === "addStep" && "border-2 border-red-protein"
                 }`}
                 onClick={() => setPageState("addStep")}
@@ -25,7 +34,7 @@ const RecipeEditPageState: React.FC<RecipeEditPageStateProp> = ({
                 Add Steps
             </div>
             <div
-                className={`p-2 rounded-md bg-dark ${
+                className={`p-2 text-center  rounded-md bg-dark ${
                     pageState === "addIngredient" &&
                     "border-2 border-red-protein"
                 }`}
@@ -33,6 +42,15 @@ const RecipeEditPageState: React.FC<RecipeEditPageStateProp> = ({
             >
                 Add Ingredients
             </div>
+            <div
+                className={`p-2 flex text-center rounded-md bg-dark ${
+                    pageState === "addIngredient" &&
+                    "border-2 border-red-protein"
+                }`}
+                onClick={() => handleDelete(recipeId)}
+            >
+                Delete Recipe
+            </div>{" "}
         </div>
     );
 };
