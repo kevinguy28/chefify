@@ -130,9 +130,6 @@ def googleLogin(request):
 
         # 4. Set them as cookies (match your existing logic)
 
-        res.delete_cookie("access_token", path="/")
-        res.delete_cookie("refresh_token", path="/")
-
         res.set_cookie(
             key="access_token",
             value=access_token,
