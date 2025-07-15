@@ -14,6 +14,12 @@ build/
 dist-ssr/
 *.local
 
+# Python virtual environments
+env/
+.venv/
+*.venv/
+*.cfg
+
 # Python
 __pycache__/
 *.py[cod]
@@ -27,6 +33,8 @@ __pycache__/
 *.venv
 env/
 venv/
+
+chefify_backend/env/
 
 # Django specific
 local_settings.py
