@@ -116,6 +116,7 @@ export const login = async (username: string, password: string) => {
 
 export const login_google = async (idToken: string) => {
     try {
+        console.log("this is where we are going");
         const response = await axios.post(
             LOGIN_GOOGLE_URL,
             { idToken },
