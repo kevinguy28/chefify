@@ -7,20 +7,8 @@ import { auth, provider } from "@/firebase/firebase";
 import GoogleLogo from "@/assets/googleLogo.svg?react";
 
 const Login = () => {
-    // const [username, setUsername] = useState("");
-    // const [password, setPassword] = useState("");
     const nav = useNavigate();
     const { google_login_user, setIsAuthenticated } = useAuth();
-
-    // const handleLogin = (e: React.FormEvent) => {
-    //     e.preventDefault(); // Prevent page reload
-    //     login_user(username, password);
-    // };
-
-    // const handleNav = (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     nav("/register");
-    // };
 
     const handleGoogleLogin = async () => {
         try {
@@ -37,11 +25,11 @@ const Login = () => {
         const tryRefresh = async () => {
             const success = await refresh_token();
             if (success) {
-                console.log("wpkoiing");
+                console.log("✔️ User is authenticated! Redirecting ...");
                 setIsAuthenticated(true);
-                nav("/"); // redirect to home if logged in
+                nav("/");
             } else {
-                console.log("failing");
+                console.log("❌ User is not authenticated!");
                 setIsAuthenticated(false);
             }
         };

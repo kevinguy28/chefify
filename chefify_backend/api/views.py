@@ -102,7 +102,6 @@ class CustomRefreshTokenView(TokenRefreshView):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def googleLogin(request):
-    print("DID I EVEN MAKE IT TO EHRE")
     token = request.data.get("idToken")
     if not token:
         return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
@@ -190,11 +189,10 @@ def register(request):
 @permission_classes([IsAuthenticated])
 def is_authenticated(request):
     print("✅ User is authenticated")
-    user = request.user  # This is already a User instance
+    user = request.user
     print("User:", user)
 
-    serializer = UserSerializer(user)  # pass the instance, not data=
-    print("Serialized:", serializer.data)
+    serializer = UserSerializer(user)
 
     return Response({
         "authenticated": True,
@@ -206,10 +204,6 @@ def is_authenticated(request):
 def google_auth(request):
 
     token = request.data.get("token")
-    print(token)
-    print("failure")
-    logger = logging.getLogger(__name__)
-    logger.info(token)
     if not token:
         return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -274,11 +268,8 @@ def readUser(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def postUserName(request):
-    print("🔧 Starting user update...")
 
-    user = request.user  # ✅ Already the logged-in user
-
-    # ✅ Use request.data, not request.GET
+    user = request.user 
     first_name = request.data.get("firstName")
     last_name = request.data.get("lastName")
     username = request.data.get("username")
