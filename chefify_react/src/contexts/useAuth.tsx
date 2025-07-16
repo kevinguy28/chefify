@@ -98,6 +98,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const google_login_user = async (idToken: string) => {
         const response = await login_google(idToken);
+        console.log(response);
+        console.log("xx");
         if (response.success) {
             setIsAuthenticated(true);
             nav("/");

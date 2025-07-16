@@ -96,6 +96,7 @@ class CustomRefreshTokenView(TokenRefreshView):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def googleLogin(request):
+    print("DID I EVEN MAKE IT TO EHRE")
     token = request.data.get("idToken")
     if not token:
         return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
