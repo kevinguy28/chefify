@@ -120,7 +120,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 userProfile,
                 login_user,
                 register_user,
-                google_login_user, // ✅ here too
+                google_login_user,
             }}
         >
             {children} {/* 'children' is properly used */}
