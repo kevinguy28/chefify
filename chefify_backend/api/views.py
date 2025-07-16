@@ -1,6 +1,7 @@
 import json
 import nltk
 import logging
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q, Count, F
 from django.shortcuts import render
 from django.core.paginator import Paginator
@@ -93,6 +94,7 @@ class CustomRefreshTokenView(TokenRefreshView):
         except:
             return Response({"refreshed": False})
 
+@csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def googleLogin(request):
