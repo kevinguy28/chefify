@@ -197,6 +197,8 @@ def is_authenticated(request):
 @api_view(["POST"])
 def google_auth(request):
     token = request.data.get("token")
+    print(token)
+    print("failure here")
     if not token:
         return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
 

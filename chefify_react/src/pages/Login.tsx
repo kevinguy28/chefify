@@ -24,6 +24,7 @@ const Login = () => {
     const handleGoogleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
+            console.log(result);
             const idToken = await result.user.getIdToken();
             await google_login_user(idToken);
         } catch (err) {
