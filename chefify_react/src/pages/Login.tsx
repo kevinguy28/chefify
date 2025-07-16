@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/useAuth";
+import { refresh_token } from "@/endpoints/api";
 import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/firebase/firebase";
@@ -9,7 +10,8 @@ const Login = () => {
     // const [username, setUsername] = useState("");
     // const [password, setPassword] = useState("");
     const nav = useNavigate();
-    const { google_login_user, isAuthenticated } = useAuth();
+    const { google_login_user, isAuthenticated, setIsAuthenticated } =
+        useAuth();
 
     // const handleLogin = (e: React.FormEvent) => {
     //     e.preventDefault(); // Prevent page reload
@@ -33,10 +35,17 @@ const Login = () => {
     };
 
     useEffect(() => {
-        if (isAuthenticated) {
-            nav("/");
-        }
-    }, [isAuthenticated]);
+        // On component mount, try refreshing tokens silently
+        const tryRefresh = async () => {
+            const success = await refresh_token();
+            if (success) {
+                setIsAuthenticated(true);
+                nav("/"); // Redirect because user is already logged in
+            }
+        };
+
+        tryRefresh();
+    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen text-alt-text">

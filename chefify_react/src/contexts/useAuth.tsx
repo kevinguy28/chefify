@@ -31,6 +31,7 @@ interface AuthContextType {
     ) => Promise<void>;
     google_login_user: (idToken: string) => Promise<void>;
     logout_user: () => Promise<void>;
+    setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -138,6 +139,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 register_user,
                 google_login_user,
                 logout_user,
+                setIsAuthenticated,
             }}
         >
             {children} {/* 'children' is properly used */}
