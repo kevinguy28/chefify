@@ -5,7 +5,7 @@ import CuisineLogo from "@/assets/cuisine.svg?react";
 
 const RecipeForm = () => {
     const [recipeName, setRecipeName] = useState("");
-    const [cuisine, setCuisine] = useState("");
+    const [cuisine, setCuisine] = useState("N/A");
     const [recipeCuisine, setRecipeCuisine] = useState<Array<any>>([]);
     const nav = useNavigate();
 
