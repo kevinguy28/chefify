@@ -34,15 +34,15 @@ const Login = () => {
     };
 
     useEffect(() => {
-        // On component mount, try refreshing tokens silently
         const tryRefresh = async () => {
             const success = await refresh_token();
             if (success) {
                 setIsAuthenticated(true);
-                nav("/"); // Redirect because user is already logged in
+                nav("/"); // redirect to home if logged in
+            } else {
+                setIsAuthenticated(false);
             }
         };
-
         tryRefresh();
     }, []);
 
