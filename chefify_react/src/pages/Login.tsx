@@ -1,6 +1,6 @@
-// import { useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "@/contexts/useAuth";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/firebase/firebase";
 import GoogleLogo from "@/assets/googleLogo.svg?react";
@@ -8,8 +8,8 @@ import GoogleLogo from "@/assets/googleLogo.svg?react";
 const Login = () => {
     // const [username, setUsername] = useState("");
     // const [password, setPassword] = useState("");
-    // const nav = useNavigate();
-    const { google_login_user } = useAuth();
+    const nav = useNavigate();
+    const { google_login_user, isAuthenticated } = useAuth();
 
     // const handleLogin = (e: React.FormEvent) => {
     //     e.preventDefault(); // Prevent page reload
@@ -31,6 +31,12 @@ const Login = () => {
             console.error("Google login error:", err);
         }
     };
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            nav("/");
+        }
+    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen text-alt-text">
