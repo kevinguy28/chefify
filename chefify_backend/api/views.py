@@ -1,5 +1,6 @@
 import json
 import nltk
+import logging
 from django.db.models import Q, Count, F
 from django.shortcuts import render
 from django.core.paginator import Paginator
@@ -122,6 +123,7 @@ def googleLogin(request):
         profile.profilePictureUrl = photo_url
         profile.save()
 
+        
         # 3. Generate access/refresh tokens like your existing JWT login
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -129,7 +131,6 @@ def googleLogin(request):
         res = Response({"success": True})
 
         # 4. Set them as cookies (match your existing logic)
-
         res.set_cookie(
             key="access_token",
             value=access_token,
@@ -196,9 +197,12 @@ def is_authenticated(request):
 
 @api_view(["POST"])
 def google_auth(request):
+
     token = request.data.get("token")
     print(token)
-    print("failure here")
+    print("failure")
+    logger = logging.getLogger(__name__)
+    logger.info(token)
     if not token:
         return Response({"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST)
 
