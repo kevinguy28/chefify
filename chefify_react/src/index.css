@@ -51,6 +51,12 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--color-bg);
+}
+
 .scrollbar {
     &::-webkit-scrollbar {
         background-color: transparent;

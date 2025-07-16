@@ -122,7 +122,6 @@ def googleLogin(request):
         profile.profilePictureUrl = photo_url
         profile.save()
 
-        
         # 3. Generate access/refresh tokens like your existing JWT login
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -130,6 +129,7 @@ def googleLogin(request):
         res = Response({"success": True})
 
         # 4. Set them as cookies (match your existing logic)
+
         res.set_cookie(
             key="access_token",
             value=access_token,

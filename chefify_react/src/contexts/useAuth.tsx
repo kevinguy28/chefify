@@ -11,6 +11,7 @@ import {
     readUserProfile,
     register,
     login_google,
+    logout,
 } from "@/endpoints/api";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +30,7 @@ interface AuthContextType {
         cPassword: string
     ) => Promise<void>;
     google_login_user: (idToken: string) => Promise<void>;
+    logout_user: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -95,15 +97,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const google_login_user = async (idToken: string) => {
         const response = await login_google(idToken);
-        console.log(response);
         if (response.success) {
-            console.log("sss");
             setIsAuthenticated(true);
             nav("/");
         } else {
             alert(
                 "Login failed. Check your credentials. If this issue continues to persist please clear cookies."
             );
+        }
+    };
+
+    const logout_user = async () => {
+        try {
+            await logout(); // Calls the Django logout endpoint
+        } catch (e) {
+            console.error("Logout failed", e);
+        } finally {
+            setIsAuthenticated(false);
+            setUser(null);
+            setUserProfile(null);
+            nav("/login"); // redirect to login page
         }
     };
 
@@ -121,6 +134,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 login_user,
                 register_user,
                 google_login_user,
+                logout_user,
             }}
         >
             {children} {/* 'children' is properly used */}

@@ -14,8 +14,8 @@ const RecipeCatalog: React.FC<RecipeCatalogProps> = ({
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-6 ">
                 {" "}
                 {recipes.length > 0 ? (
-                    recipes.map((recipe) => (
-                        <RecipeContainer recipe={recipe} edit={false} />
+                    recipes.map((recipe, index) => (
+                        <RecipeContainer recipe={recipe} edit={false} key={index} />
                     ))
                 ) : (
                     <div>
