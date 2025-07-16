@@ -37,9 +37,11 @@ const Login = () => {
         const tryRefresh = async () => {
             const success = await refresh_token();
             if (success) {
+                console.log("wpkoiing");
                 setIsAuthenticated(true);
                 nav("/"); // redirect to home if logged in
             } else {
+                console.log("failing");
                 setIsAuthenticated(false);
             }
         };

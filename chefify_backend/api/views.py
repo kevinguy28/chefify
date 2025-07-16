@@ -73,27 +73,31 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 class CustomRefreshTokenView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        try:
-            refresh_token = request.COOKIES.get("refresh_token")
-            request.data["refresh"] = refresh_token
-            response = super().post(request, *args, **kwargs)
-            tokens = response.data
-            access_token = tokens["access"]
-            res = Response()
-            res.data = {"refreshed": True}
-            res.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=True,
-                samesite="None",
-                path="/",
-            )
+        refresh_token = request.COOKIES.get("refresh_token")
+        if not refresh_token:
+            return Response({"refreshed": False}, status=status.HTTP_401_UNAUTHORIZED)
+        request.data["refresh"] = refresh_token
+        response = super().post(request, *args, **kwargs)
 
-            return res
-        except:
-            return Response({"refreshed": False})
+        # If refresh failed, super().post() returns error status
+        if response.status_code != status.HTTP_200_OK:
+            return Response({"refreshed": False}, status=response.status_code)
 
+        tokens = response.data
+        access_token = tokens.get("access")
+        res = Response({"refreshed": True})
+
+        # Set the new access_token cookie
+        res.set_cookie(
+            key="access_token",
+            value=access_token,
+            httponly=True,
+            secure=True,
+            samesite="None",
+            path="/",
+        )
+        return res
+    
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes([AllowAny])
