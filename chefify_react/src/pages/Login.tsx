@@ -10,8 +10,7 @@ const Login = () => {
     // const [username, setUsername] = useState("");
     // const [password, setPassword] = useState("");
     const nav = useNavigate();
-    const { google_login_user, isAuthenticated, setIsAuthenticated } =
-        useAuth();
+    const { google_login_user, setIsAuthenticated } = useAuth();
 
     // const handleLogin = (e: React.FormEvent) => {
     //     e.preventDefault(); // Prevent page reload
