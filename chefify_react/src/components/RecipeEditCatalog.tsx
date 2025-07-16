@@ -45,12 +45,17 @@ const RecipeEditCatalog = () => {
 
             <div className="flex flex-wrap justify-center gap-6 ">
                 {recipes.length > 0 ? (
-                    recipes.map((recipe) => (
+                    recipes.map((recipe, index) => (
                         <Link
                             to={`/recipe/update/${recipe?.id}`}
                             className="p-2"
+                            key={index}
                         >
-                            <RecipeContainer recipe={recipe} edit={true} />
+                            <RecipeContainer
+                                recipe={recipe}
+                                edit={true}
+                                key={index}
+                            />
                         </Link>
                     ))
                 ) : (
