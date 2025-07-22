@@ -61,3 +61,4 @@ firebase_key.json
 
 # Mac junk
 .DS_Store
+.vscode/

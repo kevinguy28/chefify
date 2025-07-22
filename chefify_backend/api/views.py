@@ -314,7 +314,7 @@ def read_recipes(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def readRecipesTimeline(request):
+def read_recipes_timeline(request):
     """"""
     pageNumber = request.GET.get("page", 1)
     needUser = request.GET.get("needUser")
