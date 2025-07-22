@@ -4,7 +4,9 @@
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.core.exceptions import FieldError
 from django.core.paginator import Paginator
+from django.db import DatabaseError
 from django.db.models import Count, F, Q
 from django.views.decorators.csrf import csrf_exempt
 from firebase_admin import auth as firebase_auth
@@ -253,7 +255,7 @@ def post_user_name(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def read_cuisines():
+def read_cuisines(_request):
     """Retrieves cuisines and return cuisines."""
     cuisines = Cuisine.objects.all().order_by("name")
     serializer = CuisineSerializer(cuisines, many=True)
@@ -348,7 +350,7 @@ def read_recipes_timeline(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def read_recipe(recipe_id):
+def read_recipe(_request, recipe_id):
     """Returns recipe."""
     try:
         recipe = Recipe.objects.get(id=recipe_id)
@@ -362,63 +364,50 @@ def read_recipe(recipe_id):
 @permission_classes([IsAuthenticated])
 def create_recipe(request):
     """Creates a recipe object and returns recipe data is successful."""
-    try:
-        recipe_name = request.data.get("recipeName")
-        cuisine = Cuisine.objects.get(name=request.data.get("cuisine"))
-        recipe = Recipe.objects.create(
-            name=recipe_name, cuisine=cuisine, user=request.user
-        )
-        serializer = RecipeSerializer(recipe)
-        return Response(serializer.data, status=201)
-    except:
-        return Response(
-            {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
-        )
+    recipe_name = request.data.get("recipeName")
+    cuisine = Cuisine.objects.get(name=request.data.get("cuisine"))
+    recipe = Recipe.objects.create(name=recipe_name, cuisine=cuisine, user=request.user)
+    serializer = RecipeSerializer(recipe)
+    return Response(serializer.data, status=201)
 
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def update_recipe(request, recipeId):
+def update_recipe(request, recipe_id):
     """Updates recipe information, returns recipe."""
     try:
-        try:
-            recipe = Recipe.objects.get(id=recipeId)
-        except Recipe.DoesNotExist:
-            return Response(
-                {"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+        recipe = Recipe.objects.get(id=recipe_id)
+    except Recipe.DoesNotExist:
+        return Response({"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        cuisine = request.data.get("recipeCuisine", recipe.cuisine)
-        cuisine = Cuisine.objects.get(name=cuisine)
-        name = request.data.get("recipeName", recipe.name)
-        privacy = request.data.get("recipePrivacy", recipe.privacy)
-        description = request.data.get("recipeDescription", recipe.description)
-        # image = request.FILES.get("recipeImage")
-        recipeImageUrl = request.data.get("recipeImageUrl", recipe.recipeImageUrl)
-        recipe.name = name
-        recipe.cuisine = cuisine
-        recipe.privacy = privacy
-        recipe.description = description
-        recipe.recipeImageUrl = recipeImageUrl
+    cuisine = request.data.get("recipeCuisine", recipe.cuisine)
+    cuisine = Cuisine.objects.get(name=cuisine)
+    name = request.data.get("recipeName", recipe.name)
+    privacy = request.data.get("recipePrivacy", recipe.privacy)
+    description = request.data.get("recipeDescription", recipe.description)
+    # image = request.FILES.get("recipeImage")
+    recipe_image_url = request.data.get("recipeImageUrl", recipe.recipeImageUrl)
+    recipe.name = name
+    recipe.cuisine = cuisine
+    recipe.privacy = privacy
+    recipe.description = description
+    recipe.recipeImageUrl = recipe_image_url
 
-        # if image:
-        #     recipe.image = image
+    # if image:
+    #     recipe.image = image
 
-        recipe.save()
+    recipe.save()
 
-        serializer = RecipeSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except:
-        return Response(
-            {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
-        )
+    serializer = RecipeSerializer(recipe)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def deleteRecipe(request, recipeId):
+def delete_recipe(request, recipe_id):
+    """Delete recipe on recipe_id, return response success."""
     try:
-        recipe = Recipe.objects.get(id=recipeId)
+        recipe = Recipe.objects.get(id=recipe_id)
 
         if recipe.user != request.user:
             return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
@@ -434,100 +423,86 @@ def deleteRecipe(request, recipeId):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def createRecipeStep(request, recipeId):
+def create_recipe_step(request, recipe_id):
+    """Create RecipeSteps object given fields, return RecipeSteps data."""
     try:
-        try:
-            recipe = Recipe.objects.get(id=recipeId)
-        except Recipe.DoesNotExist:
-            return Response(
-                {"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-        stepTitle = request.data["stepTitle"]
-        stepDescription = request.data["stepDescription"]
-        step = RecipeSteps.objects.create(
-            recipe=recipe, title=stepTitle, description=stepDescription
-        )
-        step.save()
-        serializer = RecipeStepsSerializer(step)
-        return Response(serializer.data, status=201)
-    except Exception as e:
-        return Response(
-            {"error": f"An error occurred: {str(e)}"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        recipe = Recipe.objects.get(id=recipe_id)
+    except Recipe.DoesNotExist:
+        return Response({"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND)
+    step_title = request.data["stepTitle"]
+    step_description = request.data["stepDescription"]
+    step = RecipeSteps.objects.create(
+        recipe=recipe, title=step_title, description=step_description
+    )
+    step.save()
+    serializer = RecipeStepsSerializer(step)
+    return Response(serializer.data, status=201)
 
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def updateRecipeStepOrder(request, stepId):
-    try:
-        moveDown = request.data.get("moveDown")
-        step = RecipeSteps.objects.get(id=stepId)
-        recipeSteps = step.recipe.steps.all()
-        tmp = step.order
-        if moveDown:
-            higherOrderStep = recipeSteps.filter(order__gt=step.order).first()
-            if higherOrderStep:
-                # Swap the order of the two steps
-                step.order = higherOrderStep.order
-                higherOrderStep.order = tmp
+def update_recipe_step_order(request, step_id):
+    """Swap order field value of Step of Recipe, return success."""
+    move_down = request.data.get("moveDown")
+    step = RecipeSteps.objects.get(id=step_id)
+    recipe_steps = step.recipe.steps.all()
+    tmp = step.order
+    if move_down:
+        higher_order_step = recipe_steps.filter(order__gt=step.order).first()
+        if higher_order_step:
+            # Swap the order of the two steps
+            step.order = higher_order_step.order
+            higher_order_step.order = tmp
 
-                # Save both steps after swapping
-                step.save()
-                higherOrderStep.save()
-        else:
-            lowerOrderStep = recipeSteps.filter(order__lt=step.order).last()
-            if lowerOrderStep:
-                step.order = lowerOrderStep.order
-                lowerOrderStep.order = tmp
+            # Save both steps after swapping
+            step.save()
+            higher_order_step.save()
+    else:
+        lower_order_step = recipe_steps.filter(order__lt=step.order).last()
+        if lower_order_step:
+            step.order = lower_order_step.order
+            lower_order_step.order = tmp
 
-                # Save both steps after swapping
-                step.save()
-                lowerOrderStep.save()
-        return Response({"success": True})
-    except Exception as e:
-        return Response(
-            {"error": f"An error occurred: {str(e)}"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+            # Save both steps after swapping
+            step.save()
+            lower_order_step.save()
+    return Response({"success": True})
 
 
 class StepView(APIView):
+    """Custom View for Step to handle PATCH & DELETE."""
+
     permission_classes = [IsAuthenticated]
 
-    def patch(self, request, stepId):
+    def patch(self, request, step_id):
+        """Update field values of Step, return success."""
         try:
-            try:
-                step = RecipeSteps.objects.get(id=stepId)
-            except Exception as e:
-                return Response(
-                    {"error": f"An error occurred: {str(e)}"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
-
-            data = request.data
-            if data["title"]:
-                step.title = data["title"]
-            if data["description"]:
-                step.description = data["description"]
-
-            step.save()
-            return Response({"success": True})
-        except Exception as e:
+            step = RecipeSteps.objects.get(id=step_id)
+        except RecipeSteps.DoesNotExist as e:
             return Response(
-                {"error": f"An error occured: {str(e)}"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": f"An error occurred: {str(e)}"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
-    def delete(self, request, stepId):
+        data = request.data
+        if data["title"]:
+            step.title = data["title"]
+        if data["description"]:
+            step.description = data["description"]
+
+        step.save()
+        return Response({"success": True})
+
+    def delete(self, _request, step_id):
+        """Delete instance of Step object, return success."""
         try:
-            step = RecipeSteps.objects.get(id=stepId)
+            step = RecipeSteps.objects.get(id=step_id)
             step.delete()
             return Response(
                 {"success": "Recipe step deleted successfully"},
                 status=status.HTTP_200_OK,
             )
-        except Exception as e:
+        except RecipeSteps.DoesNotExist as e:
             return Response(
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -539,13 +514,14 @@ class StepView(APIView):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def readRecipeSteps(request, recipeId):
+def read_recipe_steps(_request, recipe_id):
+    """Retreive recipe steps associated with a recipe, return steps data."""
     try:
-        recipe = Recipe.objects.get(id=recipeId)
+        recipe = Recipe.objects.get(id=recipe_id)
         steps = recipe.steps.all()
         serializer = RecipeStepsSerializer(steps, many=True)
         return Response(serializer.data, status=200)
-    except Exception as e:
+    except Recipe.DoesNotExist as e:
         return Response(
             {"error": f"An error occurred: {str(e)}"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -556,99 +532,89 @@ def readRecipeSteps(request, recipeId):
 
 
 class ReviewView(APIView):
+    """Custom view for Review to handle POST & GET."""
+
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, recipeId):
+    def post(self, request, recipe_id):
+        """Create review, return review data."""
         try:
-            recipe = Recipe.objects.get(id=recipeId)
-            userProfile = UserProfile.objects.get(user=request.user)
+            recipe = Recipe.objects.get(id=recipe_id)
+            user_profile = UserProfile.objects.get(user=request.user)
             data = request.data
             if data["rating"] and data["rating"] != 0:
                 rating = data["rating"]
-                try:
-                    review_text = data["review_text"]
-                    review = Review.objects.create(
-                        recipe=recipe,
-                        rating=rating,
-                        review_text=review_text,
-                        user=request.user,
-                        userProfile=userProfile,
-                    )
-                except:
-                    review = Review.objects.create(
-                        recipe=recipe,
-                        rating=rating,
-                        review_text=None,
-                        user=request.user,
-                        userProfile=userProfile,
-                    )
-
+                review_text = data["review_text"]
+                review = Review.objects.create(
+                    recipe=recipe,
+                    rating=rating,
+                    review_text=review_text,
+                    user=request.user,
+                    userProfile=user_profile,
+                )
                 serializer = ReviewSerializer(review)
                 return Response(serializer.data, status=201)
             return Response({"success": True})
-        except Exception as e:
+        except (UserProfile.DoesNotExist, Recipe.DoesNotExist) as e:
             return Response(
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get(self, request, recipeId):
+    def get(self, request, recipe_id):
+        """Get all Review instances associated with a Recipe and return review data."""
         if request.GET.get("reviewAll") == "false":
             try:
-                recipe = Recipe.objects.get(id=recipeId)
+                recipe = Recipe.objects.get(id=recipe_id)
                 try:
-                    review = Review.objects.filter(recipe=recipe).get(user=request.user)
-                except Exception as e:
+                    review = Review.objects.filter(
+                        recipe=recipe, user=request.user
+                    ).first()
+                except Review.DoesNotExist:
                     return Response(None, status=status.HTTP_200_OK)
                 serializer = ReviewSerializer(review)
                 return Response(serializer.data, status=200)
-            except Exception as e:
+            except Recipe.DoesNotExist as e:
                 return Response(
                     {"error": f"An error occurred: {str(e)}"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         elif request.GET.get("reviewAll") == "true":
-            recipe = Recipe.objects.get(id=recipeId)
+            recipe = Recipe.objects.get(id=recipe_id)
             try:
                 reviews = Review.objects.filter(recipe=recipe)
 
                 # Apply ordering based on query parameters
                 order_params = []
 
-                # Check if "relevant" is true and add it to the order parameters
-                if request.GET.get("relevant") == "true":  # Fixed the condition here
+                if request.GET.get("relevant") == "true":
                     reviews = reviews.annotate(
                         liked_count=Count("likedBy"),
                         disliked_count=Count("dislikedBy"),
                         like_dislike_diff=F("liked_count") - F("disliked_count"),
                     )
-                    # Order by the biggest difference between likes and dislikes (descending)
                     order_params.append("-like_dislike_diff")
                     order_params.append("-liked_count")
 
                 if request.GET.get("newest") == "true":
                     order_params.append("-updated")
 
-                # Check if "oldest" is true and add it to the order parameters
                 if request.GET.get("oldest") == "true":
                     order_params.append("updated")
 
-                # Check if "highest" is true and add it to the order parameters
                 if request.GET.get("highest") == "true":
                     order_params.append("-rating")
 
-                # Check if "lowest" is true and add it to the order parameters
                 if request.GET.get("lowest") == "true":
                     order_params.append("rating")
 
-                # Apply the ordering to the queryset if there are any order parameters
                 if order_params:
                     reviews = reviews.order_by(*order_params)
 
-                pageNumber = request.GET.get("page", 1)
+                page_number = request.GET.get("page", 1)
                 paginator = Paginator(reviews, 2)
-                page_obj = paginator.get_page(pageNumber)
-            except Exception as e:
+                page_obj = paginator.get_page(page_number)
+            except (ValueError, FieldError, DatabaseError) as e:
                 return Response({}, status=status.HTTP_200_OK)
 
             serializer = ReviewSerializer(page_obj, many=True)
