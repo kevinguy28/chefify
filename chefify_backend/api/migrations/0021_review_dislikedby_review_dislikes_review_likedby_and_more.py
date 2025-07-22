@@ -7,29 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0020_rename_recipe_component_recipeingredient_recipecomponent'),
+        ("api", "0020_rename_recipe_component_recipeingredient_recipecomponent"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='review',
-            name='dislikedBy',
-            field=models.ManyToManyField(blank=True, related_name='disliked_by_reviews', to=settings.AUTH_USER_MODEL),
+            model_name="review",
+            name="dislikedBy",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="disliked_by_reviews",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AddField(
-            model_name='review',
-            name='dislikes',
+            model_name="review",
+            name="dislikes",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='review',
-            name='likedBy',
-            field=models.ManyToManyField(blank=True, related_name='liked_by_reviews', to=settings.AUTH_USER_MODEL),
+            model_name="review",
+            name="likedBy",
+            field=models.ManyToManyField(
+                blank=True, related_name="liked_by_reviews", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
-            model_name='review',
-            name='likes',
+            model_name="review",
+            name="likes",
             field=models.IntegerField(default=0),
         ),
     ]

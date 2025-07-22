@@ -6,12 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0013_alter_ingredient_ingredienttype_and_more'),
+        ("api", "0013_alter_ingredient_ingredienttype_and_more"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='ingredient',
-            constraint=models.UniqueConstraint(fields=('name', 'ingredientType'), name='unique_ingredient_name_type'),
+            model_name="ingredient",
+            constraint=models.UniqueConstraint(
+                fields=("name", "ingredientType"), name="unique_ingredient_name_type"
+            ),
         ),
     ]

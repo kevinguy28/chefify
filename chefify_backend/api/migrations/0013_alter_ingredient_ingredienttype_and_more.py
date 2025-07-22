@@ -6,23 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0012_ingredient_ingredienttype'),
+        ("api", "0012_ingredient_ingredienttype"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ingredient',
-            name='ingredientType',
-            field=models.CharField(choices=[('fruitsVegetables', 'Fruits & Vegetables'), ('protein', 'Protein'), ('grains', 'Grains'), ('dairy', 'Dairy'), ('herbsSpices', 'Herbs & Spices'), ('other', 'Other')], default='Other', max_length=30),
+            model_name="ingredient",
+            name="ingredientType",
+            field=models.CharField(
+                choices=[
+                    ("fruitsVegetables", "Fruits & Vegetables"),
+                    ("protein", "Protein"),
+                    ("grains", "Grains"),
+                    ("dairy", "Dairy"),
+                    ("herbsSpices", "Herbs & Spices"),
+                    ("other", "Other"),
+                ],
+                default="Other",
+                max_length=30,
+            ),
         ),
         migrations.AlterField(
-            model_name='userprofile',
-            name='buyIngredients',
-            field=models.ManyToManyField(blank=True, related_name='to_buy_by', to='api.ingredient'),
+            model_name="userprofile",
+            name="buyIngredients",
+            field=models.ManyToManyField(
+                blank=True, related_name="to_buy_by", to="api.ingredient"
+            ),
         ),
         migrations.AlterField(
-            model_name='userprofile',
-            name='ownedIngredients',
-            field=models.ManyToManyField(blank=True, related_name='owned_by', to='api.ingredient'),
+            model_name="userprofile",
+            name="ownedIngredients",
+            field=models.ManyToManyField(
+                blank=True, related_name="owned_by", to="api.ingredient"
+            ),
         ),
     ]

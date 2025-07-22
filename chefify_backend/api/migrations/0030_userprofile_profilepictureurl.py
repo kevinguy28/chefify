@@ -7,13 +7,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0029_rename_recipe_image_url_recipe_recipeimageurl'),
+        ("api", "0029_rename_recipe_image_url_recipe_recipeimageurl"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='profilePictureUrl',
-            field=models.URLField(blank=True, max_length=500, null=True, validators=[django.core.validators.URLValidator()]),
+            model_name="userprofile",
+            name="profilePictureUrl",
+            field=models.URLField(
+                blank=True,
+                max_length=500,
+                null=True,
+                validators=[django.core.validators.URLValidator()],
+            ),
         ),
     ]

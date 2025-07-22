@@ -6,13 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0011_rename_ingredients_userprofile_ownedingredients_and_more'),
+        ("api", "0011_rename_ingredients_userprofile_ownedingredients_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='ingredient',
-            name='ingredientType',
-            field=models.CharField(choices=[('fruitsVegetables', 'Fruits & Vegetables'), ('protein', 'Protein'), ('grains', 'Grains'), ('dairy', 'Dairy'), ('herbsSpices', 'Herbs & Spices'), ('other', 'Other')], default='N/A', max_length=30),
+            model_name="ingredient",
+            name="ingredientType",
+            field=models.CharField(
+                choices=[
+                    ("fruitsVegetables", "Fruits & Vegetables"),
+                    ("protein", "Protein"),
+                    ("grains", "Grains"),
+                    ("dairy", "Dairy"),
+                    ("herbsSpices", "Herbs & Spices"),
+                    ("other", "Other"),
+                ],
+                default="N/A",
+                max_length=30,
+            ),
         ),
     ]

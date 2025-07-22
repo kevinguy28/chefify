@@ -1,2 +1,2 @@
 def capitalize(sentence: str) -> str:
-    return ' '.join([word.capitalize() for word in sentence.split()])
+    return " ".join([word.capitalize() for word in sentence.split()])

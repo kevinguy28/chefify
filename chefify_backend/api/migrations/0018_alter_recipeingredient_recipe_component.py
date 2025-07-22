@@ -7,13 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0017_recipeingredient_recipe_component'),
+        ("api", "0017_recipeingredient_recipe_component"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='recipeingredient',
-            name='recipe_component',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ingredients', to='api.recipecomponent'),
+            model_name="recipeingredient",
+            name="recipe_component",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="ingredients",
+                to="api.recipecomponent",
+            ),
         ),
     ]

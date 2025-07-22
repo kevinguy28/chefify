@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0010_userprofile'),
+        ("api", "0010_userprofile"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='userprofile',
-            old_name='ingredients',
-            new_name='ownedIngredients',
+            model_name="userprofile",
+            old_name="ingredients",
+            new_name="ownedIngredients",
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='buyIngredients',
-            field=models.ManyToManyField(blank=True, to='api.ingredient'),
+            model_name="userprofile",
+            name="buyIngredients",
+            field=models.ManyToManyField(blank=True, to="api.ingredient"),
         ),
     ]

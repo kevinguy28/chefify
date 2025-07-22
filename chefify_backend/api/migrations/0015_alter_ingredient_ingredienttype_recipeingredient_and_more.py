@@ -7,28 +7,78 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0014_ingredient_unique_ingredient_name_type'),
+        ("api", "0014_ingredient_unique_ingredient_name_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ingredient',
-            name='ingredientType',
-            field=models.CharField(choices=[('fruitsVegetables', 'Fruits & Vegetables'), ('protein', 'Protein'), ('grains', 'Grains'), ('dairy', 'Dairy'), ('herbsSpices', 'Herbs & Spices'), ('other', 'Other')], default='other', max_length=30),
+            model_name="ingredient",
+            name="ingredientType",
+            field=models.CharField(
+                choices=[
+                    ("fruitsVegetables", "Fruits & Vegetables"),
+                    ("protein", "Protein"),
+                    ("grains", "Grains"),
+                    ("dairy", "Dairy"),
+                    ("herbsSpices", "Herbs & Spices"),
+                    ("other", "Other"),
+                ],
+                default="other",
+                max_length=30,
+            ),
         ),
         migrations.CreateModel(
-            name='RecipeIngredient',
+            name="RecipeIngredient",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('unit', models.CharField(choices=[('tbsp', 'Tablespoon'), ('tsp', 'Teaspoon'), ('cup', 'Cup'), ('oz', 'Ounce'), ('g', 'Gram'), ('kg', 'Kilogram'), ('ml', 'Milliliter'), ('L', 'Liter'), ('pinch', 'Pinch'), ('dash', 'Dash')], max_length=15)),
-                ('quantity', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('ingredient', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='units', to='api.ingredient')),
-                ('recipe', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.recipe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "unit",
+                    models.CharField(
+                        choices=[
+                            ("tbsp", "Tablespoon"),
+                            ("tsp", "Teaspoon"),
+                            ("cup", "Cup"),
+                            ("oz", "Ounce"),
+                            ("g", "Gram"),
+                            ("kg", "Kilogram"),
+                            ("ml", "Milliliter"),
+                            ("L", "Liter"),
+                            ("pinch", "Pinch"),
+                            ("dash", "Dash"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("quantity", models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    "ingredient",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="units",
+                        to="api.ingredient",
+                    ),
+                ),
+                (
+                    "recipe",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="api.recipe"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='recipe',
-            name='ingredients',
-            field=models.ManyToManyField(blank=True, through='api.RecipeIngredient', to='api.ingredient'),
+            model_name="recipe",
+            name="ingredients",
+            field=models.ManyToManyField(
+                blank=True, through="api.RecipeIngredient", to="api.ingredient"
+            ),
         ),
     ]

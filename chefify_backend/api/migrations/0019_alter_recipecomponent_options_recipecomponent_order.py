@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0018_alter_recipeingredient_recipe_component'),
+        ("api", "0018_alter_recipeingredient_recipe_component"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='recipecomponent',
-            options={'ordering': ['order']},
+            name="recipecomponent",
+            options={"ordering": ["order"]},
         ),
         migrations.AddField(
-            model_name='recipecomponent',
-            name='order',
+            model_name="recipecomponent",
+            name="order",
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
     ]

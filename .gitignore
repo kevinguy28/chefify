@@ -23,6 +23,7 @@ env/
 # Python
 __pycache__/
 *.py[cod]
+*.pyc
 *.pyo
 *.pyd
 *.sqlite3

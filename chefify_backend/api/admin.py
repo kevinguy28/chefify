@@ -1,12 +1,25 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
-from .models import Recipe, Cuisine, RecipeSteps, Review, Ingredient, UserProfile, RecipeIngredient, RecipeComponent
+
+from .models import (
+    Cuisine,
+    Ingredient,
+    Recipe,
+    RecipeComponent,
+    RecipeIngredient,
+    RecipeSteps,
+    Review,
+    UserProfile,
+)
+
 
 class MyRecipe(admin.ModelAdmin):
-    list_display = ('id', 'user', 'name')
+    list_display = ("id", "user", "name")
+
 
 class MyUser(admin.ModelAdmin):
-    list_display = ('id', 'username', 'email')  # Use 'email' instead of 'email address'
+    list_display = ("id", "username", "email")  # Use 'email' instead of 'email address'
+
 
 # Register your models here.
 admin.site.unregister(User)

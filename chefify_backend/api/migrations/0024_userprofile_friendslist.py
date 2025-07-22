@@ -7,14 +7,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0023_userprofile_buyingredients'),
+        ("api", "0023_userprofile_buyingredients"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='friendsList',
-            field=models.ManyToManyField(blank=True, related_name='friends_with', to=settings.AUTH_USER_MODEL),
+            model_name="userprofile",
+            name="friendsList",
+            field=models.ManyToManyField(
+                blank=True, related_name="friends_with", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

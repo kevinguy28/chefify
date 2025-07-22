@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0022_remove_userprofile_buyingredients_and_more'),
+        ("api", "0022_remove_userprofile_buyingredients_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='buyIngredients',
-            field=models.ManyToManyField(blank=True, related_name='to_buy_by', to='api.ingredient'),
+            model_name="userprofile",
+            name="buyIngredients",
+            field=models.ManyToManyField(
+                blank=True, related_name="to_buy_by", to="api.ingredient"
+            ),
         ),
     ]
