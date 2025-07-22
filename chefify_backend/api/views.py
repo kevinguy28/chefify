@@ -125,6 +125,7 @@ class CustomRefreshTokenView(TokenRefreshView):
 def google_login(request):
     """Logins user and returns response and sets JWT token pair as secure HttpOnly cookies."""
     token = request.data.get("idToken")
+    print(token)
     if not token:
         return Response(
             {"error": "No token provided"}, status=status.HTTP_400_BAD_REQUEST
@@ -132,6 +133,7 @@ def google_login(request):
     try:
         # 1. Verify the Firebase token
         decoded_token = firebase_auth.verify_id_token(token)
+        print(decoded_token)
         email = decoded_token.get("email")
         name = decoded_token.get("name", "")
         first_name, last_name = "", ""
@@ -156,9 +158,10 @@ def google_login(request):
         profile.save()
 
         # 3. Generate access/refresh tokens like your existing JWT login
+        print("gen")
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
-
+        print(access_token)
         res = Response({"success": True})
 
         # 4. Set them as cookies (match your existing logic)
@@ -315,31 +318,20 @@ def read_recipes(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def read_recipes_timeline(request):
-    """"""
-    pageNumber = request.GET.get("page", 1)
-    needUser = request.GET.get("needUser")
-    privacy = request.GET.get("privacy")
-    filterInput = request.GET.get("filterInput")
-    cuisine = (
-        Cuisine.objects.get(name=request.GET.get("cuisine"))
-        if request.GET.get("cuisine")
-        else None
-    )
-
-    friendsList = UserProfile.objects.get(user=request.user).friendsList.all()
-    recipeList = []
-    for friend in friendsList:
-        userRecipes = (
+    """Get recipes from user's friendslist, returns recipe data."""
+    page_number = request.GET.get("page", 1)
+    friends_list = UserProfile.objects.get(user=request.user).friendsList.all()
+    recipe_list = []
+    for friend in friends_list:
+        user_recipes = (
             Recipe.objects.filter(user=friend)
             .exclude(privacy="private")
             .order_by("-updated")
         )
-        recipeList.extend(userRecipes)
-    print(recipeList)
-    paginator = Paginator(recipeList, 3)
-    main_page = paginator.get_page(pageNumber)
+    recipe_list.extend(user_recipes)
+    paginator = Paginator(recipe_list, 3)
+    main_page = paginator.get_page(page_number)
     serializer = RecipeSerializer(main_page, many=True)
-    print(main_page.has_next)
     return Response(
         {
             "recipes": serializer.data,
@@ -356,9 +348,10 @@ def read_recipes_timeline(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def readRecipe(request, recipeId):
+def read_recipe(recipe_id):
+    """Returns recipe."""
     try:
-        recipe = Recipe.objects.get(id=recipeId)
+        recipe = Recipe.objects.get(id=recipe_id)
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data)
     except Recipe.DoesNotExist:
@@ -367,18 +360,14 @@ def readRecipe(request, recipeId):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def createRecipe(request):
-
+def create_recipe(request):
+    """Creates a recipe object and returns recipe data is successful."""
     try:
-        recipeName = request.data.get("recipeName")
-        try:
-            cuisine = Cuisine.objects.get(name=request.data.get("cuisine"))
-            recipe = Recipe.objects.create(
-                name=recipeName, cuisine=cuisine, user=request.user
-            )
-        except:
-            recipe = Recipe.objects.create(name=recipeName, user=request.user)
-
+        recipe_name = request.data.get("recipeName")
+        cuisine = Cuisine.objects.get(name=request.data.get("cuisine"))
+        recipe = Recipe.objects.create(
+            name=recipe_name, cuisine=cuisine, user=request.user
+        )
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data, status=201)
     except:
@@ -389,7 +378,8 @@ def createRecipe(request):
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def updateRecipe(request, recipeId):
+def update_recipe(request, recipeId):
+    """Updates recipe information, returns recipe."""
     try:
         try:
             recipe = Recipe.objects.get(id=recipeId)
@@ -405,8 +395,6 @@ def updateRecipe(request, recipeId):
         description = request.data.get("recipeDescription", recipe.description)
         # image = request.FILES.get("recipeImage")
         recipeImageUrl = request.data.get("recipeImageUrl", recipe.recipeImageUrl)
-        print(recipeImageUrl)
-        print("xxx")
         recipe.name = name
         recipe.cuisine = cuisine
         recipe.privacy = privacy

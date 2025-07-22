@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from django.urls import path
 
 from .views import (
@@ -11,8 +10,8 @@ from .views import (
     UserProfileFriendView,
     UserProfileIngredientMove,
     UserProfileIngredientView,
+    create_recipe,
     createIngredient,
-    createRecipe,
     createRecipeStep,
     deleteRecipe,
     deleteRecipeComponent,
@@ -26,13 +25,13 @@ from .views import (
     logout,
     post_user_name,
     read_cuisines,
+    read_recipe,
     read_recipes,
     read_recipes_timeline,
-    readRecipe,
     readRecipeSteps,
     register,
+    update_recipe,
     updateFavouriteUserProfile,
-    updateRecipe,
     updateRecipeStepOrder,
     updateReviewLikes,
 )
@@ -51,9 +50,9 @@ urlpatterns = [
     path("recipes/read/", read_recipes),
     path("recipes/timeline/", read_recipes_timeline),
     # Recipe Endpoints
-    path("recipe/read/<int:recipeId>/", readRecipe),
-    path("recipe/create/", createRecipe),
-    path("recipe/update/<int:recipeId>/", updateRecipe),
+    path("recipe/read/<int:recipeId>/", read_recipe),
+    path("recipe/create/", create_recipe),
+    path("recipe/update/<int:recipeId>/", update_recipe),
     path("recipe/delete/<int:recipeId>/", deleteRecipe),
     # Recipe Step Endpoints
     path("recipe/step/order/<int:stepId>/", updateRecipeStepOrder),
