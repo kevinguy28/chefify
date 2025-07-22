@@ -144,7 +144,7 @@ def google_login(request):
             last_name = " ".join(parts[1:]) if len(parts) > 1 else ""
 
         # 2. Get or create user
-        user = User.objects.get_or_create(
+        user, _ = User.objects.get_or_create(
             email=email,
             defaults={
                 "username": email.split("@")[0],
