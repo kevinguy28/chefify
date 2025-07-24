@@ -614,25 +614,26 @@ class ReviewView(APIView):
                 page_number = request.GET.get("page", 1)
                 paginator = Paginator(reviews, 2)
                 page_obj = paginator.get_page(page_number)
-            except (ValueError, FieldError, DatabaseError) as e:
+                serializer = ReviewSerializer(page_obj, many=True)
+                return Response(
+                    {
+                        "reviews": serializer.data,
+                        "page": page_obj.number,
+                        "totalPages": paginator.num_pages,  # Total number of pages
+                        "hasNext": page_obj.has_next(),  # If there's a next page
+                        "hasPrevious": page_obj.has_previous(),  # If there's a previous page
+                    }
+                )
+            except (ValueError, FieldError, DatabaseError):
                 return Response({}, status=status.HTTP_200_OK)
+        return Response({}, status=status.HTTP_200_OK)
 
-            serializer = ReviewSerializer(page_obj, many=True)
-            return Response(
-                {
-                    "reviews": serializer.data,
-                    "page": page_obj.number,
-                    "totalPages": paginator.num_pages,  # Total number of pages
-                    "hasNext": page_obj.has_next(),  # If there's a next page
-                    "hasPrevious": page_obj.has_previous(),  # If there's a previous page
-                }
-            )
-
-    def put(self, request, recipeId):
+    def put(self, request, recipe_id):
+        """Update Review rating and return Review data."""
         data = request.data
         try:
             review = Review.objects.get(
-                user=request.user, recipe=Recipe.objects.get(id=recipeId)
+                user=request.user, recipe=Recipe.objects.get(id=recipe_id)
             )
             if data["rating"] != review.rating:
                 review.rating = data["rating"]
@@ -641,37 +642,34 @@ class ReviewView(APIView):
             review.save()
             serializer = ReviewSerializer(review)
             return Response(serializer.data, status=200)
-        except Exception as e:
+        except Review.DoesNotExist as e:
             return Response(
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def delete(self, request, recipeId):
+    def delete(self, request, recipe_id):
+        """Delete Review, return response."""
         try:
             review = Review.objects.get(
-                user=request.user, recipe=Recipe.objects.get(id=recipeId)
+                user=request.user, recipe=Recipe.objects.get(id=recipe_id)
             )
-            if review:
-                review.delete()
-                return Response({"Success": "Review has been deleted"})
+            review.delete()
+            return Response({"Success": "Review has been deleted"})
+        except Review.DoesNotExist as e:
             return Response(
-                {"error": f"Review could not be found"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            return Response(
-                {"error": f"An error occurred: {str(e)}"},
+                {"error": f"Review could not be found or does not exist: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def updateReviewLikes(request, reviewId):
-    review = Review.objects.get(id=reviewId)
-    isLike = request.data["isLike"]
-    if isLike:
+def update_review_likes(request, review_id):
+    """Update Review likes, return Review data."""
+    review = Review.objects.get(id=review_id)
+    is_like = request.data["isLike"]
+    if is_like:
         if request.user in review.likedBy.all():
             review.likedBy.remove(request.user)
         else:
@@ -695,10 +693,11 @@ def updateReviewLikes(request, reviewId):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def createIngredient(request):
+def create_ingredient(request):
+    """Create instance Ingredient object, return response."""
     name = request.data["name"].lower()
-    if not (Ingredient.objects.filter(name=name)):
-        Ingredient.objects.create(name=name).save
+    if not Ingredient.objects.filter(name=name).exists():
+        Ingredient.objects.create(name=name)
 
     return Response({"success": True})
 
@@ -708,13 +707,11 @@ def createIngredient(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def getUserProfileFavouriteRecipe(request):
-    print("gayt")
+def get_user_profile_favourite_recipe(request):
+    """Get 12 Recipes from UserProfile favouriteRecipe field, return Recipes list."""
     page = request.GET.get("page", 1)
-    print(page)
-    userProfile = UserProfile.objects.get(user=request.user).favouriteRecipes.all()
-    print(userProfile)
-    paginator = Paginator(userProfile, 12)
+    user_profile = UserProfile.objects.get(user=request.user).favouriteRecipes.all()
+    paginator = Paginator(user_profile, 12)
     page_obj = paginator.get_page(int(page))
     serializer = RecipeSerializer(page_obj, many=True)
     return Response(
@@ -729,25 +726,29 @@ def getUserProfileFavouriteRecipe(request):
 
 
 class UserProfileFriendView(APIView):
+    """Custom view for UserProfile model for GET & PATCH for Friend field."""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        userProfile = UserProfile.objects.get(user=request.user)
-        serializer = UserProfileSerializer(userProfile)
+        """Get UserProfile, return UserProfile data."""
+        user_profile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfileSerializer(user_profile)
         return Response(serializer.data, status=200)
 
     def patch(self, request):
-        userProfile = UserProfile.objects.get(user=request.user)
+        """Update UserProfile friends list, return response."""
+        user_profile = UserProfile.objects.get(user=request.user)
         if request.data["action"] == "add":
-            userProfileId = request.data["userProfileId"]
-            userRemove = UserProfile.objects.get(id=userProfileId)
-            userProfile.friendsList.add(userRemove.user)
-            userProfile.save()
+            user_profile_id = request.data["userProfileId"]
+            user_remove = UserProfile.objects.get(id=user_profile_id)
+            user_profile.friendsList.add(user_remove.user)
+            user_profile.save()
         elif request.data["action"] == "remove":
-            userProfileId = request.data["userProfileId"]
-            userRemove = UserProfile.objects.get(id=userProfileId)
-            userProfile.friendsList.remove(userRemove.user)
-            userProfile.save()
+            user_profile_id = request.data["userProfileId"]
+            user_remove = UserProfile.objects.get(id=user_profile_id)
+            user_profile.friendsList.remove(user_remove.user)
+            user_profile.save()
         return Response({"Success": True}, status=200)
 
 
@@ -756,30 +757,31 @@ class UserProfileFriendView(APIView):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def getFriendsUserProfile(request):
-    userProfile = UserProfile.objects.get(user=request.user)
-    friendsProfile = []
-    for user in userProfile.friendsList.all():
-        friendsProfile.append(user.profile)
-    serializer = UserProfileSerializer(friendsProfile, many=True)
+def get_friends_user_profile(request):
+    """Get friends list of UserProfile, return UserProfile lists."""
+    user_profile = UserProfile.objects.get(user=request.user)
+    friends_profile = []
+    for user in user_profile.friendsList.all():
+        friends_profile.append(user.profile)
+    serializer = UserProfileSerializer(friends_profile, many=True)
     return Response(serializer.data, status=200)
 
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def getQueryUserProfile(request):
-    userFriendList = UserProfile.objects.get(user=request.user).friendsList.all()
-    usernameQuery = request.GET.get("usernameQuery")
-    user_profiles = UserProfile.objects.filter(user__username__icontains=usernameQuery)
+def get_query_user_profile(request):
+    """Get UserProfile based on query value, return UserProfile data."""
+    user_friend_list = UserProfile.objects.get(user=request.user).friendsList.all()
+    username_query = request.GET.get("usernameQuery")
+    user_profiles = UserProfile.objects.filter(user__username__icontains=username_query)
 
-    friend_user_ids = [user.id for user in userFriendList]
+    friend_user_ids = [user.id for user in user_friend_list]
 
     user_profiles = user_profiles.exclude(user__id__in=friend_user_ids).exclude(
         user_id=request.user.id
     )
 
     serializer = UserProfileSerializer(user_profiles, many=True)
-    # print(serializer.data)
     return Response(serializer.data, status=200)
 
 
@@ -788,15 +790,16 @@ def getQueryUserProfile(request):
 
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
-def updateFavouriteUserProfile(request, recipeId):
-    userProfile = UserProfile.objects.get(user=request.user)
-    recipe = Recipe.objects.get(id=recipeId)
-    isFavourited = request.data["isFavourite"]
-    if isFavourited == "true":
-        userProfile.favouriteRecipes.remove(recipe)
+def update_favourite_user_profile(request, recipe_id):
+    """Remove or add recipe to UserProfile favourites field, return responnse."""
+    user_profile = UserProfile.objects.get(user=request.user)
+    recipe = Recipe.objects.get(id=recipe_id)
+    is_favourited = request.data["isFavourite"]
+    if is_favourited == "true":
+        user_profile.favouriteRecipes.remove(recipe)
     else:
-        userProfile.favouriteRecipes.add(recipe)
-    userProfile.save()
+        user_profile.favouriteRecipes.add(recipe)
+    user_profile.save()
     return Response({"success": True}, status=200)
 
 
@@ -804,9 +807,12 @@ def updateFavouriteUserProfile(request, recipeId):
 
 
 class UserProfileIngredientView(APIView):
+    """Custom UserProfile view for GET & PATCH & DELETE of Ingredients."""
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """Get UserProfile Ingredients for field owned or buy, return Ingredients list."""
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
         is_owned = request.GET.get("isOwned")
@@ -833,8 +839,9 @@ class UserProfileIngredientView(APIView):
         return Response(serialized_data, status=status.HTTP_200_OK)
 
     def patch(self, request):
+        """Add Ingredient to field ownedIngredients or buyIngredients of Userprofile"""
         user = request.user
-        userProfile = UserProfile.objects.get(user=user)
+        user_profile = UserProfile.objects.get(user=user)
         is_owned = str(request.data.get("isOwned")).lower() == "true"
         try:
             ingredient = Ingredient.objects.get(
@@ -848,27 +855,28 @@ class UserProfileIngredientView(APIView):
             )
 
         if is_owned:
-            userProfile.ownedIngredients.add(ingredient)
+            user_profile.ownedIngredients.add(ingredient)
         else:
-            userProfile.buyIngredients.add(ingredient)
+            user_profile.buyIngredients.add(ingredient)
 
         return Response({"success": True})
 
     def delete(self, request):
+        """Remove ingredient from field ownedIngredients or buyIngredients of Userprofile"""
         user = request.user
-        userProfile = UserProfile.objects.get(user=user)
-        userProfileIngredientList = (
-            userProfile.ownedIngredients
+        user_profile = UserProfile.objects.get(user=user)
+        user_profile_ingredient_list = (
+            user_profile.ownedIngredients
             if request.data.get("isOwned") == "true"
-            else userProfile.buyIngredients
+            else user_profile.buyIngredients
         )
 
         try:
-            userProfileIngredientList.remove(
+            user_profile_ingredient_list.remove(
                 Ingredient.objects.get(name=request.data.get("ingredient").lower())
             )
-        except:
-            userProfileIngredientList.remove(
+        except (ValueError, Ingredient.DoesNotExist):
+            user_profile_ingredient_list.remove(
                 Ingredient.objects.get(id=request.data.get("id"))
             )
 
@@ -877,18 +885,19 @@ class UserProfileIngredientView(APIView):
 
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
-def UserProfileIngredientMove(request):
+def user_profile_ingredient_move(request):
+    """Move UserProfile ingredient from owned to buy or vice versa, return response."""
     user = request.user
-    userProfile = UserProfile.objects.get(user=user)
+    user_profile = UserProfile.objects.get(user=user)
     ingredient = Ingredient.objects.get(id=request.data.get("id"))
-    isOwned = request.data.get("isOwned")
+    is_owned = request.data.get("isOwned")
 
-    if isOwned == "true":
-        userProfile.ownedIngredients.remove(ingredient)
-        userProfile.buyIngredients.add(ingredient)
+    if is_owned == "true":
+        user_profile.ownedIngredients.remove(ingredient)
+        user_profile.buyIngredients.add(ingredient)
     else:
-        userProfile.buyIngredients.remove(ingredient)
-        userProfile.ownedIngredients.add(ingredient)
+        user_profile.buyIngredients.remove(ingredient)
+        user_profile.ownedIngredients.add(ingredient)
 
     return Response({"success": True})
 
@@ -898,69 +907,74 @@ def UserProfileIngredientMove(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def getRecipeIngredient(request, recipeId):
-    recipe = Recipe.objects.get(id=recipeId)
-    componentId = request.GET.get("componentId")
-    recipeComponent = RecipeComponent.objects.get(id=componentId)
-    recipeIngredient = RecipeIngredient.objects.filter(
-        recipe=recipe, recipeComponent=recipeComponent
+def get_recipe_ingredient(request, recipe_id):
+    """Get Recipe Ingredient, return Recipe Ingredient data."""
+    recipe = Recipe.objects.get(id=recipe_id)
+    component_id = request.GET.get("componentId")
+    recipe_component = RecipeComponent.objects.get(id=component_id)
+    recipe_ingredient = RecipeIngredient.objects.filter(
+        recipe=recipe, recipeComponent=recipe_component
     )
-    serializer = RecipeIngredientSerializer(recipeIngredient, many=True)
+    serializer = RecipeIngredientSerializer(recipe_ingredient, many=True)
     return Response(serializer.data, status=200)
 
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def deleteRecipeIngredient(request, ingredientId):
-    recipeIngredient = RecipeIngredient.objects.get(id=ingredientId)
-    if request.user == recipeIngredient.recipe.user:
-        recipeIngredient.delete()
+def delete_recipe_ingredient(request, ingredient_id):
+    """Delete recipe ingredient, return response."""
+    recipe_ingredient = RecipeIngredient.objects.get(id=ingredient_id)
+    if request.user == recipe_ingredient.recipe.user:
+        recipe_ingredient.delete()
     return Response({"Success": True}, status=200)
 
 
 class RecipeIngredientView(APIView):
+    """Custom Recipe Ingredient View for POST."""
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        recipeId = request.data.get("recipeId")
-        if not (Recipe.objects.get(id=recipeId).user == request.user):
+        """Create RecipeIngredient object, return RecipeIngredient data."""
+        recipe_id = request.data.get("recipeId")
+        if not Recipe.objects.get(id=recipe_id).user == request.user:
             return Response(
                 {"error": "You are not authorized to modify this recipe."}, status=403
             )
-        recipe = Recipe.objects.get(id=recipeId)
+        recipe = Recipe.objects.get(id=recipe_id)
 
-        ingredientName = request.data.get("ingredient")
-        ingredientType = request.data.get("ingredientType")
+        ingredient_name = request.data.get("ingredient")
+        ingredient_type = request.data.get("ingredientType")
 
         quantity = request.data.get("quantity")
 
         if quantity <= 0:
             return Response({"success": False})
 
-        componentId = request.data.get("componentId")
+        component_id = request.data.get("componentId")
         try:
-            recipeComponent = RecipeComponent.objects.get(id=componentId)
+            recipe_component = RecipeComponent.objects.get(id=component_id)
         except RecipeComponent.DoesNotExist:
             return Response({"success": False})
 
         try:
             ingredient = Ingredient.objects.get(
-                name=ingredientName, ingredientType=ingredientType
+                name=ingredient_name, ingredientType=ingredient_type
             )
         except Ingredient.DoesNotExist:
             ingredient = Ingredient.objects.create(
-                name=ingredientName, ingredientType=ingredientType
+                name=ingredient_name, ingredientType=ingredient_type
             )
 
         unit = request.data.get("unit")
-        recipeIngredient = RecipeIngredient.objects.create(
+        recipe_ingredient = RecipeIngredient.objects.create(
             recipe=recipe,
             ingredient=ingredient,
             quantity=quantity,
             unit=unit,
-            recipeComponent=recipeComponent,
+            recipeComponent=recipe_component,
         )
-        serializer = RecipeIngredientSerializer(recipeIngredient)
+        serializer = RecipeIngredientSerializer(recipe_ingredient)
         return Response(serializer.data, status=200)
 
 
@@ -968,31 +982,36 @@ class RecipeIngredientView(APIView):
 
 
 class RecipeComponentView(APIView):
+    """Custom Recipe Component View."""
+
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, recipeId):
-        recipe = Recipe.objects.get(id=recipeId)
-        recipeComponent = RecipeComponent.objects.filter(recipe=recipe)
-        serializer = RecipeComponentSerializer(recipeComponent, many=True)
+    def get(self, _request, recipe_id):
+        """Get RecipeComponent, returns RecipeComponent data."""
+        recipe = Recipe.objects.get(id=recipe_id)
+        recipe_component = RecipeComponent.objects.filter(recipe=recipe)
+        serializer = RecipeComponentSerializer(recipe_component, many=True)
         return Response(serializer.data, status=200)
 
-    def post(self, request, recipeId):
-        recipeComponentName = request.data["recipeComponentName"]
-        recipeComponentDesc = request.data["recipeComponentDescription"]
-        recipe = Recipe.objects.get(id=recipeId)
-        recipeComponent = RecipeComponent.objects.create(
-            name=recipeComponentName, description=recipeComponentDesc, recipe=recipe
+    def post(self, request, recipe_id):
+        """Create RecipeComponent, return RecipeComponent data."""
+        recipe_component_name = request.data["recipeComponentName"]
+        recipe_component_desc = request.data["recipeComponentDescription"]
+        recipe = Recipe.objects.get(id=recipe_id)
+        recipe_component = RecipeComponent.objects.create(
+            name=recipe_component_name, description=recipe_component_desc, recipe=recipe
         )
-        serializer = RecipeComponentSerializer(recipeComponent)
+        serializer = RecipeComponentSerializer(recipe_component)
 
         return Response(serializer.data, status=200)
 
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def deleteRecipeComponent(request, componentId):
+def delete_recipe_component(request, component_id):
+    """Delete Recipe Component, return Response."""
     user = request.user
-    recipeComponent = RecipeComponent.objects.get(id=componentId)
-    if recipeComponent.recipe.user == user:
-        recipeComponent.delete()
+    recipe_component = RecipeComponent.objects.get(id=component_id)
+    if recipe_component.recipe.user == user:
+        recipe_component.delete()
     return Response({"success": True})

@@ -1,10 +1,13 @@
+"Custom JWT Authentication"
+
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CookiesJWTAuthentication(JWTAuthentication):
+    """Custom JWT Token Authentication."""
+
     def authenticate(self, request):
-        print("@auth")
         access_token = request.COOKIES.get("access_token")
 
         if not access_token:
@@ -16,4 +19,4 @@ class CookiesJWTAuthentication(JWTAuthentication):
             return (user, validated_token)
         except Exception as e:
             print("❌ Invalid JWT in cookie:", e)
-            raise AuthenticationFailed("Invalid or expired access token")
+            raise AuthenticationFailed("Invalid or expired access token") from e
