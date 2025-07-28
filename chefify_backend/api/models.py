@@ -1,3 +1,13 @@
+"""
+Django models for the Chefify application.
+
+This module defines the core data structures used throughout the backend.
+
+"""
+
+# pylint: disable=no-member
+# pylint: disable=too-few-public-methods
+
 import os
 
 from django.contrib.auth.models import User
@@ -7,6 +17,14 @@ from django.db.models import F
 
 
 class Ingredient(models.Model):
+    """
+    Represents an Ingredient.
+
+    Represented by Type, & Name.
+
+    Functionally important to model: Recipe, Userprofile, RecipeIngredient.
+    """
+
     TYPE = {
         "fruitsVegetables": "Fruits & Vegetables",
         "protein": "Protein",
@@ -19,6 +37,12 @@ class Ingredient(models.Model):
     ingredientType = models.CharField(max_length=30, choices=TYPE, default="other")
 
     class Meta:
+        """
+        Add constraints so only a unique pairing of a name and type can exist.
+
+        Helps to avoid duplicate ingredients of the same type to manage database storage size.
+        """
+
         constraints = [
             models.UniqueConstraint(
                 fields=["name", "ingredientType"], name="unique_ingredient_name_type"
@@ -30,13 +54,33 @@ class Ingredient(models.Model):
 
 
 class Cuisine(models.Model):
+    """
+    Represents a Cuisine.
+
+    Represented by name.
+
+    Functionally important to model: Review.
+    """
+
     name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class Recipe(models.Model):
+    """
+    Represents a Recipe.
+
+    Represented by user, rating (value from 0-10; value from RATING_CHOCIES),
+    reviewers, name, cuisine, privacy (value of 3 different strings from STATUS_CHOICES),
+    description, image, recipeImageUrl, ingredients (list of Ingredient instances), updated,
+    & created.
+
+    Functionally important to model: RecipeStep, Review, RecipeComponent, RecipeIngredient
+
+    """
+
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     STATUS_CHOICES = {
         "private": "Private",
@@ -72,14 +116,19 @@ class Recipe(models.Model):
 
     def save(self, *args, **kwargs):
         if self.id:
-            oldRecipe = Recipe.objects.get(id=self.id)
-            if (oldRecipe.image != self.image) and oldRecipe.image:
-                oldImageUrl = oldRecipe.image.path
-                if os.path.isfile(oldImageUrl):
-                    os.remove(oldImageUrl)
+            old_recipe = Recipe.objects.get(id=self.id)
+            if (old_recipe.image != self.image) and old_recipe.image:
+                oldimage_url = old_recipe.image.path
+                if os.path.isfile(oldimage_url):
+                    os.remove(oldimage_url)
         super().save(*args, **kwargs)
 
     def update_rating(self):
+        """
+        Updates rating value.
+
+        Takes sum of rating values and divides by number of reviewers (Users).
+        """
         reviews = Review.objects.filter(recipe=self)
         total_reviews = self.reviewers.count()
         if total_reviews > 0:
@@ -93,28 +142,45 @@ class Recipe(models.Model):
         self.save()
 
     def remove_user(self, review_instance):
+        """Removes a user from the reviewers field and calls class function update_rating."""
         user = review_instance.user
         self.reviewers.remove(user)
         self.save()
         self.update_rating()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class RecipeSteps(models.Model):
+    """
+    Represents one instruction.
+
+    Represented by recipe, title, description, order (order in which the instruction appears
+    in the recipe relative to other RecipeSteps).
+
+    Associated with model Recipe.
+
+    """
+
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="steps")
     title = models.CharField(max_length=50, default="")
     description = models.TextField()
     order = models.PositiveIntegerField(blank=True)
 
     class Meta:
+        """
+        Adds sorting by field value "order".
+
+        Adds two different string representations dependent on plural or not.
+        """
+
         ordering = ["order"]
         verbose_name = "Recipe Step"
         verbose_name_plural = "Recipe Steps"
 
     def __str__(self):
-        return "Step-" + str(self.order) + ": " + self.title[0:30]
+        return str("Step-" + str(self.order) + ": " + str(self.title)[0:30])
 
     def save(self, *args, **kwargs):
         if not self.order:
@@ -125,13 +191,23 @@ class RecipeSteps(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # Update the order of instances with a larger order value
+        """Updates order of other RecipeSteps to account for self.RecipeStep being deleted."""
         RecipeSteps.objects.filter(order__gt=self.order).update(order=F("order") - 1)
-        # Call the superclass delete method to delete the instance
         super(RecipeSteps, self).delete(*args, **kwargs)
 
 
 class UserProfile(models.Model):
+    """
+    Represents a User's Profile.
+
+    Represented by user, friendsList (list of User), ownIngredients (list of Ingredient),
+    buyIngredients (list of Ingredient), favouriteRecipes (list of Recipe), profilePicture,
+    & profilePictureUrl.
+
+    Associated with model User.
+
+    """
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     friendsList = models.ManyToManyField(User, related_name="friends_with", blank=True)
     ownedIngredients = models.ManyToManyField(
@@ -155,6 +231,15 @@ class UserProfile(models.Model):
 
 
 class Review(models.Model):
+    """
+    Represents a Review of a Recipe.
+
+    Represented by recipe, rating (value from 0-5), likedBy (list of user),
+    dislikedBy (list of user), likes, dislikes, review_text, user, userProfile,
+    updated, & created.
+
+    """
+
     RATING_CHOICES = [(i / 2, str(i / 2)) for i in range(1, 11)]
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     rating = models.DecimalField(
@@ -180,25 +265,36 @@ class Review(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        """
+        Add constraints so only a unique pairing of a user and recipe can exist.
+
+        Helps to avoid duplicate reviews by the same user for a recipe, to help
+        manage database storage size.
+        """
+
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "recipe"], name="unique_review_per_user_per_recipe"
             )
         ]
 
-    def addLike(self):
+    def add_like(self):
+        """Increments self.likes value."""
         self.likes = self.likes + 1
         self.save()
 
-    def removeLike(self):
+    def remove_like(self):
+        """Decrements self.likes value."""
         self.likes = self.likes - 1
         self.save()
 
-    def addDislike(self):
+    def add_dislike(self):
+        """Increments self.dislikes value."""
         self.dislikes = self.dislikes + 1
         self.save()
 
-    def removeDislike(self):
+    def remove_dislike(self):
+        """Decrements self.dislikes value."""
         self.dislikes = self.dislikes - 1
         self.save()
 
@@ -207,12 +303,23 @@ class Review(models.Model):
 
 
 class RecipeComponent(models.Model):
+    """
+    Represents a grouping of ingredients pertaining to a specific instruction of a recipe.
+
+    Represented by name, recipe, description, & order.
+
+    Functionally important to: RecipeIngredient.
+
+    """
+
     name = models.CharField(max_length=255)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
     order = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:
+        """Adds sorting by field value "order"."""
+
         ordering = ["order"]
 
     def save(self, *args, **kwargs):
@@ -230,10 +337,17 @@ class RecipeComponent(models.Model):
         super(RecipeComponent, self).delete(*args, **kwargs)
 
     def __str__(self):
-        return "Step-" + str(self.order) + ": " + self.name[0:30]
+        return str("Step-" + str(self.order) + ": " + str(self.name)[0:30])
 
 
 class RecipeIngredient(models.Model):
+    """
+    Represents an amount in units of an ingredient needed in a component of a recipe.
+
+    Represented by recipe, ingredient, unit (a value in UNIT_CHOICES), quantity, &
+    recipeComponent
+    """
+
     UNIT_CHOICES = {
         "tbsp": "Tablespoon",
         "tsp": "Teaspoon",
