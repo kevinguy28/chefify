@@ -1,3 +1,14 @@
+"""
+URL configuration for the Django backend.
+
+Includes routes for:
+- Authentication (login, logout, register, Google login)
+- User profile actions
+- Recipe creation, reading, updating, deleting
+- Steps, ingredients, and components
+- Reviews and timeline views
+"""
+
 from django.urls import path
 
 from .views import (
