@@ -11,7 +11,7 @@ class CookiesJWTAuthentication(JWTAuthentication):
         access_token = request.COOKIES.get("access_token")
 
         if not access_token:
-            return None  # No cookie means unauthenticatedd
+            return None  # No cookie means unauthenticated
 
         try:
             validated_token = self.get_validated_token(access_token)
