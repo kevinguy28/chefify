@@ -32,5 +32,9 @@ jobs:
 
             - name: Run Pylint
               working-directory: chefify_backend
+              env:
+                  DJANGO_SETTINGS_MODULE: ${{ vars.DJANGO_SETTINGS_MODULE }}
+                  SECRET_KEY: ${{secrets.SECRET_KEY}}
+                  FIREBASE_KEY_JSON: ${{secrets.FIREBASE_KEY_JSON}}
               run: |
                   pylint api/authentication.py api/functions.py api/models.py api/signals.py api/urls.py api/views.py api/serializer.py
