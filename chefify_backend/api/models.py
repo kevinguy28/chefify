@@ -10,10 +10,12 @@ This module defines the core data structures used throughout the backend.
 
 import os
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models
 from django.db.models import F
+
+User = get_user_model()
 
 
 class Ingredient(models.Model):
@@ -193,7 +195,7 @@ class RecipeSteps(models.Model):
     def delete(self, *args, **kwargs):
         """Updates order of other RecipeSteps to account for self.RecipeStep being deleted."""
         RecipeSteps.objects.filter(order__gt=self.order).update(order=F("order") - 1)
-        super(RecipeSteps, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
 
 class UserProfile(models.Model):
@@ -334,7 +336,7 @@ class RecipeComponent(models.Model):
         RecipeComponent.objects.filter(order__gt=self.order).update(
             order=F("order") - 1
         )
-        super(RecipeComponent, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
     def __str__(self):
         return str("Step-" + str(self.order) + ": " + str(self.name)[0:30])

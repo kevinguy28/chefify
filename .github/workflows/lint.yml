@@ -1,0 +1,36 @@
+name: Lint
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    lint:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v3
+              with:
+                  python-version: "3.9"
+
+            - name: Install Dependencies
+              working-directory: chefify_backend
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Run Black (check mode)
+              working-directory: chefify_backend
+              run: |
+                  black api --check
+
+            - name: Run Pylint
+              working-directory: chefify_backend
+              run: |
+                  pylint api/authentication.py api/functions.py api/models.py api/signals.py api/urls.py api/views.py api/serializer.py

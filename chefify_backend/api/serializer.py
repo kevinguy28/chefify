@@ -1,4 +1,13 @@
-from django.contrib.auth.models import User
+"""
+serializer.py
+
+This module defines serializers for the API application that converts
+complex data types, ie. Django Model Instances, into native python
+datatypes that can be rendered JSON/XML.
+
+"""
+
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -13,14 +22,20 @@ from .models import (
     UserProfile,
 )
 
+User = get_user_model()
+
 
 class UserSerializer(ModelSerializer):
+    """Serializes User model."""
+
     class Meta:
         model = User
         fields = "__all__"
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    """Serializes User Registration Data."""
+
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -35,12 +50,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class CuisineSerializer(ModelSerializer):
+    """Serializes Cuisine data."""
+
     class Meta:
         model = Cuisine
         fields = "__all__"
 
 
 class RecipeSerializer(ModelSerializer):
+    """Serializes Recipe data."""
+
     user = UserSerializer()
     cuisine = CuisineSerializer()
 
@@ -50,6 +69,8 @@ class RecipeSerializer(ModelSerializer):
 
 
 class RecipeStepsSerializer(ModelSerializer):
+    """Serialize Recipe Steps data."""
+
     recipe = RecipeSerializer()
 
     class Meta:
@@ -58,6 +79,8 @@ class RecipeStepsSerializer(ModelSerializer):
 
 
 class ReviewSerializer(ModelSerializer):
+    """Serialize Review data."""
+
     user = UserSerializer()
     recipe = RecipeSerializer()
     likedBy = UserSerializer(many=True)
@@ -70,12 +93,16 @@ class ReviewSerializer(ModelSerializer):
 
 
 class IngredientSerializer(ModelSerializer):
+    """Serializes Ingredient data."""
+
     class Meta:
         model = Ingredient
         fields = "__all__"
 
 
 class UserProfileSerializer(ModelSerializer):
+    """Serialize User Profile data."""
+
     user = UserSerializer()
     favouriteRecipes = RecipeSerializer(many=True)
     ownedIngredients = IngredientSerializer(many=True)
@@ -99,6 +126,8 @@ class UserProfileSerializer(ModelSerializer):
 
 
 class UserProfileIngredientListSerializer(ModelSerializer):
+    """Serializes User Profile Ingredient Data."""
+
     ownedIngredients = IngredientSerializer(many=True)
     buyIngredients = IngredientSerializer(many=True)
 
@@ -119,6 +148,8 @@ class UserProfileIngredientListSerializer(ModelSerializer):
 
 
 class RecipeIngredientSerializer(ModelSerializer):
+    """Serializes Recipe Ingredient data."""
+
     recipe = RecipeSerializer()
     ingredient = IngredientSerializer()
 
@@ -128,6 +159,8 @@ class RecipeIngredientSerializer(ModelSerializer):
 
 
 class RecipeComponentSerializer(ModelSerializer):
+    """Serializes Recipe Component Data."""
+
     recipe = RecipeSerializer()
 
     class Meta:
