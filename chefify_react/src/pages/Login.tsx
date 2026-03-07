@@ -1,15 +1,15 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { useAuth } from "@/contexts/useAuth";
-import { refresh_token } from "@/endpoints/api";
-import { useNavigate } from "react-router-dom";
+// import { refresh_token } from "@/endpoints/api";
+// import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "@/firebase/firebase";
 import GoogleLogo from "@/assets/googleLogo.svg?react";
 
 const Login = () => {
-    const nav = useNavigate();
-    const { google_login_user, setIsAuthenticated } = useAuth();
-
+    // const nav = useNavigate();
+    // const { google_login_user, setIsAuthenticated } = useAuth();
+    const { google_login_user } = useAuth();
     const handleGoogleLogin = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
