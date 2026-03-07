@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setIsAuthenticated(false);
             setUser(null);
             setUserProfile(null);
-            nav("/login"); // redirect to login page
+            // nav("/login"); // redirect to login page
         }
     };
 
