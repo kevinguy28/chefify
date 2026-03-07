@@ -27,10 +27,12 @@ const RecipePage = () => {
         }
         const responseReview = await readReviewUser(String(recipeId), "false");
         if (responseReview.data) {
+            console.log(responseReview.data);
+            console.log(responseReview);
             setReview(responseReview.data);
         }
         const responseRecipeComponent = await readRecipeComponent(
-            String(recipeId)
+            String(recipeId),
         );
         if (responseRecipeComponent) {
             setRecipeComponent(responseRecipeComponent);
@@ -90,7 +92,7 @@ const RecipePage = () => {
             <div>{loaded && <RecipeStepsDisplay edit={false} />}</div>
             <div className="flex flex-col gap-4">
                 <div className="mx-auto sm:w-120 lg:w-150">
-                    {loaded && review ? (
+                    {loaded && review?.rating ? (
                         <ReviewForm review={review} setLoaded={setLoaded} />
                     ) : (
                         <ReviewForm review={null} setLoaded={setLoaded} />

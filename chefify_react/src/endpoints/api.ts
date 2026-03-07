@@ -1,6 +1,6 @@
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_API_URL;
-// const BASE_URL = "http://127.0.0.1:8000/api/";
+// const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = "http://127.0.0.1:8000/api/";
 const CREATE_URL = "create/";
 const READ_URL = "read/";
 const UPDATE_URL = "update/";
@@ -104,7 +104,7 @@ export const login = async (username: string, password: string) => {
         const response = await axios.post(
             LOGIN_URL,
             { username, password },
-            { withCredentials: true }
+            { withCredentials: true },
         );
 
         return response.data;
@@ -120,7 +120,7 @@ export const login_google = async (idToken: string) => {
         const response = await axios.post(
             LOGIN_GOOGLE_URL,
             { idToken },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -141,13 +141,13 @@ export const logout = async () => {
 export const register = async (
     username: string,
     email: string,
-    password: string
+    password: string,
 ) => {
     try {
         const response = await axios.post(
             REGISTER_URL,
             { username, email, password },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -161,7 +161,7 @@ export const is_authenticated = async () => {
         const response = await axios.post(
             AUTHENTICATED_URL,
             {},
-            { withCredentials: true }
+            { withCredentials: true },
         );
         if (response) {
             return response.data;
@@ -190,7 +190,7 @@ export const readUser = async () => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(USER_READ_URL, { withCredentials: true })
+            axios.get(USER_READ_URL, { withCredentials: true }),
         );
     }
 };
@@ -198,7 +198,7 @@ export const readUser = async () => {
 export const putUserName = async (
     firstName: string,
     lastName: string,
-    username: string
+    username: string,
 ) => {
     try {
         const response = await axios.put(
@@ -210,7 +210,7 @@ export const putUserName = async (
             },
             {
                 withCredentials: true,
-            }
+            },
         );
         return response.data;
     } catch (error) {
@@ -224,8 +224,8 @@ export const putUserName = async (
                 },
                 {
                     withCredentials: true,
-                }
-            )
+                },
+            ),
         );
     }
 };
@@ -239,7 +239,7 @@ export const readRecipes = async (
     filterInput?: string,
     cuisine?: string,
     recent?: string,
-    returnQuantity?: number
+    returnQuantity?: number,
 ) => {
     try {
         const response = await axios.get(RECIPES_READ_URL, {
@@ -268,7 +268,7 @@ export const readRecipes = async (
                     ...(returnQuantity && { returnQuantity }),
                 },
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -278,7 +278,7 @@ export const readTimeline = async (
     needUser: boolean,
     privacy?: string,
     filterInput?: string,
-    cuisine?: string
+    cuisine?: string,
 ) => {
     try {
         const response = await axios.get(RECIPE_TIMELINE_URL, {
@@ -303,7 +303,7 @@ export const readTimeline = async (
                     ...(cuisine && { cuisine }),
                 },
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -317,7 +317,7 @@ export const readRecipe = async (recipeId: string) => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(url, { withCredentials: true })
+            axios.get(url, { withCredentials: true }),
         );
     }
 };
@@ -330,7 +330,7 @@ export const createRecipe = async (recipeName: string, cuisine: string) => {
                 recipeName,
                 cuisine,
             },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return reponse.data;
     } catch (error) {
@@ -341,8 +341,8 @@ export const createRecipe = async (recipeName: string, cuisine: string) => {
                     recipeName,
                     cuisine,
                 },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -389,7 +389,7 @@ export const updateRecipe = async (
     recipeCuisine: string,
     recipePrivacy: string,
     recipeDescription: string,
-    recipeImageUrl: string
+    recipeImageUrl: string,
 ) => {
     const url = `${RECIPE_UPDATE_URL}${recipeId}/`;
     const formData = new FormData();
@@ -411,7 +411,7 @@ export const updateRecipe = async (
             axios.put(url, formData, {
                 withCredentials: true,
                 headers: { "Content-Type": "multipart/form-data" },
-            })
+            }),
         );
     }
 };
@@ -426,7 +426,7 @@ export const deleteRecipe = async (recipeId: string) => {
         return await call_refresh(error, () =>
             axios.delete(RECIPE_DELETE_URL(recipeId), {
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -436,7 +436,7 @@ export const deleteRecipe = async (recipeId: string) => {
 export const createRecipeStep = async (
     recipeId: string,
     stepTitle: string,
-    stepDescription: string
+    stepDescription: string,
 ) => {
     try {
         const response = await axios.post(
@@ -445,7 +445,7 @@ export const createRecipeStep = async (
                 stepTitle,
                 stepDescription,
             },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -456,21 +456,21 @@ export const createRecipeStep = async (
                     stepTitle,
                     stepDescription,
                 },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
 
 export const updateRecipeStepOrder = async (
     stepId: string,
-    moveDown: boolean
+    moveDown: boolean,
 ) => {
     try {
         const response = await axios.put(
             RECIPE_STEPS_UPDATE_ORDER_URL(stepId),
             { moveDown },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response;
     } catch (error) {
@@ -480,8 +480,8 @@ export const updateRecipeStepOrder = async (
                 { moveDown },
                 {
                     withCredentials: true,
-                }
-            )
+                },
+            ),
         );
     }
 };
@@ -489,14 +489,14 @@ export const updateRecipeStepOrder = async (
 export const updateRecipeStep = async (
     stepId: string,
     title: string,
-    description: string
+    description: string,
 ) => {
     // const url = `${RECIPE_STEP_URL}${stepId}/`;
     try {
         const response = await axios.patch(
             STEP_URL(stepId),
             { title, description },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -504,8 +504,8 @@ export const updateRecipeStep = async (
             axios.patch(
                 STEP_URL(stepId),
                 { title, description },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -518,7 +518,7 @@ export const deleteRecipeStep = async (stepId: string) => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.delete(STEP_URL(stepId), { withCredentials: true })
+            axios.delete(STEP_URL(stepId), { withCredentials: true }),
         );
     }
 };
@@ -532,7 +532,7 @@ export const readRecipeSteps = async (recipeId: string) => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(url, { withCredentials: true })
+            axios.get(url, { withCredentials: true }),
         );
     }
 };
@@ -546,7 +546,7 @@ export const readCuisines = async () => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(CUISINE_READ_URL, { withCredentials: true })
+            axios.get(CUISINE_READ_URL, { withCredentials: true }),
         );
     }
 };
@@ -556,7 +556,7 @@ export const readCuisines = async () => {
 export const createReview = async (
     recipeId: string,
     rating: number,
-    review_text: string
+    review_text: string,
 ) => {
     try {
         console.log("called");
@@ -566,7 +566,7 @@ export const createReview = async (
                 rating,
                 review_text,
             },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         console.log(response);
         return response;
@@ -578,8 +578,8 @@ export const createReview = async (
                     rating,
                     review_text,
                 },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -596,7 +596,7 @@ export const readReviewUser = async (recipeId: string, reviewAll: string) => {
             axios.get(REVIEW_URL(recipeId), {
                 withCredentials: true,
                 params: { reviewAll },
-            })
+            }),
         );
     }
 };
@@ -609,7 +609,7 @@ export const readRecipeReviews = async (
     newest: string,
     oldest: string,
     highest: string,
-    lowest: string
+    lowest: string,
 ) => {
     try {
         const response = await axios.get(REVIEW_URL(recipeId), {
@@ -638,7 +638,7 @@ export const readRecipeReviews = async (
                     highest,
                     lowest,
                 },
-            })
+            }),
         );
     }
 };
@@ -646,13 +646,13 @@ export const readRecipeReviews = async (
 export const updateReview = async (
     recipeId: string,
     rating: number,
-    review_text: string
+    review_text: string,
 ) => {
     try {
         const response = await axios.put(
             REVIEW_URL(recipeId),
             { rating, review_text },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response;
     } catch (error) {
@@ -660,8 +660,8 @@ export const updateReview = async (
             axios.put(
                 REVIEW_URL(recipeId),
                 { rating, review_text },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -674,7 +674,7 @@ export const deleteReview = async (recipeId: string) => {
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.delete(REVIEW_URL(recipeId), { withCredentials: true })
+            axios.delete(REVIEW_URL(recipeId), { withCredentials: true }),
         );
     }
 };
@@ -684,7 +684,7 @@ export const updateReviewLiked = async (reviewId: string, isLike: boolean) => {
         const response = await axios.put(
             REVIEW_LIKE_URL(reviewId),
             { isLike },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -692,8 +692,8 @@ export const updateReviewLiked = async (reviewId: string, isLike: boolean) => {
             axios.put(
                 REVIEW_LIKE_URL(reviewId),
                 { isLike },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -705,12 +705,12 @@ export const createIngredient = async (name: string) => {
         const response = await axios.post(
             INGREDIENT_URL,
             { name },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.post(INGREDIENT_URL, { name }, { withCredentials: true })
+            axios.post(INGREDIENT_URL, { name }, { withCredentials: true }),
         );
     }
 };
@@ -728,7 +728,7 @@ export const readUserProfileFavouriteRecipes = async (page: number) => {
         return await call_refresh(error, () =>
             axios.get(USER_PROFILE_FAVOURITE_RECIPE_URL, {
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -743,7 +743,7 @@ export const readUserProfile = async () => {
         return await call_refresh(error, () =>
             axios.get(USER_PROFILE_URL, {
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -760,7 +760,7 @@ export const readQueryUserProfile = async (usernameQuery?: string) => {
             axios.get(USER_PROFILE_QUERY_URL, {
                 params: { usernameQuery },
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -773,14 +773,14 @@ export const readFriendsUserProfile = async () => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(USER_PROFILE_FRIENDS_URL, { withCredentials: true })
+            axios.get(USER_PROFILE_FRIENDS_URL, { withCredentials: true }),
         );
     }
 };
 
 export const updateAddFriendUserProfile = async (
     userProfileId: string,
-    action: string
+    action: string,
 ) => {
     try {
         const response = await axios.patch(
@@ -788,19 +788,19 @@ export const updateAddFriendUserProfile = async (
             { userProfileId, action },
             {
                 withCredentials: true,
-            }
+            },
         );
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.patch(USER_PROFILE_URL, { withCredentials: true })
+            axios.patch(USER_PROFILE_URL, { withCredentials: true }),
         );
     }
 };
 
 export const updateRemoveFriendUserProfile = async (
     userProfileId: string,
-    action: string
+    action: string,
 ) => {
     try {
         const response = await axios.patch(
@@ -808,12 +808,12 @@ export const updateRemoveFriendUserProfile = async (
             { userProfileId, action },
             {
                 withCredentials: true,
-            }
+            },
         );
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.patch(USER_PROFILE_URL, { withCredentials: true })
+            axios.patch(USER_PROFILE_URL, { withCredentials: true }),
         );
     }
 };
@@ -830,7 +830,7 @@ export const readIngredientUserProfile = async (isOwned: string) => {
             axios.get(USER_PROFILE_INGREDIENT_URL, {
                 withCredentials: true,
                 params: { isOwned },
-            })
+            }),
         );
     }
 };
@@ -838,13 +838,13 @@ export const readIngredientUserProfile = async (isOwned: string) => {
 export const updateIngredientUserProfile = async (
     ingredient: string,
     ingredientType: string,
-    isOwned: string
+    isOwned: string,
 ) => {
     try {
         const response = await axios.patch(
             USER_PROFILE_INGREDIENT_URL,
             { ingredient, ingredientType, isOwned },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response;
     } catch (error) {
@@ -852,8 +852,8 @@ export const updateIngredientUserProfile = async (
             axios.patch(
                 USER_PROFILE_INGREDIENT_URL,
                 { ingredient, ingredientType, isOwned },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -861,7 +861,7 @@ export const updateIngredientUserProfile = async (
 export const deleteIngredientUserProfile = async (
     isOwned: string,
     id?: number,
-    ingredient?: string
+    ingredient?: string,
 ) => {
     try {
         const response = await axios.delete(USER_PROFILE_INGREDIENT_URL, {
@@ -878,20 +878,20 @@ export const deleteIngredientUserProfile = async (
             axios.patch(USER_PROFILE_INGREDIENT_URL, {
                 withCredentials: true,
                 data: { ingredient, isOwned },
-            })
+            }),
         );
     }
 };
 
 export const moveIngredientsUserProfile = async (
     isOwned: string,
-    id: number
+    id: number,
 ) => {
     try {
         const response = await axios.patch(
             USER_PROFILE_MOVE_URL,
             { isOwned, id },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response;
     } catch (error) {
@@ -899,21 +899,21 @@ export const moveIngredientsUserProfile = async (
             axios.patch(
                 USER_PROFILE_MOVE_URL,
                 { isOwned, id },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
 
 export const updateFavouriteRecipeUserProfile = async (
     recipeId: string,
-    isFavourite: string
+    isFavourite: string,
 ) => {
     try {
         const response = await axios.patch(
             USER_PROFILE_FAVOURITE_URL(recipeId),
             { isFavourite },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -921,8 +921,8 @@ export const updateFavouriteRecipeUserProfile = async (
             axios.patch(
                 USER_PROFILE_FAVOURITE_URL(recipeId),
                 { isFavourite },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -931,7 +931,7 @@ export const updateFavouriteRecipeUserProfile = async (
 
 export const readRecipeIngredients = async (
     recipeId: number,
-    componentId: number
+    componentId: number,
 ) => {
     try {
         const response = await axios.get(RECIPE_INGREDIENT_GET_URL(recipeId), {
@@ -944,7 +944,7 @@ export const readRecipeIngredients = async (
             axios.get(RECIPE_INGREDIENT_GET_URL(recipeId), {
                 params: { componentId },
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -955,7 +955,7 @@ export const createRecipeIngredient = async (
     ingredient: string,
     ingredientType: string,
     recipeId: number,
-    componentId: string
+    componentId: string,
 ) => {
     try {
         const response = await axios.post(
@@ -968,7 +968,7 @@ export const createRecipeIngredient = async (
                 recipeId,
                 componentId,
             },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response;
     } catch (error) {
@@ -983,8 +983,8 @@ export const createRecipeIngredient = async (
                     recipeId,
                     componentId,
                 },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -993,14 +993,14 @@ export const deleteRecipeIngredient = async (ingredeintId: number) => {
     try {
         const response = await axios.delete(
             RECIPE_INGREDIENT_DELETE_URL(ingredeintId),
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
             axios.delete(RECIPE_INGREDIENT_DELETE_URL(ingredeintId), {
                 withCredentials: true,
-            })
+            }),
         );
     }
 };
@@ -1015,7 +1015,9 @@ export const readRecipeComponent = async (recipeId: string) => {
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
-            axios.get(RECIPE_COMPONENT_URL(recipeId), { withCredentials: true })
+            axios.get(RECIPE_COMPONENT_URL(recipeId), {
+                withCredentials: true,
+            }),
         );
     }
 };
@@ -1023,13 +1025,13 @@ export const readRecipeComponent = async (recipeId: string) => {
 export const createRecipeComponent = async (
     recipeComponentName: string,
     recipeComponentDescription: string,
-    recipeId: string
+    recipeId: string,
 ) => {
     try {
         const response = await axios.post(
             RECIPE_COMPONENT_URL(recipeId),
             { recipeComponentName, recipeComponentDescription },
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
@@ -1037,8 +1039,8 @@ export const createRecipeComponent = async (
             axios.post(
                 RECIPE_COMPONENT_URL(recipeId),
                 { recipeComponentName, recipeComponentDescription },
-                { withCredentials: true }
-            )
+                { withCredentials: true },
+            ),
         );
     }
 };
@@ -1047,14 +1049,14 @@ export const deleteRecipeComponent = async (componentId: string) => {
     try {
         const response = await axios.delete(
             RECIPE_COMPONENT_DELETE_URL(componentId.toString()),
-            { withCredentials: true }
+            { withCredentials: true },
         );
         return response.data;
     } catch (error) {
         return await call_refresh(error, () =>
             axios.delete(RECIPE_COMPONENT_DELETE_URL(componentId.toString()), {
                 withCredentials: true,
-            })
+            }),
         );
     }
 };

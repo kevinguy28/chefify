@@ -27,7 +27,7 @@ interface AuthContextType {
         username: string,
         email: string,
         password: string,
-        cPassword: string
+        cPassword: string,
     ) => Promise<void>;
     google_login_user: (idToken: string) => Promise<void>;
     logout_user: () => Promise<void>;
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const get_authenticated = async () => {
         setLoading(true);
         try {
+            console.log("abbbbbbbbbb");
             const response = await is_authenticated();
             if (response) {
                 setIsAuthenticated(true);
@@ -83,7 +84,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         username: string,
         email: string,
         password: string,
-        cPassword: string
+        cPassword: string,
     ) => {
         if (password === cPassword) {
             try {
@@ -106,7 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             nav("/");
         } else {
             alert(
-                "Login failed. Check your credentials. If this issue continues to persist please clear cookies."
+                "Login failed. Check your credentials. If this issue continues to persist please clear cookies.",
             );
         }
     };
@@ -114,19 +115,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const logout_user = async () => {
         try {
             await logout(); // Calls the Django logout endpoint
+            console.log("After logout");
         } catch (e) {
             console.error("Logout failed", e);
         } finally {
+            console.log("Authenticateeee");
             setIsAuthenticated(false);
             setUser(null);
             setUserProfile(null);
-            nav("/login"); // redirect to login page
+            // nav("/login"); // redirect to login page
         }
     };
 
     useEffect(() => {
         get_authenticated();
-    }, [location.pathname]);
+    }, []);
 
     return (
         <AuthContext.Provider

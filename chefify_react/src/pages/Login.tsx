@@ -21,20 +21,20 @@ const Login = () => {
         }
     };
 
-    useEffect(() => {
-        const tryRefresh = async () => {
-            const success = await refresh_token();
-            if (success) {
-                console.log("✔️ User is authenticated! Redirecting ...");
-                setIsAuthenticated(true);
-                nav("/");
-            } else {
-                console.log("❌ User is not authenticated!");
-                setIsAuthenticated(false);
-            }
-        };
-        tryRefresh();
-    }, []);
+    // useEffect(() => {
+    //     const tryRefresh = async () => {
+    //         const success = await refresh_token();
+    //         if (success) {
+    //             console.log("✔️ User is authenticated! Redirecting ...");
+    //             setIsAuthenticated(true);
+    //             nav("/");
+    //         } else {
+    //             console.log("❌ User is not authenticated!");
+    //             setIsAuthenticated(false);
+    //         }
+    //     };
+    //     tryRefresh();
+    // }, []);
 
     return (
         <div className="flex flex-col items-center justify-center h-screen text-alt-text">

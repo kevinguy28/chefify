@@ -15,7 +15,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
         if (response) {
             setLoaded(false);
             const recipeRatings = document.querySelectorAll(
-                "[id^='recipeRating']"
+                "[id^='recipeRating']",
             );
             for (const rating of recipeRatings) {
                 const input = rating as HTMLInputElement;
@@ -28,7 +28,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
         const response = await updateReview(
             String(recipeId),
             userRating,
-            userReviewText
+            userReviewText,
         );
         if (response) {
             setLoaded(false);
@@ -39,7 +39,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
         const response = await createReview(
             String(recipeId),
             userRating,
-            userReviewText
+            userReviewText,
         );
         if (response) {
             setLoaded(false);
@@ -51,10 +51,13 @@ const ReviewForm: React.FC<ReviewFormProps> = ({ review, setLoaded }) => {
             setUserRating(review.rating);
             setUserReviewText(review.review_text);
             const ratingValue = review.rating * 2;
-            const recipeRating: HTMLInputElement = document.getElementById(
-                `recipeRating${ratingValue}`
-            ) as HTMLInputElement;
-            recipeRating.checked = true;
+            const recipeRating = document.getElementById(
+                `recipeRating${ratingValue}`,
+            ) as HTMLInputElement | null;
+
+            if (recipeRating) {
+                recipeRating.checked = true;
+            }
         } else {
             setUserReviewText("");
         }

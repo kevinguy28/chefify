@@ -195,8 +195,9 @@ def google_login(request):
 
 @api_view(["POST"])
 @permission_classes([AllowAny])  # Optional, if logout doesn't require auth
-def logout():
+def logout(request):
     """Logout user and delete cookies."""
+    print("are we doign anything")
     response = Response({"detail": "Logout successful."}, status=status.HTTP_200_OK)
     response.delete_cookie("access_token", path="/")
     response.delete_cookie("refresh_token", path="/")
@@ -349,10 +350,10 @@ def read_recipes_timeline(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def read_recipe(_request, recipe_id):
+def read_recipe(_request, recipeId):
     """Returns recipe."""
     try:
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
         serializer = RecipeSerializer(recipe)
         return Response(serializer.data)
     except Recipe.DoesNotExist:
@@ -372,10 +373,10 @@ def create_recipe(request):
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def update_recipe(request, recipe_id):
+def update_recipe(request, recipeId):
     """Updates recipe information, returns recipe."""
     try:
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
     except Recipe.DoesNotExist:
         return Response({"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -403,10 +404,10 @@ def update_recipe(request, recipe_id):
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_recipe(request, recipe_id):
+def delete_recipe(request, recipeId):
     """Delete recipe on recipe_id, return response success."""
     try:
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
 
         if recipe.user != request.user:
             return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
@@ -422,10 +423,10 @@ def delete_recipe(request, recipe_id):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
-def create_recipe_step(request, recipe_id):
+def create_recipe_step(request, recipeId):
     """Create RecipeSteps object given fields, return RecipeSteps data."""
     try:
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
     except Recipe.DoesNotExist:
         return Response({"error": "Recipe not found"}, status=status.HTTP_404_NOT_FOUND)
     step_title = request.data["stepTitle"]
@@ -440,10 +441,10 @@ def create_recipe_step(request, recipe_id):
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def update_recipe_step_order(request, step_id):
+def update_recipe_step_order(request, stepId):
     """Swap order field value of Step of Recipe, return success."""
     move_down = request.data.get("moveDown")
-    step = RecipeSteps.objects.get(id=step_id)
+    step = RecipeSteps.objects.get(id=stepId)
     recipe_steps = step.recipe.steps.all()
     tmp = step.order
     if move_down:
@@ -473,10 +474,10 @@ class StepView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def patch(self, request, step_id):
+    def patch(self, request, stepId):
         """Update field values of Step, return success."""
         try:
-            step = RecipeSteps.objects.get(id=step_id)
+            step = RecipeSteps.objects.get(id=stepId)
         except RecipeSteps.DoesNotExist as e:
             return Response(
                 {"error": f"An error occurred: {str(e)}"},
@@ -492,10 +493,10 @@ class StepView(APIView):
         step.save()
         return Response({"success": True})
 
-    def delete(self, _request, step_id):
+    def delete(self, _request, stepId):
         """Delete instance of Step object, return success."""
         try:
-            step = RecipeSteps.objects.get(id=step_id)
+            step = RecipeSteps.objects.get(id=stepId)
             step.delete()
             return Response(
                 {"success": "Recipe step deleted successfully"},
@@ -513,10 +514,10 @@ class StepView(APIView):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def read_recipe_steps(_request, recipe_id):
+def read_recipe_steps(_request, recipeId):
     """Retreive recipe steps associated with a recipe, return steps data."""
     try:
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
         steps = recipe.steps.all()
         serializer = RecipeStepsSerializer(steps, many=True)
         return Response(serializer.data, status=200)
@@ -535,10 +536,10 @@ class ReviewView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, recipe_id):
+    def post(self, request, recipeId):
         """Create review, return review data."""
         try:
-            recipe = Recipe.objects.get(id=recipe_id)
+            recipe = Recipe.objects.get(id=recipeId)
             user_profile = UserProfile.objects.get(user=request.user)
             data = request.data
             if data["rating"] and data["rating"] != 0:
@@ -560,11 +561,11 @@ class ReviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def get(self, request, recipe_id):
+    def get(self, request, recipeId):
         """Get all Review instances associated with a Recipe and return review data."""
         if request.GET.get("reviewAll") == "false":
             try:
-                recipe = Recipe.objects.get(id=recipe_id)
+                recipe = Recipe.objects.get(id=recipeId)
                 try:
                     review = Review.objects.filter(
                         recipe=recipe, user=request.user
@@ -579,7 +580,7 @@ class ReviewView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         elif request.GET.get("reviewAll") == "true":
-            recipe = Recipe.objects.get(id=recipe_id)
+            recipe = Recipe.objects.get(id=recipeId)
             try:
                 reviews = Review.objects.filter(recipe=recipe)
 
@@ -627,12 +628,12 @@ class ReviewView(APIView):
                 return Response({}, status=status.HTTP_200_OK)
         return Response({}, status=status.HTTP_200_OK)
 
-    def put(self, request, recipe_id):
+    def put(self, request, recipeId):
         """Update Review rating and return Review data."""
         data = request.data
         try:
             review = Review.objects.get(
-                user=request.user, recipe=Recipe.objects.get(id=recipe_id)
+                user=request.user, recipe=Recipe.objects.get(id=recipeId)
             )
             if data["rating"] != review.rating:
                 review.rating = data["rating"]
@@ -647,11 +648,11 @@ class ReviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def delete(self, request, recipe_id):
+    def delete(self, request, recipeId):
         """Delete Review, return response."""
         try:
             review = Review.objects.get(
-                user=request.user, recipe=Recipe.objects.get(id=recipe_id)
+                user=request.user, recipe=Recipe.objects.get(id=recipeId)
             )
             review.delete()
             return Response({"Success": "Review has been deleted"})
@@ -789,10 +790,10 @@ def get_query_user_profile(request):
 
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
-def update_favourite_user_profile(request, recipe_id):
+def update_favourite_user_profile(request, recipeId):
     """Remove or add recipe to UserProfile favourites field, return responnse."""
     user_profile = UserProfile.objects.get(user=request.user)
-    recipe = Recipe.objects.get(id=recipe_id)
+    recipe = Recipe.objects.get(id=recipeId)
     is_favourited = request.data["isFavourite"]
     if is_favourited == "true":
         user_profile.favouriteRecipes.remove(recipe)
@@ -906,9 +907,9 @@ def user_profile_ingredient_move(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_recipe_ingredient(request, recipe_id):
+def get_recipe_ingredient(request, recipeId):
     """Get Recipe Ingredient, return Recipe Ingredient data."""
-    recipe = Recipe.objects.get(id=recipe_id)
+    recipe = Recipe.objects.get(id=recipeId)
     component_id = request.GET.get("componentId")
     recipe_component = RecipeComponent.objects.get(id=component_id)
     recipe_ingredient = RecipeIngredient.objects.filter(
@@ -920,9 +921,9 @@ def get_recipe_ingredient(request, recipe_id):
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_recipe_ingredient(request, ingredient_id):
+def delete_recipe_ingredient(request, ingredientId):
     """Delete recipe ingredient, return response."""
-    recipe_ingredient = RecipeIngredient.objects.get(id=ingredient_id)
+    recipe_ingredient = RecipeIngredient.objects.get(id=ingredientId)
     if request.user == recipe_ingredient.recipe.user:
         recipe_ingredient.delete()
     return Response({"Success": True}, status=200)
@@ -985,18 +986,18 @@ class RecipeComponentView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def get(self, _request, recipe_id):
+    def get(self, _request, recipeId):
         """Get RecipeComponent, returns RecipeComponent data."""
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
         recipe_component = RecipeComponent.objects.filter(recipe=recipe)
         serializer = RecipeComponentSerializer(recipe_component, many=True)
         return Response(serializer.data, status=200)
 
-    def post(self, request, recipe_id):
+    def post(self, request, recipeId):
         """Create RecipeComponent, return RecipeComponent data."""
         recipe_component_name = request.data["recipeComponentName"]
         recipe_component_desc = request.data["recipeComponentDescription"]
-        recipe = Recipe.objects.get(id=recipe_id)
+        recipe = Recipe.objects.get(id=recipeId)
         recipe_component = RecipeComponent.objects.create(
             name=recipe_component_name, description=recipe_component_desc, recipe=recipe
         )
@@ -1007,10 +1008,10 @@ class RecipeComponentView(APIView):
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
-def delete_recipe_component(request, component_id):
+def delete_recipe_component(request, componentId):
     """Delete Recipe Component, return Response."""
     user = request.user
-    recipe_component = RecipeComponent.objects.get(id=component_id)
+    recipe_component = RecipeComponent.objects.get(id=componentId)
     if recipe_component.recipe.user == user:
         recipe_component.delete()
     return Response({"success": True})
