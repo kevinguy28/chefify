@@ -216,3 +216,6 @@ else:
 # if not firebase_admin._apps:
 #     cred = credentials.Certificate(FIREBASE_KEY_PATH)
 #     firebase_admin.initialize_app(cred)
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
