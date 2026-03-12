@@ -8,14 +8,14 @@ import {
 
 export const doCreateUserWithEmailAndPassaword = async (
     email: string,
-    password: string
+    password: string,
 ) => {
     return createUserWithEmailAndPassword(auth, email, password);
 };
 
 export const doSignInWithEmailAndPassword = (
     email: string,
-    password: string
+    password: string,
 ) => {
     return signInWithEmailAndPassword(auth, email, password);
 };
@@ -23,6 +23,7 @@ export const doSignInWithEmailAndPassword = (
 export const doSignInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
+    console.log(result);
     return result;
 };
 
