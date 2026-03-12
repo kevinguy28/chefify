@@ -85,7 +85,7 @@ ROOT_URLCONF = "chefify_backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "chefify_frontend"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -219,3 +219,4 @@ else:
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True  # optional but safer for JWT
