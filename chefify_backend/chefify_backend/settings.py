@@ -82,10 +82,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "chefify_backend.urls"
 
+FRONTEND_DIR = BASE_DIR / "chefify_frontend"
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "chefify_frontend"],
+        "DIRS": [FRONTEND_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -97,6 +99,9 @@ TEMPLATES = [
         },
     },
 ]
+
+STATICFILES_DIRS = [FRONTEND_DIR / "assets"]  # <- point to assets folder
+STATIC_URL = "/assets/"  # match the folder structure in index.html
 
 WSGI_APPLICATION = "chefify_backend.wsgi.application"
 
@@ -164,7 +169,9 @@ USE_TZ = True
 # STATIC_URL = "/static/"
 # STATIC_ROOT = os.path.join(BASE_DIR, "..", "staticfiles")
 
-STATIC_URL = "/static/"
+# Line 176 Commented Out 3/12/2026
+
+# STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
